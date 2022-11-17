@@ -11,8 +11,8 @@
     <groupId>pers.nek0peko</groupId>
     <artifactId>datas</artifactId>
     <version>1.0.0</version>
-    <name>datas</name>
-    <description>DataS-Back-End</description>
+    <name>DataS back-end</name>
+    <description>DataS back-end</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -29,8 +29,8 @@
             <version>3.0.3</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>8.0.31</version>
         </dependency>
         <dependency>

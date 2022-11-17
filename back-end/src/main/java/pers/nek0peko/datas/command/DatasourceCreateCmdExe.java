@@ -18,7 +18,7 @@ public class DatasourceCreateCmdExe {
     @Transactional(rollbackFor = Exception.class)
     public void execute(DatasourceCreateCmd cmd) {
         try {
-            final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(cmd.getType());service.test();
+            final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(cmd.getType());
             service.test();
         } catch (Exception ignored) {
             // 未获取到该数据源类型的服务
