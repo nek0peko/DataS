@@ -1,0 +1,16 @@
+html, body, div {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%
+}
+
+.ml-10 {
+    margin-left: 10px
+}
+
+.w-200 {
+    width: 200px
+}
