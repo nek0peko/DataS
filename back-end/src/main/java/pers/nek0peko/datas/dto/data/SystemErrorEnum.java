@@ -6,7 +6,7 @@ import pers.nek0peko.datas.exception.ErrorCodeI;
  * SystemErrorEnum
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/13
  */
 public enum SystemErrorEnum implements ErrorCodeI {
 
@@ -14,7 +14,7 @@ public enum SystemErrorEnum implements ErrorCodeI {
     S_SERVER_ERROR("S_SERVER_ERROR", "系统繁忙"),
 
     // 参数错误
-    S_PARAMETER_ERROR("S_PARAMETER_ERROR", "参数错误！");
+    B_PARAMETER_ERROR("B_PARAMETER_ERROR", "请求参数错误！");
 
     private final String errCode;
 

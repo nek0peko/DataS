@@ -11,24 +11,24 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * 新增数据源
+ * 修改数据源
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/13
  */
 @ApiModel
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DatasourceCreateCmd extends BaseCommand {
+public class DatasourceModifyCmd extends BaseCommand {
 
-    @ApiModelProperty(value = "名称", required = true)
+    @ApiModelProperty(value = "数据源ID", required = true)
+    @NotNull(message = "数据源ID不能为空")
+    private Long id;
+
+    @ApiModelProperty(value = "名称", required = true, position = 1)
     @Length(min = 1, max = 20, message = "名称长度不超过20")
     @NotBlank(message = "数据源名不能为空")
     private String name;
-
-    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "MySQL")
-    @NotBlank(message = "数据源类型不能为空")
-    private String type;
 
     @ApiModelProperty(value = "描述：长度不超过50", position = 2, allowEmptyValue = true)
     @Length(max = 50, message = "描述长度应不超过50")

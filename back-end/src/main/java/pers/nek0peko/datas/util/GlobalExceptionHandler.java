@@ -18,7 +18,7 @@ import pers.nek0peko.datas.exception.BusinessException;
  * GlobalExceptionHandler
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/13
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,13 +31,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public Response parameterExceptionHandler(MethodArgumentNotValidException ex) {
-        String msg = SystemErrorEnum.S_PARAMETER_ERROR.getErrMessage();
+        String msg = SystemErrorEnum.B_PARAMETER_ERROR.getErrMessage();
         BindingResult exceptions = ex.getBindingResult();
         if (exceptions.hasErrors()) {
-            msg = exceptions.getAllErrors().stream().findFirst().map(DefaultMessageSourceResolvable::getDefaultMessage).orElse(SystemErrorEnum.S_PARAMETER_ERROR.getErrMessage());
+            msg = exceptions.getAllErrors().stream().findFirst().map(DefaultMessageSourceResolvable::getDefaultMessage).orElse(SystemErrorEnum.B_PARAMETER_ERROR.getErrMessage());
         }
 
-        return Response.buildFailure(SystemErrorEnum.S_PARAMETER_ERROR.getErrCode(), msg);
+        return Response.buildFailure(SystemErrorEnum.B_PARAMETER_ERROR.getErrCode(), msg);
     }
 
     @ResponseStatus(HttpStatus.OK)
