@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.service.DatasourceServiceI;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -19,7 +20,7 @@ import javax.validation.constraints.NotNull;
  * 数据源管理
  *
  * @author nek0peko
- * @date 2022/11/17
+ * @date 2022/12/12
  */
 @Api(tags = "数据源管理")
 @ApiSort(0)
@@ -34,8 +35,8 @@ public class DatasourceController {
     @ApiOperationSupport(author = "nek0peko", order = 1)
     @ApiOperation(value = "新增数据源")
     @PostMapping(value = "/create")
-    public void create(@Valid @NotNull @RequestBody DatasourceCreateCmd cmd) {
-        datasourceService.create(cmd);
+    public Response create(@Valid @NotNull @RequestBody DatasourceCreateCmd cmd) {
+        return datasourceService.create(cmd);
     }
 
 }

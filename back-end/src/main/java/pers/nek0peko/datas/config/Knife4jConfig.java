@@ -13,14 +13,14 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 /**
- * Knife4jConfiguration
+ * Knife4jConfig
  *
  * @author nek0peko
- * @date 2022/11/17
+ * @date 2022/12/12
  */
 @Configuration
 @EnableOpenApi
-public class Knife4jConfiguration {
+public class Knife4jConfig {
 
     @Value("${version}")
     private String version;
