@@ -1,6 +1,7 @@
 package pers.nek0peko.datas.dto.command;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Setter;
  * @author nek0peko
  * @date 2022/12/13
  */
+@NoArgsConstructor
 public class BasePageQuery extends BaseQuery {
 
     private static final long serialVersionUID = 1L;
@@ -33,9 +35,6 @@ public class BasePageQuery extends BaseQuery {
     @Getter
     @Setter
     private boolean needTotalCount = true;
-
-    public BasePageQuery() {
-    }
 
     public int getPageIndex() {
         return Math.max(this.pageIndex, 1);

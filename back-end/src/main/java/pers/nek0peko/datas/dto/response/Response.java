@@ -1,13 +1,19 @@
 package pers.nek0peko.datas.dto.response;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pers.nek0peko.datas.dto.BaseDTO;
 
 /**
  * Response
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/13
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class Response extends BaseDTO {
 
     private boolean success;
@@ -15,33 +21,6 @@ public class Response extends BaseDTO {
     private String errCode;
 
     private String errMessage;
-
-    public Response() {
-    }
-
-    public boolean isSuccess() {
-        return this.success;
-    }
-
-    public String getErrCode() {
-        return this.errCode;
-    }
-
-    public String getErrMessage() {
-        return this.errMessage;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public void setErrCode(String errCode) {
-        this.errCode = errCode;
-    }
-
-    public void setErrMessage(String errMessage) {
-        this.errMessage = errMessage;
-    }
 
     public String toString() {
         return "Response: [success=" + this.success + ", errCode=" + this.errCode + ", errMessage=" + this.errMessage + "]";

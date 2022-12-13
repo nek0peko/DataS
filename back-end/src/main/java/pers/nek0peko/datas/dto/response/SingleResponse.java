@@ -1,25 +1,21 @@
 package pers.nek0peko.datas.dto.response;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * SingleResponse
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/13
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class SingleResponse<T> extends Response {
 
     private T data;
-
-    public SingleResponse() {
-    }
-
-    public T getData() {
-        return this.data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 
     public static SingleResponse buildSuccess() {
         SingleResponse response = new SingleResponse();

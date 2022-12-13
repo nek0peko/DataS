@@ -1,5 +1,6 @@
 package pers.nek0peko.datas.util;
 
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -20,13 +21,11 @@ import pers.nek0peko.datas.exception.BusinessException;
  * @author nek0peko
  * @date 2022/12/13
  */
+@NoArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    public GlobalExceptionHandler() {
-    }
 
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -36,7 +35,6 @@ public class GlobalExceptionHandler {
         if (exceptions.hasErrors()) {
             msg = exceptions.getAllErrors().stream().findFirst().map(DefaultMessageSourceResolvable::getDefaultMessage).orElse(SystemErrorEnum.B_PARAMETER_ERROR.getErrMessage());
         }
-
         return Response.buildFailure(SystemErrorEnum.B_PARAMETER_ERROR.getErrCode(), msg);
     }
 

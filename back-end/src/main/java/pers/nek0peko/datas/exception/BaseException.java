@@ -1,15 +1,20 @@
 package pers.nek0peko.datas.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * BaseException
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/13
  */
 public abstract class BaseException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
+    @Getter
+    @Setter
     private String errCode;
 
     public BaseException(String errCode, String errMessage) {
@@ -19,14 +24,6 @@ public abstract class BaseException extends RuntimeException {
 
     public BaseException(String errCode, String errMessage, Throwable e) {
         super(errMessage, e);
-        this.errCode = errCode;
-    }
-
-    public String getErrCode() {
-        return this.errCode;
-    }
-
-    public void setErrCode(String errCode) {
         this.errCode = errCode;
     }
 

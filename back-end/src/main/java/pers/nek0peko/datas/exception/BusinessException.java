@@ -1,5 +1,7 @@
 package pers.nek0peko.datas.exception;
 
+import lombok.Getter;
+
 /**
  * BusinessException
  *
@@ -8,6 +10,7 @@ package pers.nek0peko.datas.exception;
  */
 public class BusinessException extends BaseException {
 
+    @Getter
     private final ErrorCodeI errorCode;
 
     public BusinessException(ErrorCodeI errorCode) {
@@ -18,10 +21,6 @@ public class BusinessException extends BaseException {
     public BusinessException(ErrorCodeI errorCode, Throwable e) {
         super(errorCode.getErrCode(), errorCode.getErrMessage(), e);
         this.errorCode = errorCode;
-    }
-
-    public ErrorCodeI getErrorCode() {
-        return this.errorCode;
     }
 
 }
