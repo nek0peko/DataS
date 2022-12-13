@@ -78,7 +78,7 @@
           </div>
 
           <!-- 字段 -->
-          <el-table :data="tableData" border="true" stripe="true" header-cell-class-name="table-header">
+          <el-table :data="tableData" border stripe header-cell-class-name="table-header">
             <el-table-column prop="name" label="名称" width="150"></el-table-column>
             <el-table-column prop="type" label="数据源类型" width="120"></el-table-column>
             <el-table-column prop="address" label="地址" width="140"></el-table-column>
@@ -92,7 +92,7 @@
             <el-table-column prop="description" label="描述" width="350"></el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+                <el-button @click="handleClick(scope.row); test()" type="text" size="small">查看</el-button>
                 <el-button type="text" size="small">编辑</el-button>
                 <el-button type="text" size="small">测试</el-button>
                 <el-button type="text" size="small">禁用</el-button>
@@ -118,8 +118,10 @@
 </template>
 
 <script>
+import request from "@/utils/request";
+
 export default {
-  name: 'HomeView',
+  name: 'Home',
   data() {
     const item = {
       name: 'test-db',
@@ -145,6 +147,11 @@ export default {
     },
     handleClick(row) {
       console.log(row);
+    },
+    test() {
+      request.post('/datasource/list-type', 'post').then(res => {
+        console.log(res)
+      })
     }
   }
 }
