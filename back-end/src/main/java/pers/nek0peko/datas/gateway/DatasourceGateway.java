@@ -1,5 +1,7 @@
 package pers.nek0peko.datas.gateway;
 
+import pers.nek0peko.datas.domain.object.PageHolder;
+import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.data.DatasourceDTO;
 
 import java.util.List;
@@ -41,5 +43,13 @@ public interface DatasourceGateway {
      * @param ids 数据源id列表
      */
     void removeByIds(List<Long> ids);
+
+    /**
+     * 分页条件查询数据源
+     *
+     * @param qry 查询条件
+     * @return 分页查询结果
+     */
+    PageHolder<DatasourceDTO> list(DatasourceListQry qry);
 
 }

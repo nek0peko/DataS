@@ -2,12 +2,16 @@ package pers.nek0peko.datas.gateway.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import pers.nek0peko.datas.domain.object.PageHolder;
 import pers.nek0peko.datas.domain.convertor.DatasourceConvertor;
 import pers.nek0peko.datas.domain.mapper.DatasourceMapper;
 import pers.nek0peko.datas.domain.object.DatasourceDO;
+import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.data.DatasourceDTO;
 import pers.nek0peko.datas.gateway.DatasourceGateway;
 
@@ -62,6 +66,16 @@ public class DatasourceGatewayImpl implements DatasourceGateway {
             return;
         }
         mapper.deleteBatchIds(ids);
+    }
+
+    @Override
+    public PageHolder<DatasourceDTO> list(DatasourceListQry qry) {
+        final LambdaQueryWrapper<DatasourceDO> wrapper = Wrappers.lambdaQuery(DatasourceDO.class)
+                .like(StringUtils.isNotEmpty(qry.getType()), DatasourceDO::getType, qry.getType())
+                .like(StringUtils.isNotEmpty(qry.getName()), DatasourceDO::getName, qry.getName());
+        final Page<DatasourceDO> page = mapper.selectPage(new Page<>(
+                qry.getPageIndex(), qry.getPageSize(), qry.isNeedTotalCount()), wrapper);
+        return PageHolder.of(convertor.toDTO(page.getRecords()), page.getTotal(), page.getSize(), page.getCurrent());
     }
 
     private void add(DatasourceDTO datasource) {

@@ -1,12 +1,14 @@
 package pers.nek0peko.datas.service.impl;
 
 import org.springframework.stereotype.Service;
-import pers.nek0peko.datas.command.DatasourceCreateCmdExe;
-import pers.nek0peko.datas.command.DatasourceModifyCmdExe;
-import pers.nek0peko.datas.command.DatasourceRemoveCmdExe;
+import pers.nek0peko.datas.command.*;
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
+import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.response.PageResponse;
 import pers.nek0peko.datas.dto.response.Response;
+import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.service.DatasourceServiceI;
 
 import javax.annotation.Resource;
@@ -30,6 +32,15 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
     @Resource
     private transient DatasourceRemoveCmdExe datasourceRemoveCmdExe;
 
+    @Resource
+    private transient DatasourceViewQryExe datasourceViewQryExe;
+
+    @Resource
+    private transient DatasourceListQryExe datasourceListQryExe;
+
+    @Resource
+    private transient DatasourceListTypeQryExe datasourceListTypeQryExe;
+
     @Override
     public Response create(DatasourceCreateCmd cmd) {
         return datasourceCreateCmdExe.execute(cmd);
@@ -43,6 +54,21 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
     @Override
     public Response remove(List<Long> ids) {
         return datasourceRemoveCmdExe.execute(ids);
+    }
+
+    @Override
+    public SingleResponse<DatasourceDTO> view(Long id) {
+        return datasourceViewQryExe.execute(id);
+    }
+
+    @Override
+    public PageResponse<DatasourceDTO> list(DatasourceListQry qry) {
+        return datasourceListQryExe.execute(qry);
+    }
+
+    @Override
+    public SingleResponse<List<String>> listType() {
+        return datasourceListTypeQryExe.execute();
     }
 
 }

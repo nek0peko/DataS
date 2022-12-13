@@ -2,11 +2,14 @@ package pers.nek0peko.datas.dto.data;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 支持的数据源类型
  *
  * @author nek0peko
- * @date 2022/11/17
+ * @date 2022/12/13
  */
 @Getter
 public enum DatasourceTypeEnum {
@@ -33,6 +36,14 @@ public enum DatasourceTypeEnum {
             }
         }
         return false;
+    }
+
+    public static List<String> listType() {
+        final List<String> types = new ArrayList<>();
+        for (final DatasourceTypeEnum supportedType : DatasourceTypeEnum.values()) {
+            types.add(supportedType.getType());
+        }
+        return types;
     }
 
 }

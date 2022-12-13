@@ -11,14 +11,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
+import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.response.PageResponse;
 import pers.nek0peko.datas.dto.response.Response;
+import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.service.DatasourceServiceI;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 数据源管理
@@ -56,6 +61,29 @@ public class DatasourceController {
     @PostMapping(value = "/remove")
     public Response remove(@Valid @NotEmpty @RequestBody List<Long> ids) {
         return datasourceService.remove(ids);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 4)
+    @ApiOperation(value = "查询单个数据源")
+    @ApiImplicitParam(name = "id", value = "数据源ID", required = true, dataType = "long")
+    @PostMapping(value = "/view")
+    public SingleResponse<DatasourceDTO> view(@Valid @NotNull @RequestBody Long id) {
+        return datasourceService.view(id);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 5, ignoreParameters = {"qry.orderBy", "qry.orderDirection", "qry.orderDirection", "qry.groupBy"})
+    @ApiOperation(value = "条件查询数据源列表")
+    @PostMapping(value = "/list")
+    public PageResponse<DatasourceDTO> list(@Valid @RequestBody(required = false) DatasourceListQry qry) {
+        qry = Optional.ofNullable(qry).orElse(new DatasourceListQry());
+        return datasourceService.list(qry);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 6)
+    @ApiOperation(value = "查询数据源类型列表")
+    @PostMapping(value = "/list-type")
+    public SingleResponse<List<String>> listType() {
+        return datasourceService.listType();
     }
 
 }

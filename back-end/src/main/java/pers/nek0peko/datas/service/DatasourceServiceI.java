@@ -1,8 +1,12 @@
 package pers.nek0peko.datas.service;
 
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
+import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.response.PageResponse;
 import pers.nek0peko.datas.dto.response.Response;
+import pers.nek0peko.datas.dto.response.SingleResponse;
 
 import java.util.List;
 
@@ -37,5 +41,28 @@ public interface DatasourceServiceI {
      * @return 返回删除结果
      */
     Response remove(List<Long> ids);
+
+    /**
+     * 查询单个数据源
+     *
+     * @param id 数据源ID
+     * @return 数据源信息
+     */
+    SingleResponse<DatasourceDTO> view(Long id);
+
+    /**
+     * 条件查询数据源列表
+     *
+     * @param qry 查询条件
+     * @return 数据源列表
+     */
+    PageResponse<DatasourceDTO> list(DatasourceListQry qry);
+
+    /**
+     * 查询数据源类型列表
+     *
+     * @return 数据源类型列表
+     */
+    SingleResponse<List<String>> listType();
 
 }

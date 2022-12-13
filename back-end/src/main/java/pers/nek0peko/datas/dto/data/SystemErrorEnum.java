@@ -14,7 +14,9 @@ public enum SystemErrorEnum implements ErrorCodeI {
     S_SERVER_ERROR("S_SERVER_ERROR", "系统繁忙"),
 
     // 参数错误
-    B_PARAMETER_ERROR("B_PARAMETER_ERROR", "请求参数错误！");
+    B_PARAMETER_ERROR("B_PARAMETER_ERROR", "请求参数错误！"),
+
+    ;
 
     private final String errCode;
 

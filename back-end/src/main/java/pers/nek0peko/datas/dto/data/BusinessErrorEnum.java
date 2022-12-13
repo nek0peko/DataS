@@ -18,7 +18,8 @@ public enum BusinessErrorEnum implements ErrorCodeI {
     B_DATASOURCE_INVALID_CONFIG("B_DATASOURCE_INVALID_CONFIG", "数据源配置校验失败！"),
     B_DATASOURCE_PARAMETER_ERROR("B_PARAMETER_ERROR", "数据源参数错误！"),
     // 数据源类型不支持
-    B_DATASOURCE_UNSUPPORTED("B_DATASOURCE_UNSUPPORTED", "不支持该数据源类型！");
+    B_DATASOURCE_UNSUPPORTED("B_DATASOURCE_UNSUPPORTED", "不支持该数据源类型！"),
+    ;
 
     private final String errCode;
 
