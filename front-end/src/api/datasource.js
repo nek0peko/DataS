@@ -16,6 +16,14 @@ export function modifyDs(data) {
     })
 }
 
+export function listDs(data) {
+    return request({
+        url: '/datasource/list',
+        method: 'post',
+        data
+    })
+}
+
 export function viewDs(id) {
     return request({
         url: '/datasource/view',

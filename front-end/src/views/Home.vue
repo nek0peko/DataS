@@ -15,7 +15,7 @@
           <!-- 侧边栏菜单 -->
           <el-submenu index="1">
             <template slot="title">
-              <i class="el-icon-message"></i><span slot="title">数据可视化</span>
+              <i class="el-icon-data-analysis"></i><span slot="title">数据可视化</span>
             </template>
             <el-menu-item-group>
               <template slot="title">分组一</template>
@@ -35,11 +35,6 @@
               <i class="el-icon-setting"></i><span slot="title">数据源管理</span>
             </template>
           </el-submenu>
-          <!--          <el-submenu index="3">-->
-          <!--            <template slot="title">-->
-          <!--              <i class="el-icon-menu"></i><span slot="title">导航三</span>-->
-          <!--            </template>-->
-          <!--          </el-submenu>-->
 
         </el-menu>
       </el-aside>
@@ -65,34 +60,32 @@
         <el-main>
           <!-- 搜索 -->
           <div class="search">
-            <el-input class="w-200" placeholder="请输入名称" suffix-icon="el-icon-search"></el-input>
-            <el-input class="w-200 ml-10" placeholder="请输入邮箱" suffix-icon="el-icon-message"></el-input>
-            <el-input class="w-200 ml-10" placeholder="请输入地址" suffix-icon="el-icon-position"></el-input>
-            <el-button class="ml-10" type="primary">搜索</el-button>
-          </div>
-
-          <!-- 修改表格数据 -->
-          <div class="table-modify">
-            <el-button type="primary">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
-            <el-button type="danger">批量删除 <i class="el-icon-remove-outline"></i></el-button>
+            <el-input class="w-300" placeholder="请输入数据源名称" suffix-icon="el-icon-search"
+                      v-model="dsListForm.name"></el-input>
+            <el-input class="w-300 ml-10" placeholder="请输入数据源类型" suffix-icon="el-icon-s-data"
+                      v-model="dsListForm.type"></el-input>
+            <el-button class="ml-10" type="primary" @click="loadTable">搜索</el-button>
+            <el-button class="ml-10" type="info" @click="resetTable">重置</el-button>
+            <el-button class="fl-r" type="danger">批量删除 <i class="el-icon-remove-outline"></i></el-button>
+            <el-button class="fl-r" type="success">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
           </div>
 
           <!-- 字段 -->
           <el-table :data="tableData" border stripe header-cell-class-name="table-header">
             <el-table-column prop="name" label="名称" width="150"></el-table-column>
             <el-table-column prop="type" label="数据源类型" width="120"></el-table-column>
-            <el-table-column prop="address" label="地址" width="140"></el-table-column>
-            <el-table-column prop="port" label="端口" width="80"></el-table-column>
-            <el-table-column prop="database" label="数据库名称" width="140"></el-table-column>
-            <el-table-column prop="status" label="连接状态" width="100"></el-table-column>
-            <el-table-column prop="disable" label="是否禁用" width="100"></el-table-column>
             <el-table-column prop="creator" label="创建者" width="140"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
-            <el-table-column prop="modifyTime" label="修改时间" width="140"></el-table-column>
-            <el-table-column prop="description" label="描述" width="350"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
+            <el-table-column prop="updateTime" label="修改时间" width="180"></el-table-column>
+            <el-table-column prop="description" label="描述"></el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
+              <!--            <el-table-column prop="address" label="地址" width="140"></el-table-column>-->
+              <!--            <el-table-column prop="port" label="端口" width="80"></el-table-column>-->
+              <!--            <el-table-column prop="database" label="数据库名称" width="140"></el-table-column>-->
+              <!--            <el-table-column prop="status" label="连接状态" width="100"></el-table-column>-->
+              <!--            <el-table-column prop="disable" label="是否禁用" width="100"></el-table-column>-->
               <template slot-scope="scope">
-                <el-button @click="handleClick()" type="text" size="small">查看</el-button>
+                <el-button type="text" size="small">查看</el-button>
                 <el-button type="text" size="small">编辑</el-button>
                 <el-button type="text" size="small">测试</el-button>
                 <el-button type="text" size="small">禁用</el-button>
@@ -103,11 +96,14 @@
 
           <!-- 分页 -->
           <div class="paging">
-            <el-pagination
-                :page-sizes="[5, 10, 15, 20]"
-                :page-size="10"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="400">
+            <el-pagination layout="total, sizes, prev, pager, next, jumper"
+                           @size-change="handleSizeChange"
+                           @current-change="handleCurrentChange"
+                           :page-sizes="[5, 10, 15, 20]"
+                           :page-size="dsListForm.pageSize"
+                           :current-page="dsListForm.pageIndex"
+                           :total="pageTotal"
+            >
             </el-pagination>
           </div>
         </el-main>
@@ -118,42 +114,53 @@
 </template>
 
 <script>
-import {listDsType, viewDs} from "@/api/datasource"
+import {listDs} from "@/api/datasource"
 
 export default {
   name: 'Home',
   data() {
-    const item = {
-      name: 'test-db',
-      type: 'MySQL',
-      address: '192.168.12.34',
-      port: '3306',
-      database: 'testDB',
-      status: '可用',
-      disable: '否',
-      creator: 'admin',
-      createTime: '2022-12-12',
-      modifyTime: '2022-12-12',
-      description: '这是一个数据源的描述这是一个数据源的描述'
-    };
     return {
       isCollapsed: false, // 默认菜单栏展开
-      tableData: Array(10).fill(item)
+      tableData: [],
+      pageTotal: 0,
+      dsListForm: {
+        pageIndex: 1,
+        pageSize: 10,
+        name: "",
+        type: ""
+      }
     }
+  },
+  created() {
+    this.loadTable()
   },
   methods: {
     collapse() {
       this.isCollapsed = !this.isCollapsed
     },
-    handleClick() {
-      listDsType().then(res => {
-        console.log(res)
-      })
-      const id = BigInt("1602283332641640448")
-      viewDs(id).then(res => {
-        console.log(res)
+    loadTable() {
+      listDs(this.dsListForm).then(res => {
+        this.pageTotal = res.totalCount
+        this.dsListForm.pageSize = res.pageSize
+
+        const data = res.data
+        this.tableData = data
+        this.tableData.type = data.config.type
       })
     },
+    resetTable() {
+      this.dsListForm.name = ""
+      this.dsListForm.type = ""
+      this.loadTable()
+    },
+    handleSizeChange(pageSize) {
+      this.dsListForm.pageSize = pageSize
+      this.loadTable()
+    },
+    handleCurrentChange(pageIndex) {
+      this.dsListForm.pageIndex = pageIndex
+      this.loadTable()
+    }
   }
 }
 </script>
@@ -218,12 +225,7 @@ export default {
 }
 
 .search, .paging {
-  margin: 10px 0
-}
-
-.table-modify {
-  margin-top: 30px;
-  margin-bottom: 10px
+  margin: 20px 0
 }
 
 .table-header {
