@@ -1,8 +1,18 @@
 import axios from 'axios'
+import JSONbig from 'json-bigint'
 
 const request = axios.create({
     baseURL: process.env.VUE_APP_BASE_URL,
-    timeout: 10000
+    timeout: 10000,
+    transformResponse: [
+        function (data) {
+            try {
+                return JSON.parse(JSON.stringify(JSONbig.parse(data)));
+            } catch (err) {
+                return 'Json parse error: ' + err;
+            }
+        }
+    ]
 })
 
 // request interceptor

@@ -12,6 +12,10 @@ Vue.use(ElementUI);
 
 Vue.prototype.axios = request()
 
+BigInt.prototype.toJSON = function () {
+    return this.toString()
+}
+
 new Vue({
     router,
     render: h => h(App)

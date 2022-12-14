@@ -92,7 +92,7 @@
             <el-table-column prop="description" label="描述" width="350"></el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row); test()" type="text" size="small">查看</el-button>
+                <el-button @click="handleClick()" type="text" size="small">查看</el-button>
                 <el-button type="text" size="small">编辑</el-button>
                 <el-button type="text" size="small">测试</el-button>
                 <el-button type="text" size="small">禁用</el-button>
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import request from "@/utils/request";
+import {listDsType, viewDs} from "@/api/datasource"
 
 export default {
   name: 'Home',
@@ -145,14 +145,15 @@ export default {
     collapse() {
       this.isCollapsed = !this.isCollapsed
     },
-    handleClick(row) {
-      console.log(row);
-    },
-    test() {
-      request.post('/datasource/list-type', 'post').then(res => {
+    handleClick() {
+      listDsType().then(res => {
         console.log(res)
       })
-    }
+      const id = BigInt("1602283332641640448")
+      viewDs(id).then(res => {
+        console.log(res)
+      })
+    },
   }
 }
 </script>
@@ -224,7 +225,6 @@ export default {
   margin-top: 30px;
   margin-bottom: 10px
 }
-
 
 .table-header {
   background-color: #eeeeee !important
