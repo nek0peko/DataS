@@ -67,7 +67,8 @@
             <el-button class="ml-10" type="primary" @click="loadTable">搜索</el-button>
             <el-button class="ml-10" type="info" @click="resetTable">重置</el-button>
             <el-button class="fl-r" type="danger">批量删除 <i class="el-icon-remove-outline"></i></el-button>
-            <el-button class="fl-r" type="success">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
+            <el-button class="fl-r" type="success" @click="handleCreate">新增 <i
+                class="el-icon-circle-plus-outline"></i></el-button>
           </div>
 
           <!-- 字段 -->
@@ -83,10 +84,10 @@
               <!--            <el-table-column prop="port" label="端口" width="80"></el-table-column>-->
               <!--            <el-table-column prop="database" label="数据库名称" width="140"></el-table-column>-->
               <!--            <el-table-column prop="status" label="连接状态" width="100"></el-table-column>-->
-              <!--            <el-table-column prop="disable" label="是否禁用" width="100"></el-table-column>-->
-              <template slot-scope="scope">
+              <!--            <el-table-column prop="disabled" label="是否禁用" width="100"></el-table-column>-->
+              <template v-slot="scope">
                 <el-button type="text" size="small">查看</el-button>
-                <el-button type="text" size="small">编辑</el-button>
+                <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
                 <el-button type="text" size="small">测试</el-button>
                 <el-button type="text" size="small">禁用</el-button>
                 <el-button type="text" size="small" style="color: #F56C6C">删除</el-button>
@@ -102,10 +103,38 @@
                            :page-sizes="[5, 10, 15, 20]"
                            :page-size="dsListForm.pageSize"
                            :current-page="dsListForm.pageIndex"
-                           :total="pageTotal"
-            >
+                           :total="pageTotal">
             </el-pagination>
           </div>
+
+          <!-- 对话框 -->
+          <el-dialog title="新建数据源" width="40%" :visible.sync="dialogFormVisible">
+            <el-form :model="dsForm" label-width="80px" :rules="dsFormRules">
+              <el-form-item label="名称" prop="name">
+                <el-input v-model="dsForm.name" placeholder="请输入数据源名称（20字符以内）"
+                          autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="类型" prop="type">
+                <el-select v-model="dsForm.type" placeholder="请选择数据源类型">
+                  <el-option v-for="type in dsTypeList" :label="type.name" :value="type.name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="是否启用" prop="disabled">
+                <el-radio-group v-model="dsForm.disabled">
+                  <el-radio :label=false>启用</el-radio>
+                  <el-radio :label=true>禁用</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="描述" prop="description">
+                <el-input type="textarea" v-model="dsForm.description"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="handleSave">确 定</el-button>
+            </div>
+          </el-dialog>
+
         </el-main>
       </el-container>
 
@@ -114,13 +143,16 @@
 </template>
 
 <script>
-import {listDs} from "@/api/datasource"
+import {createDs, listDs, listDsType, modifyDs} from "@/api/datasource"
 
 export default {
   name: 'Home',
   data() {
     return {
+      // Menu
       isCollapsed: false, // 默认菜单栏展开
+
+      // Table
       tableData: [],
       pageTotal: 0,
       dsListForm: {
@@ -128,11 +160,30 @@ export default {
         pageSize: 10,
         name: "",
         type: ""
+      },
+
+      // Dialog
+      dialogFormVisible: false,
+      saveMode: 0,
+      dsTypeList: [],
+      dsForm: {
+        id: "",
+        name: "",
+        type: "",
+        description: "",
+        disabled: false
+      },
+      dsFormRules: {
+        name: [
+          {required: true, message: '请输入数据源名称', trigger: 'blur'},
+          {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
+        ]
       }
     }
   },
   created() {
     this.loadTable()
+    this.loadType()
   },
   methods: {
     collapse() {
@@ -148,6 +199,14 @@ export default {
         this.tableData.type = data.config.type
       })
     },
+    loadType() {
+      listDsType().then(res => {
+        res.data.forEach(type => {
+          this.dsTypeList.push({name: type})
+        })
+      })
+    },
+
     resetTable() {
       this.dsListForm.name = ""
       this.dsListForm.type = ""
@@ -160,6 +219,34 @@ export default {
     handleCurrentChange(pageIndex) {
       this.dsListForm.pageIndex = pageIndex
       this.loadTable()
+    },
+
+    handleCreate() {
+      this.dsForm = {disabled: false}
+      this.saveMode = 0
+      this.dialogFormVisible = true
+    },
+    handleModify(row) {
+      this.dsForm = row
+      this.saveMode = 1
+      this.dialogFormVisible = true
+    },
+    handleSave() {
+      let method = null
+      if (this.saveMode == 0) {
+        method = createDs(this.dsForm)
+      } else {
+        method = modifyDs(this.dsForm)
+      }
+      method.then(res => {
+        if (res.success) {
+          this.dialogFormVisible = false
+          this.$message.success("保存成功！")
+          this.loadTable()
+        } else {
+          this.$message.error(res.errMessage)
+        }
+      })
     }
   }
 }
