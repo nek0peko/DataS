@@ -73,7 +73,9 @@
           </div>
 
           <!-- 字段 -->
-          <el-table :data="tableData" border stripe v-loading="tableLoad" header-cell-class-name="table-header">
+          <el-table :data="tableData" border stripe v-loading="tableLoad" header-cell-class-name="table-header"
+                    @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="name" label="名称" width="150"></el-table-column>
             <el-table-column prop="type" label="数据源类型" width="120"></el-table-column>
             <el-table-column prop="creator" label="创建者" width="140"></el-table-column>
@@ -85,7 +87,7 @@
                 <el-button type="text" size="small" @click="handleView">查看</el-button>
                 <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
                 <el-button type="text" size="small" @click="handleTestLink">测试</el-button>
-                <el-button type="text" size="small" style="color: #F56C6C" @click="handleRemove(scope.row.id)">删除
+                <el-button type="text" size="small" style="color: #F56C6C" @click="handleSingleRemove(scope.row.id)">删除
                 </el-button>
               </template>
             </el-table-column>
@@ -166,6 +168,7 @@ export default {
         name: "",
         type: ""
       },
+      multipleSelection: [],
 
       // Dialog
       dialogFormVisible: false,
@@ -224,6 +227,7 @@ export default {
       this.isCollapsed = !this.isCollapsed
     },
     loadTable() {
+      this.tableLoad = true
       listDs(this.dsListForm).then(res => {
         if (res.success) {
           this.tableLoad = false
@@ -251,6 +255,7 @@ export default {
       })
     },
 
+    // Table
     resetTable() {
       this.dsListForm.name = ""
       this.dsListForm.type = ""
@@ -264,7 +269,11 @@ export default {
       this.dsListForm.pageIndex = pageIndex
       this.loadTable()
     },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
 
+    // CRUD
     handleCreate() {
       this.dsForm = {config: {jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true"}}
       this.saveMode = 0
@@ -296,29 +305,38 @@ export default {
         }
       })
     },
-    handleRemove(id) {
+    handleSingleRemove(id) {
       this.$confirm('此操作将永久删除该数据源，是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        removeDs([id]).then(res => {
-          if (res.success) {
-            this.$message.success("删除成功！")
-            this.loadTable()
-          } else {
-            this.$message.error("删除失败：" + res.errMessage)
-          }
-        })
+        this.handleRemove([id])
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+        this.$message({type: 'info', message: '已取消删除'})
       })
     },
     handleBatchRemove() {
-
+      this.$confirm('此操作将永久删除这些数据源，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let ids = this.multipleSelection.map(row => row.id)
+        this.handleRemove(ids)
+      }).catch(() => {
+        this.$message({type: 'info', message: '已取消删除'})
+      })
+    },
+    handleRemove(ids) {
+      removeDs(ids).then(res => {
+        if (res.success) {
+          this.$message.success("删除成功！")
+          this.loadTable()
+        } else {
+          this.$message.error("删除失败：" + res.errMessage)
+        }
+      })
     },
     handleView() {
 
