@@ -66,7 +66,8 @@
                       v-model="dsListForm.type"></el-input>
             <el-button class="ml-10" type="primary" @click="loadTable">搜索</el-button>
             <el-button class="ml-10" type="info" @click="resetTable">重置</el-button>
-            <el-button class="fl-r" type="danger">批量删除 <i class="el-icon-remove-outline"></i></el-button>
+            <el-button class="fl-r" type="danger" @click="handleBatchRemove">批量删除 <i
+                class="el-icon-remove-outline"></i></el-button>
             <el-button class="fl-r" type="success" @click="handleCreate">新增 <i
                 class="el-icon-circle-plus-outline"></i></el-button>
           </div>
@@ -81,10 +82,11 @@
             <el-table-column prop="description" label="描述"></el-table-column>
             <el-table-column fixed="right" label="操作" width="155">
               <template v-slot="scope">
-                <el-button type="text" size="small">查看</el-button>
+                <el-button type="text" size="small" @click="handleView">查看</el-button>
                 <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
-                <el-button type="text" size="small">测试</el-button>
-                <el-button type="text" size="small" style="color: #F56C6C">删除</el-button>
+                <el-button type="text" size="small" @click="handleTest">测试</el-button>
+                <el-button type="text" size="small" style="color: #F56C6C" @click="handleRemove(scope.row)">删除
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -145,7 +147,7 @@
 </template>
 
 <script>
-import {createDs, listDs, listDsType, modifyDs} from "@/api/datasource"
+import {createDs, listDs, listDsType, modifyDs, removeDs} from "@/api/datasource"
 
 export default {
   name: 'Home',
@@ -258,7 +260,7 @@ export default {
       this.dialogFormVisible = true
     },
     handleModify(row) {
-      this.dsForm = row
+      this.dsForm = Object.assign({}, row) // 将row拷贝到空对象中，防止没点确定前数据改变
       this.saveMode = 1
       this.dialogFormVisible = true
     },
@@ -282,6 +284,36 @@ export default {
           })
         }
       })
+    },
+    handleRemove(row) {
+      this.$confirm('此操作将永久删除该数据源，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        removeDs([row.id]).then(res => {
+          if (res.success) {
+            this.$message.success("删除成功！")
+            this.loadTable()
+          } else {
+            this.$message.error("删除失败：" + res.errMessage)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    handleBatchRemove() {
+
+    },
+    handleView() {
+
+    },
+    handleTest() {
+
     }
   }
 }

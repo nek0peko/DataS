@@ -16,6 +16,14 @@ export function modifyDs(data) {
     })
 }
 
+export function removeDs(data) {
+    return request({
+        url: '/datasource/remove',
+        method: 'post',
+        data
+    })
+}
+
 export function listDs(data) {
     return request({
         url: '/datasource/list',
