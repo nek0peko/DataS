@@ -8,7 +8,7 @@
 
           <!-- 侧边栏头部Logo和名称 -->
           <div class="sidebar-header">
-            <img class="sidebar-logo" src="../assets/logo.png">
+            <img class="sidebar-logo" src="../assets/logo.png" alt="logo">
             <b class="sidebar-title" v-show="!isCollapsed">DataS</b>
           </div>
 
@@ -73,7 +73,7 @@
           </div>
 
           <!-- 字段 -->
-          <el-table :data="tableData" border stripe header-cell-class-name="table-header">
+          <el-table :data="tableData" border stripe v-loading="tableLoad" header-cell-class-name="table-header">
             <el-table-column prop="name" label="名称" width="150"></el-table-column>
             <el-table-column prop="type" label="数据源类型" width="120"></el-table-column>
             <el-table-column prop="creator" label="创建者" width="140"></el-table-column>
@@ -84,8 +84,8 @@
               <template v-slot="scope">
                 <el-button type="text" size="small" @click="handleView">查看</el-button>
                 <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
-                <el-button type="text" size="small" @click="handleTest">测试</el-button>
-                <el-button type="text" size="small" style="color: #F56C6C" @click="handleRemove(scope.row)">删除
+                <el-button type="text" size="small" @click="handleTestLink">测试</el-button>
+                <el-button type="text" size="small" style="color: #F56C6C" @click="handleRemove(scope.row.id)">删除
                 </el-button>
               </template>
             </el-table-column>
@@ -158,6 +158,7 @@ export default {
 
       // Table
       tableData: [],
+      tableLoad: true,
       pageTotal: 0,
       dsListForm: {
         pageIndex: 1,
@@ -202,7 +203,7 @@ export default {
         //       if (!value) {
         //         return callback(new Error('主机名或IP不能为空'))
         //       }
-        //       var reg = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+        //       var reg = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/
         //       if (!reg.test(value)) {
         //         return callback(new Error('主机名或IP格式不正确'))
         //       }
@@ -224,19 +225,29 @@ export default {
     },
     loadTable() {
       listDs(this.dsListForm).then(res => {
-        this.pageTotal = res.totalCount
-        this.dsListForm.pageSize = res.pageSize
+        if (res.success) {
+          this.tableLoad = false
 
-        const data = res.data
-        this.tableData = data
-        this.tableData.type = data.config.type
+          this.pageTotal = res.totalCount
+          this.dsListForm.pageSize = res.pageSize
+
+          const data = res.data
+          this.tableData = data
+          this.tableData.type = data.config.type
+        } else {
+          this.$message.error("查询失败：" + res.errMessage)
+        }
       })
     },
     loadType() {
       listDsType().then(res => {
-        res.data.forEach(type => {
-          this.dsTypeList.push({name: type})
-        })
+        if (res.success) {
+          res.data.forEach(type => {
+            this.dsTypeList.push({name: type})
+          })
+        } else {
+          this.$message.error("数据源类型获取失败：" + res.errMessage)
+        }
       })
     },
 
@@ -267,8 +278,8 @@ export default {
     handleSave() {
       this.$refs['dsForm'].validate((valid) => {
         if (valid) {
-          let method = null
-          if (this.saveMode == 0) {
+          let method
+          if (this.saveMode === 0) {
             method = createDs(this.dsForm)
           } else {
             method = modifyDs(this.dsForm)
@@ -285,13 +296,13 @@ export default {
         }
       })
     },
-    handleRemove(row) {
+    handleRemove(id) {
       this.$confirm('此操作将永久删除该数据源，是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        removeDs([row.id]).then(res => {
+        removeDs([id]).then(res => {
           if (res.success) {
             this.$message.success("删除成功！")
             this.loadTable()
@@ -303,8 +314,8 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
     },
     handleBatchRemove() {
 
@@ -312,7 +323,7 @@ export default {
     handleView() {
 
     },
-    handleTest() {
+    handleTestLink() {
 
     }
   }
@@ -321,7 +332,7 @@ export default {
 
 <style>
 .home-container, .sidebar, .sidebar-menu {
-  height: 100%;
+  height: 100%
 }
 
 .sidebar {
