@@ -80,11 +80,6 @@
             <el-table-column prop="updateTime" label="修改时间" width="180"></el-table-column>
             <el-table-column prop="description" label="描述"></el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
-              <!--            <el-table-column prop="address" label="地址" width="140"></el-table-column>-->
-              <!--            <el-table-column prop="port" label="端口" width="80"></el-table-column>-->
-              <!--            <el-table-column prop="database" label="数据库名称" width="140"></el-table-column>-->
-              <!--            <el-table-column prop="status" label="连接状态" width="100"></el-table-column>-->
-              <!--            <el-table-column prop="disabled" label="是否禁用" width="100"></el-table-column>-->
               <template v-slot="scope">
                 <el-button type="text" size="small">查看</el-button>
                 <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
@@ -111,22 +106,30 @@
           <el-dialog title="新建数据源" width="40%" :visible.sync="dialogFormVisible">
             <el-form :model="dsForm" label-width="80px" :rules="dsFormRules">
               <el-form-item label="名称" prop="name">
-                <el-input v-model="dsForm.name" placeholder="请输入数据源名称（20字符以内）"
-                          autocomplete="off"></el-input>
+                <el-input v-model="dsForm.name" placeholder="请输入数据源名称（20字符以内）"></el-input>
               </el-form-item>
               <el-form-item label="类型" prop="type">
                 <el-select v-model="dsForm.type" placeholder="请选择数据源类型">
                   <el-option v-for="type in dsTypeList" :label="type.name" :value="type.name"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="是否启用" prop="disabled">
-                <el-radio-group v-model="dsForm.disabled">
-                  <el-radio :label=false>启用</el-radio>
-                  <el-radio :label=true>禁用</el-radio>
-                </el-radio-group>
+              <el-form-item label="主机名/IP" prop="host">
+                <el-input v-model="dsForm.config.host" placeholder="请输入主机名或IP地址"></el-input>
+              </el-form-item>
+              <el-form-item label="端口号" prop="port">
+                <el-input v-model="dsForm.config.port"></el-input>
+              </el-form-item>
+              <el-form-item label="用户名" prop="username">
+                <el-input v-model="dsForm.config.username" placeholder="请输入用户名"></el-input>
+              </el-form-item>
+              <el-form-item label="密码" prop="password">
+                <el-input v-model="dsForm.config.password" placeholder="请输入密码"></el-input>
+              </el-form-item>
+              <el-form-item label="JDBC参数" prop="jdbc">
+                <el-input v-model="dsForm.config.jdbc" placeholder="额外的JDBC连接字符串"></el-input>
               </el-form-item>
               <el-form-item label="描述" prop="description">
-                <el-input type="textarea" v-model="dsForm.description"></el-input>
+                <el-input v-model="dsForm.description" type="textarea"></el-input>
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -171,7 +174,14 @@ export default {
         name: "",
         type: "",
         description: "",
-        disabled: false
+        config: {
+          host: "",
+          port: "",
+          username: "",
+          password: "",
+          database: "",
+          jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true"
+        }
       },
       dsFormRules: {
         name: [
@@ -222,7 +232,7 @@ export default {
     },
 
     handleCreate() {
-      this.dsForm = {disabled: false}
+      this.dsForm = {config: {jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true"}}
       this.saveMode = 0
       this.dialogFormVisible = true
     },
