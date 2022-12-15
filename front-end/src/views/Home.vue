@@ -103,7 +103,7 @@
 
           <!-- 对话框 -->
           <el-dialog title="新建数据源" width="40%" :visible.sync="dialogFormVisible">
-            <el-form :model="dsForm" label-width="80px" :rules="dsFormRules">
+            <el-form status-icon label-width="80px" ref="dsForm" :model="dsForm" :rules="dsFormRules">
               <el-form-item label="名称" prop="name">
                 <el-input v-model="dsForm.name" placeholder="请输入数据源名称（20字符以内）"></el-input>
               </el-form-item>
@@ -122,7 +122,7 @@
                 <el-input v-model="dsForm.config.username" placeholder="请输入用户名"></el-input>
               </el-form-item>
               <el-form-item label="密码" prop="password">
-                <el-input v-model="dsForm.config.password" placeholder="请输入密码"></el-input>
+                <el-input v-model="dsForm.config.password" placeholder="请输入密码" show-password></el-input>
               </el-form-item>
               <el-form-item label="JDBC参数" prop="jdbc">
                 <el-input v-model="dsForm.config.jdbc" placeholder="额外的JDBC连接字符串"></el-input>
@@ -186,7 +186,29 @@ export default {
         name: [
           {required: true, message: '请输入数据源名称', trigger: 'blur'},
           {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
-        ]
+        ],
+        type: [
+          {required: true, message: '请选择数据源类型', trigger: 'change'}
+        ],
+        description: [
+          {max: 50, message: '描述长度应不超过50', trigger: 'blur'}
+        ],
+        // host: [
+        //   {
+        //     required: true,
+        //     validator: (rule, value, callback) => {
+        //       if (!value) {
+        //         return callback(new Error('主机名或IP不能为空'))
+        //       }
+        //       var reg = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+        //       if (!reg.test(value)) {
+        //         return callback(new Error('主机名或IP格式不正确'))
+        //       }
+        //       callback()
+        //     },
+        //     trigger: 'blur'
+        //   }
+        // ]
       }
     }
   },
@@ -241,19 +263,23 @@ export default {
       this.dialogFormVisible = true
     },
     handleSave() {
-      let method = null
-      if (this.saveMode == 0) {
-        method = createDs(this.dsForm)
-      } else {
-        method = modifyDs(this.dsForm)
-      }
-      method.then(res => {
-        if (res.success) {
-          this.dialogFormVisible = false
-          this.$message.success("保存成功！")
-          this.loadTable()
-        } else {
-          this.$message.error(res.errMessage)
+      this.$refs['dsForm'].validate((valid) => {
+        if (valid) {
+          let method = null
+          if (this.saveMode == 0) {
+            method = createDs(this.dsForm)
+          } else {
+            method = modifyDs(this.dsForm)
+          }
+          method.then(res => {
+            if (res.success) {
+              this.dialogFormVisible = false
+              this.$message.success("保存成功！")
+              this.loadTable()
+            } else {
+              this.$message.error(res.errMessage)
+            }
+          })
         }
       })
     }
