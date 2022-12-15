@@ -57,7 +57,7 @@ public class DatasourceController {
 
     @ApiOperationSupport(author = "nek0peko", order = 3)
     @ApiOperation(value = "删除数据源")
-    @ApiImplicitParam(name = "ids", value = "数据源ID列表", required = true, allowMultiple = true, dataType = "long")
+    @ApiImplicitParam(name = "ids", value = "数据源ID列表", required = true, allowMultiple = true, dataType = "Long", dataTypeClass = Long.class)
     @PostMapping(value = "/remove")
     public Response remove(@Valid @NotEmpty @RequestBody List<Long> ids) {
         return datasourceService.remove(ids);
@@ -65,7 +65,7 @@ public class DatasourceController {
 
     @ApiOperationSupport(author = "nek0peko", order = 4)
     @ApiOperation(value = "查询单个数据源")
-    @ApiImplicitParam(name = "id", value = "数据源ID", required = true, dataType = "long")
+    @ApiImplicitParam(name = "id", value = "数据源ID", required = true, dataType = "Long", dataTypeClass = Long.class)
     @PostMapping(value = "/view")
     public SingleResponse<DatasourceDTO> view(@Valid @NotNull @RequestBody Long id) {
         return datasourceService.view(id);
