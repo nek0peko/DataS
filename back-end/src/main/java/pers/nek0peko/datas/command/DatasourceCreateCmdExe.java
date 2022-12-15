@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * 新增数据源
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/15
  */
 @Component
 public class DatasourceCreateCmdExe {
@@ -31,8 +31,8 @@ public class DatasourceCreateCmdExe {
 
     @Transactional(rollbackFor = Exception.class)
     public Response execute(DatasourceCreateCmd cmd) {
-//        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(cmd.getType());
-//        cmd.setConfig(service.validateAndFilterConfig(cmd.getConfig()));
+        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(cmd.getType());
+        cmd.setConfig(service.validateAndFilterConfig(cmd.getConfig()));
         try {
             datasourceGateway.save(convertor.toDTO(cmd));
         } catch (DuplicateKeyException e) {

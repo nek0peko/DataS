@@ -21,7 +21,7 @@ import java.util.Objects;
  * 修改数据源
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2022/12/15
  */
 @Component
 public class DatasourceModifyCmdExe {
@@ -36,8 +36,8 @@ public class DatasourceModifyCmdExe {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
         }
 
-//        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
-//        cmd.setConfig(service.validateAndFilterConfig(cmd.getConfig()));
+        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
+        cmd.setConfig(service.validateAndFilterConfig(cmd.getConfig()));
 
         BeanUtil.copyProperties(cmd, datasource, CopyOptions.create().ignoreNullValue());
         try {

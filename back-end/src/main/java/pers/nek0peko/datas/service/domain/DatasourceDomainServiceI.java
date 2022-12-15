@@ -16,9 +16,9 @@ import java.util.Set;
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2022/12/15
  */
-public interface DatasourceDomainServiceI<T1, T2> {
+public interface DatasourceDomainServiceI<T> {
 
     /**
      * test
@@ -32,8 +32,8 @@ public interface DatasourceDomainServiceI<T1, T2> {
      * @return 过滤后的配置
      */
     default JSONObject validateAndFilterConfig(JSONObject configJson) {
-        T1 config;
-        Class<T1> clazz = null;
+        T config;
+        Class<T> clazz = null;
         try {
             for (final Type type : getClass().getGenericInterfaces()) {
                 if (type instanceof ParameterizedType) {
@@ -41,7 +41,7 @@ public interface DatasourceDomainServiceI<T1, T2> {
                     if (parameterizedType.getRawType() != DatasourceDomainServiceI.class) {
                         continue;
                     }
-                    clazz = (Class<T1>) parameterizedType.getActualTypeArguments()[0];
+                    clazz = (Class<T>) parameterizedType.getActualTypeArguments()[0];
                 }
             }
             config = configJson.toJavaObject(Objects.requireNonNull(clazz));
@@ -50,7 +50,7 @@ public interface DatasourceDomainServiceI<T1, T2> {
         }
 
         final Validator validator = ApplicationContextHelper.getBean(Validator.class);
-        final Set<ConstraintViolation<T1>> constraintViolationSet = validator.validate(config);
+        final Set<ConstraintViolation<T>> constraintViolationSet = validator.validate(config);
         constraintViolationSet.stream()
                 .findFirst()
                 .ifPresent(x -> {
