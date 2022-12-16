@@ -34,7 +34,7 @@
         <template v-slot="scope">
           <el-button type="text" size="small" @click="handleView">查看</el-button>
           <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="handleTestLink">测试</el-button>
+          <el-button type="text" size="small" @click="handleTestLink(scope.row.id)">测试</el-button>
           <el-button type="text" size="small" style="color: #F56C6C" @click="handleSingleRemove(scope.row.id)">删除
           </el-button>
         </template>
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import {createDs, listDs, listDsType, modifyDs, removeDs} from "@/api/datasource";
+import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink} from "@/api/datasource";
 
 export default {
   name: "Datasource",
@@ -278,7 +278,18 @@ export default {
     handleView() {
     },
 
-    handleTestLink() {
+    handleTestLink(id) {
+      testDsLink(id).then(res => {
+        if (res.success) {
+          if (res.data) {
+            this.$message.success("连接成功！")
+          } else {
+            this.$message.error("连接失败！")
+          }
+        } else {
+          this.$message.error("系统繁忙！")
+        }
+      })
     }
   }
 }

@@ -46,3 +46,11 @@ export function listDsType() {
         method: 'post'
     })
 }
+
+export function testDsLink(id) {
+    return request({
+        url: '/datasource/test-link',
+        method: 'post',
+        data: id
+    })
+}
