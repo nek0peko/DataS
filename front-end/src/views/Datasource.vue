@@ -32,7 +32,7 @@
       <el-table-column prop="description" label="描述"></el-table-column>
       <el-table-column fixed="right" label="操作" width="155">
         <template v-slot="scope">
-          <el-button type="text" size="small" @click="handleView">查看</el-button>
+          <el-button type="text" size="small" @click="handleView(scope.row)">查看</el-button>
           <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
           <el-button type="text" size="small" @click="handleTestLink(scope.row.id)">测试</el-button>
           <el-button type="text" size="small" style="color: #F56C6C" @click="handleSingleRemove(scope.row.id)">删除
@@ -88,11 +88,30 @@
         <el-button type="primary" @click="handleSave">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 数据源详情对话框 -->
+    <el-dialog title="数据源详情" width="40%" :visible.sync="dialogViewVisible">
+      <el-descriptions status-icon label-width="100px" :column="1">
+        <el-descriptions-item label="ID">{{ dsForm.id }}</el-descriptions-item>
+      </el-descriptions>
+      <el-descriptions status-icon label-width="100px" :column="2">
+        <el-descriptions-item label="名称">{{ dsForm.name }}</el-descriptions-item>
+        <el-descriptions-item label="类型">{{ dsForm.type }}</el-descriptions-item>
+        <el-descriptions-item label="主机名">{{ dsForm.config.host }}</el-descriptions-item>
+        <el-descriptions-item label="端口">{{ dsForm.config.port }}</el-descriptions-item>
+        <el-descriptions-item label="用户名">{{ dsForm.config.username }}</el-descriptions-item>
+        <el-descriptions-item label="密码">{{ dsForm.config.password }}</el-descriptions-item>
+      </el-descriptions>
+      <el-descriptions status-icon label-width="100px" :column="1">
+        <el-descriptions-item label="JDBC">{{ dsForm.config.jdbc }}</el-descriptions-item>
+        <el-descriptions-item label="描述">{{ dsForm.description }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink} from "@/api/datasource";
+import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink, viewDs} from "@/api/datasource";
 
 export default {
   name: "Datasource",
@@ -112,6 +131,7 @@ export default {
 
       // Dialog
       dialogFormVisible: false,
+      dialogViewVisible: false,
       saveMode: 0,
       dsTypeList: [],
       dsForm: {
@@ -275,7 +295,9 @@ export default {
         }
       })
     },
-    handleView() {
+    handleView(row) {
+      this.dsForm = Object.assign({}, row)
+      this.dialogViewVisible = true
     },
 
     handleTestLink(id) {
