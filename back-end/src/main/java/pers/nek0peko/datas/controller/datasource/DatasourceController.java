@@ -29,7 +29,7 @@ import java.util.Optional;
  * 数据源管理
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2022/12/16
  */
 @Api(tags = "数据源管理")
 @ApiSort(0)
@@ -84,6 +84,14 @@ public class DatasourceController {
     @PostMapping(value = "/list-type")
     public SingleResponse<List<String>> listType() {
         return datasourceService.listType();
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 7)
+    @ApiOperation(value = "测试数据源连接")
+    @ApiImplicitParam(name = "id", value = "数据源ID", required = true, dataType = "Long", dataTypeClass = Long.class)
+    @PostMapping(value = "/test-link")
+    public SingleResponse<Boolean> testLink(@Valid @NotNull @RequestBody Long id) {
+        return datasourceService.testLink(id);
     }
 
 }

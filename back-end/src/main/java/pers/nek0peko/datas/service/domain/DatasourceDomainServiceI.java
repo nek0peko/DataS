@@ -9,6 +9,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,14 +19,17 @@ import java.util.Set;
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2022/12/15
+ * @date 2022/12/16
  */
 public interface DatasourceDomainServiceI<T> {
 
     /**
-     * test
+     * 测试数据源连接
+     *
+     * @param configJson 数据源配置的JSON对象
+     * @return 是否连接成功
      */
-    void test();
+    boolean testLink(JSONObject configJson);
 
     /**
      * 校验和过滤数据源配置
@@ -59,6 +65,29 @@ public interface DatasourceDomainServiceI<T> {
 
         // 由于前端会传入额外字段，在这里过滤掉其它数据源的字段；虽然这些字段并不会造成影响，但会让数据库存储冗余数据。
         return JSONObject.parseObject(JSONObject.toJSONString(configJson.toJavaObject(clazz)));
+    }
+
+    /**
+     * 关闭数据源连接
+     *
+     * @param conn connection
+     * @param stmt statement
+     */
+    default void closeConnection(Connection conn, Statement stmt) {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
     }
 
 }
