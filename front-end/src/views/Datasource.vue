@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink, viewDs} from "@/api/datasource";
+import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink} from "@/api/datasource";
 
 export default {
   name: "Datasource",

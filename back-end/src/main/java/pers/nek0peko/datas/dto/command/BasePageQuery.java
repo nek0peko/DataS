@@ -11,7 +11,7 @@ import lombok.Setter;
  * @date 2022/12/13
  */
 @NoArgsConstructor
-public class BasePageQuery extends BaseQuery {
+public abstract class BasePageQuery extends BaseQuery {
 
     private static final long serialVersionUID = 1L;
     private static final String ASC = "ASC";
