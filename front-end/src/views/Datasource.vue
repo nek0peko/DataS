@@ -184,13 +184,9 @@ export default {
       listDs(this.dsListForm).then(res => {
         if (res.success) {
           this.tableLoad = false
-
           this.pageTotal = res.totalCount
           this.dsListForm.pageSize = res.pageSize
-
-          const data = res.data
-          this.tableData = data
-          this.tableData.type = data.config.type
+          this.tableData = res.data
         } else {
           this.$message.error("查询失败：" + res.errMessage)
         }
