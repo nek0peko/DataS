@@ -8,7 +8,7 @@
     </div>
     <!-- 侧边栏菜单 -->
     <el-menu-item index="/">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-s-home"></i>
       <span slot="title">首页</span>
     </el-menu-item>
     <el-menu-item index="/datasource">
