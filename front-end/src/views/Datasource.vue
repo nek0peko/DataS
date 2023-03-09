@@ -177,6 +177,7 @@ export default {
   created() {
     this.loadTable()
     this.loadType()
+    window.addEventListener('keydown', this.handleCode, true)
   },
   methods: {
     loadTable() {
@@ -202,6 +203,12 @@ export default {
           this.$message.error("数据源类型获取失败：" + res.errMessage)
         }
       })
+    },
+
+    handleCode(e) {
+      if (e.keyCode === 13) {
+        this.loadTable()
+      }
     },
 
     // Table
