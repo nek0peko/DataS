@@ -257,6 +257,8 @@ export default {
             } else {
               this.$message.error(res.errMessage)
             }
+          }).catch(err => {
+            this.$message.error(err)
           })
         }
       })
