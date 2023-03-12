@@ -15,9 +15,13 @@
       <i class="el-icon-setting"></i>
       <span slot="title">数据源管理</span>
     </el-menu-item>
+    <el-menu-item index="/panel">
+      <i class="el-icon-data-analysis"></i>
+      <span slot="title">数据可视化</span>
+    </el-menu-item>
     <el-submenu index="1">
       <template slot="title">
-        <i class="el-icon-data-analysis"></i><span slot="title">数据可视化</span>
+        <i class="el-icon-info"></i><span slot="title">分组测试</span>
       </template>
       <el-menu-item-group>
         <template slot="title">分组一</template>

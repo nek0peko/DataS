@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^1.2.1",
     "core-js": "^3.8.3",
+    "echarts": "^5.4.1",
     "element-ui": "^2.15.12",
     "json-bigint": "^1.0.0",
     "vue": "^2.6.14",
