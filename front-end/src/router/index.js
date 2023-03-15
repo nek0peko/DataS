@@ -15,9 +15,9 @@ const routes = [
                 component: () => import('../views/Datasource')
             },
             {
-                path: '/panel',
+                path: '/chart',
                 name: '数据可视化',
-                component: () => import('../views/Panel')
+                component: () => import('../views/Chart')
             }
         ]
     },

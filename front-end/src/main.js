@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import router from './router';
+import router from './router'
 import request from '@/utils/request'
 import App from './App.vue'
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import './assets/global.css'
 
 Vue.config.productionTip = false

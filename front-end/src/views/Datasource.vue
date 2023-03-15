@@ -91,18 +91,14 @@
 
     <!-- 数据源详情对话框 -->
     <el-dialog title="数据源详情" width="40%" :visible.sync="dialogViewVisible">
-      <el-descriptions status-icon label-width="100px" :column="1">
+      <el-descriptions size="small" column="1" border>
         <el-descriptions-item label="ID">{{ dsForm.id }}</el-descriptions-item>
-      </el-descriptions>
-      <el-descriptions status-icon label-width="100px" :column="2">
         <el-descriptions-item label="名称">{{ dsForm.name }}</el-descriptions-item>
         <el-descriptions-item label="类型">{{ dsForm.type }}</el-descriptions-item>
         <el-descriptions-item label="主机名">{{ dsForm.config.host }}</el-descriptions-item>
         <el-descriptions-item label="端口">{{ dsForm.config.port }}</el-descriptions-item>
         <el-descriptions-item label="用户名">{{ dsForm.config.username }}</el-descriptions-item>
         <el-descriptions-item label="密码">{{ dsForm.config.password }}</el-descriptions-item>
-      </el-descriptions>
-      <el-descriptions status-icon label-width="100px" :column="1">
         <el-descriptions-item label="JDBC">{{ dsForm.config.jdbc }}</el-descriptions-item>
         <el-descriptions-item label="描述">{{ dsForm.description }}</el-descriptions-item>
       </el-descriptions>
@@ -155,6 +151,7 @@ export default {
         ],
         type: [{required: true, message: '请选择数据源类型', trigger: 'change'}],
         description: [{max: 50, message: '描述长度应不超过50', trigger: 'blur'}],
+        // 正则校验放在后端
         // host: [
         //   {
         //     required: true,
