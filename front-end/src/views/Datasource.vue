@@ -1,11 +1,5 @@
 <template>
   <div>
-    <!-- 面包屑 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item class="breadcrumb" :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item class="breadcrumb">{{ this.$route.name }}</el-breadcrumb-item>
-    </el-breadcrumb>
-
     <!-- 搜索 -->
     <div class="search">
       <el-input class="w-300" placeholder="请输入数据源名称" suffix-icon="el-icon-search"
@@ -326,11 +320,5 @@ export default {
 
 .table-header {
   background-color: #eeeeee !important
-}
-
-.breadcrumb {
-  font-size: 16px;
-  margin-top: 10px;
-  margin-bottom: 10px
 }
 </style>

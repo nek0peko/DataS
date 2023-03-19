@@ -6,7 +6,6 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        name: 'Index',
         component: () => import('../views/Index'),
         children: [
             {

@@ -25,6 +25,11 @@
         </el-header>
 
         <el-main>
+          <!-- 面包屑 -->
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item class="breadcrumb" :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item class="breadcrumb">{{ this.$route.name }}</el-breadcrumb-item>
+          </el-breadcrumb>
           <router-view/>
         </el-main>
       </el-container>
@@ -89,5 +94,11 @@ export default {
 
 .user-name {
   font-size: 13px
+}
+
+.breadcrumb {
+  font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 10px
 }
 </style>
