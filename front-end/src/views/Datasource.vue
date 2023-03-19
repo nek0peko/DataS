@@ -167,7 +167,7 @@ export default {
   },
   created() {
     this.loadTable()
-    this.loadType()
+    this.loadDsType()
     window.addEventListener('keydown', this.handleCode, true)
   },
   methods: {
@@ -184,7 +184,7 @@ export default {
         }
       })
     },
-    loadType() {
+    loadDsType() {
       listDsType().then(res => {
         if (res.success) {
           res.data.forEach(type => {

@@ -1,14 +1,23 @@
 <template>
   <div>
+    <div class="top-element">
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <el-checkbox-group class="checkbox" v-model="checkedTypes" @change="handleCheckedTypesChange">
+        <el-checkbox v-for="type in chartTypeList" :label="type" :key="type">{{ type }}</el-checkbox>
+      </el-checkbox-group>
+    </div>
+
     <el-row class="chart-row" type="flex" justify="center" :gutter="50">
-      <el-col class="chart-col" v-for="(chart, index) in chartList" :key="index">
-        <el-card class="chart-card" :body-style="{ padding: '0px' }" shadow="hover">
-          <div id="chart-container">
-            <div class="chart-preview" :id="`chart${index}`"></div>
-          </div>
-          <div class="chart-title">{{ chart.name }}</div>
-        </el-card>
-      </el-col>
+      <el-card class="card-create" shadow="hover">
+        <el-button class="button-create" @click="handleCreate" circle>+</el-button>
+      </el-card>
+      <el-card class="card-chart" :body-style="{ padding: '10px' }" shadow="always"
+               v-for="(chart, index) in chartList" :key="index">
+        <div id="chart-container">
+          <div class="chart-preview" :id="`chart${index}`"></div>
+        </div>
+        <div class="chart-title">{{ chart.name }}</div>
+      </el-card>
     </el-row>
   </div>
 </template>
@@ -20,7 +29,32 @@ export default {
   name: "Chart",
   data() {
     return {
-      chartList: [
+      checkAll: true,
+      checkedTypes: [],
+      isIndeterminate: true,
+      chartList: [],
+      chartTypeList: []
+    }
+  },
+  created() {
+    this.loadChartList()
+    this.loadChartType()
+    if (this.chartList.length > 0) {
+      this.$nextTick(() => {
+        this.initChartList()
+        this.resizeChart()
+      })
+    }
+  },
+  mounted() {
+    window.onresize = () => {
+      this.resizeChart()
+    }
+  },
+  methods: {
+    loadChartList() {
+      // TODO: Get ChartList 时间倒序排列
+      this.chartList = [
         {
           "name": "测试",
           "option": {
@@ -193,12 +227,12 @@ export default {
             "radar": {
               // shape: 'circle',
               "indicator": [
-                { "name": 'Sales', "max": 6500 },
-                { "name": 'Administration', "max": 16000 },
-                { "name": 'Information Technology', "max": 30000 },
-                { "name": 'Customer Support', "max": 38000 },
-                { "name": 'Development', "max": 52000 },
-                { "name": 'Marketing', "max": 25000 }
+                {"name": 'Sales', "max": 6500},
+                {"name": 'Administration', "max": 16000},
+                {"name": 'Information Technology', "max": 30000},
+                {"name": 'Customer Support', "max": 38000},
+                {"name": 'Development', "max": 52000},
+                {"name": 'Marketing', "max": 25000}
               ]
             },
             "series": [
@@ -218,25 +252,14 @@ export default {
               }
             ]
           }
-        }
+        },
       ]
-    }
-  },
-  created() {
-    // TODO: Get ChartList
-    if (this.chartList.length > 0) {
-      this.$nextTick(() => {
-        this.initChartList()
-        this.resizeChart()
-      })
-    }
-  },
-  mounted() {
-    window.onresize = () => {
-      this.resizeChart()
-    }
-  },
-  methods: {
+    },
+    loadChartType() {
+      // TODO: Get ChartType
+      this.chartTypeList = ["柱状图", "折线图", "饼图", "散点图"]
+      this.checkedTypes = this.chartTypeList
+    },
     initChartList() {
       this.chartList.forEach((val, index) => {
         const myChart = echarts.init(document.getElementById(`chart${index}`))
@@ -253,32 +276,68 @@ export default {
         // 修改样式后，需重新绘制图表
         echarts.getInstanceByDom(chartDom).resize()
       })
+    },
+    handleCheckAllChange(val) {
+      this.checkedTypes = val ? this.chartTypeList : []
+      this.isIndeterminate = false
+    },
+    handleCheckedTypesChange(val) {
+      let checkedCount = val.length
+      this.checkAll = checkedCount === this.chartTypeList.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.chartTypeList.length
+      // TODO: reload chart list
+    },
+    handleCreate() {
+      // TODO: 打开dialog
     }
   }
 }
 </script>
 
 <style>
+.top-element {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: center
+}
+
+.checkbox {
+  margin-left: 30px;
+  display: inline
+}
+
 .chart-row {
   /* 自动换行 */
   flex-wrap: wrap
 }
 
-.chart-col {
-  margin-bottom: 30px;
-  width: 30%
+.card-create {
+  width: 500px;
+  height: 350px;
+  margin: 20px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center
 }
 
-.chart-card {
-  /* 防止Card中内容不一致导致高度不同 */
-  height: 100%;
-  margin: 8px
+.card-chart {
+  width: 500px;
+  height: 350px;
+  margin: 20px 20px
+}
+
+.button-create {
+  width: 300px;
+  height: 300px;
+  font-size: 200px;
+  color: #cccccc;
+  border: none;
 }
 
 #chart-container {
   width: 100%;
   height: 100%;
-  margin: 0 auto;
+  margin: 0 auto
   /* background-color: #cccccc */
 }
 
