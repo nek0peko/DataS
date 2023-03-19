@@ -296,8 +296,8 @@ export default {
 
 <style>
 .top-element {
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-top: 5px;
+  margin-bottom: 15px;
   text-align: center
 }
 
@@ -314,7 +314,7 @@ export default {
 .card-create {
   width: 500px;
   height: 350px;
-  margin: 20px 20px;
+  margin: 15px 20px;
   display: flex;
   justify-content: center;
   align-items: center
@@ -323,7 +323,7 @@ export default {
 .card-chart {
   width: 500px;
   height: 350px;
-  margin: 20px 20px
+  margin: 15px 20px
 }
 
 .button-create {
