@@ -24,6 +24,7 @@
 
 <script>
 import * as echarts from 'echarts'
+import {listChart} from '@/api/chart'
 
 export default {
   name: "Chart",
@@ -39,12 +40,6 @@ export default {
   created() {
     this.loadChartList()
     this.loadChartType()
-    if (this.chartList.length > 0) {
-      this.$nextTick(() => {
-        this.initChartList()
-        this.resizeChart()
-      })
-    }
   },
   mounted() {
     window.onresize = () => {
@@ -54,25 +49,58 @@ export default {
   methods: {
     loadChartList() {
       // TODO: Get ChartList 时间倒序排列
-      this.chartList = [
-        {
-          "name": "测试",
-          "option": {
-            "xAxis": {
-              "type": "category",
-              "data": ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-            },
-            "yAxis": {
-              "type": "value"
-            },
-            "series": [
-              {
-                "data": [150, 230, 224, 218, 135, 147, 260],
-                "type": "line"
-              }
-            ]
+      listChart().then(res => {
+        if (res.success) {
+          this.chartList = res.data
+          // this.forTest()
+          if (this.chartList.length > 0) {
+            this.$nextTick(() => {
+              this.chartList.forEach((val, index) => {
+                const myChart = echarts.init(document.getElementById(`chart${index}`))
+                myChart.setOption(this.chartList[index].option)
+              })
+              this.resizeChart()
+            })
           }
-        },
+        } else {
+          this.$message.error("查询失败：" + res.errMessage)
+        }
+      })
+    },
+    loadChartType() {
+      // TODO: Get ChartType
+      this.chartTypeList = ["柱状图", "折线图", "饼图", "散点图"]
+      this.checkedTypes = this.chartTypeList
+    },
+    resizeChart() {
+      // 获取Chart容器自适应后的宽高，为Chart的宽高赋值，实现图表随浏览器窗口大小自适应
+      const chartContainerStyle = window.getComputedStyle(document.getElementById("chart-container"))
+      this.chartList.forEach((val, index) => {
+        const chartDom = document.getElementById(`chart${index}`)
+        chartDom.style.width = chartContainerStyle.width
+        chartDom.style.height = chartContainerStyle.height
+        // 修改样式后，需重新绘制图表
+        const chartInstance = echarts.getInstanceByDom(chartDom)
+        if (chartInstance) {
+          chartInstance.resize()
+        }
+      })
+    },
+    handleCheckAllChange(val) {
+      this.checkedTypes = val ? this.chartTypeList : []
+      this.isIndeterminate = false
+    },
+    handleCheckedTypesChange(val) {
+      let checkedCount = val.length
+      this.checkAll = checkedCount === this.chartTypeList.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.chartTypeList.length
+      // TODO: reload chart list
+    },
+    handleCreate() {
+      // TODO: 打开dialog
+    },
+    forTest() {
+      this.chartList = [
         {
           "name": "测试2",
           "option": {
@@ -179,43 +207,6 @@ export default {
           }
         },
         {
-          "name": "测试5",
-          "option": {
-            "xAxis": {},
-            "yAxis": {},
-            "series": [
-              {
-                "symbolSize": 20,
-                "data": [
-                  [10.0, 8.04],
-                  [8.07, 6.95],
-                  [13.0, 7.58],
-                  [9.05, 8.81],
-                  [11.0, 8.33],
-                  [14.0, 7.66],
-                  [13.4, 6.81],
-                  [10.0, 6.33],
-                  [14.0, 8.96],
-                  [12.5, 6.82],
-                  [9.15, 7.2],
-                  [11.5, 7.2],
-                  [3.03, 4.23],
-                  [12.2, 7.83],
-                  [2.02, 4.47],
-                  [1.05, 3.33],
-                  [4.05, 4.96],
-                  [6.03, 7.24],
-                  [12.0, 6.26],
-                  [12.0, 8.84],
-                  [7.08, 5.82],
-                  [5.02, 5.68]
-                ],
-                "type": 'scatter'
-              }
-            ]
-          }
-        },
-        {
           "name": "测试6",
           "option": {
             "title": {
@@ -254,41 +245,6 @@ export default {
           }
         },
       ]
-    },
-    loadChartType() {
-      // TODO: Get ChartType
-      this.chartTypeList = ["柱状图", "折线图", "饼图", "散点图"]
-      this.checkedTypes = this.chartTypeList
-    },
-    initChartList() {
-      this.chartList.forEach((val, index) => {
-        const myChart = echarts.init(document.getElementById(`chart${index}`))
-        myChart.setOption(this.chartList[index].option)
-      })
-    },
-    resizeChart() {
-      // 获取Chart容器自适应后的宽高，为Chart的宽高赋值，实现图表随浏览器窗口大小自适应
-      const chartContainerStyle = window.getComputedStyle(document.getElementById("chart-container"))
-      this.chartList.forEach((val, index) => {
-        const chartDom = document.getElementById(`chart${index}`)
-        chartDom.style.width = chartContainerStyle.width
-        chartDom.style.height = chartContainerStyle.height
-        // 修改样式后，需重新绘制图表
-        echarts.getInstanceByDom(chartDom).resize()
-      })
-    },
-    handleCheckAllChange(val) {
-      this.checkedTypes = val ? this.chartTypeList : []
-      this.isIndeterminate = false
-    },
-    handleCheckedTypesChange(val) {
-      let checkedCount = val.length
-      this.checkAll = checkedCount === this.chartTypeList.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.chartTypeList.length
-      // TODO: reload chart list
-    },
-    handleCreate() {
-      // TODO: 打开dialog
     }
   }
 }
