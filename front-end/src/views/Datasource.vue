@@ -62,7 +62,10 @@
           <el-input v-model="dsForm.config.host" placeholder="请输入主机名或IP地址"></el-input>
         </el-form-item>
         <el-form-item label="端口号" prop="port">
-          <el-input v-model="dsForm.config.port"></el-input>
+          <el-input v-model="dsForm.config.port"  placeholder="请输入端口号"></el-input>
+        </el-form-item>
+        <el-form-item label="数据库名" prop="database">
+          <el-input v-model="dsForm.config.database"  placeholder="请输入数据库名"></el-input>
         </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="dsForm.config.username" placeholder="请输入用户名"></el-input>
@@ -91,6 +94,7 @@
         <el-descriptions-item label="类型">{{ dsForm.type }}</el-descriptions-item>
         <el-descriptions-item label="主机名">{{ dsForm.config.host }}</el-descriptions-item>
         <el-descriptions-item label="端口">{{ dsForm.config.port }}</el-descriptions-item>
+        <el-descriptions-item label="数据库">{{ dsForm.config.database }}</el-descriptions-item>
         <el-descriptions-item label="用户名">{{ dsForm.config.username }}</el-descriptions-item>
         <el-descriptions-item label="密码">{{ dsForm.config.password }}</el-descriptions-item>
         <el-descriptions-item label="JDBC">{{ dsForm.config.jdbc }}</el-descriptions-item>
