@@ -10,27 +10,28 @@ import pers.nek0peko.datas.gateway.DatasourceGateway;
 import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
- * 测试数据源连接
+ * 查询数据源中所有表名
  *
  * @author nek0peko
  * @date 2023/03/22
  */
 @Component
-public class DatasourceTestLinkCmdExe {
+public class DatasourceListTableQryExe {
 
     @Resource
     private transient DatasourceGateway datasourceGateway;
 
-    public SingleResponse<Boolean> execute(Long id) {
+    public SingleResponse<List<String>> execute(Long id) {
         final DatasourceDTO datasource = datasourceGateway.getById(id);
         if (Objects.isNull(datasource)) {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
         }
         final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
-        return SingleResponse.of(service.testLink(datasource.getConfig()));
+        return SingleResponse.of(service.listTable(datasource.getConfig()));
     }
 
 }

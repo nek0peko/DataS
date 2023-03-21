@@ -1,4 +1,4 @@
-package pers.nek0peko.datas.controller.datasource;
+package pers.nek0peko.datas.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSort;
@@ -29,7 +29,7 @@ import java.util.Optional;
  * 数据源管理
  *
  * @author nek0peko
- * @date 2022/12/16
+ * @date 2023/03/22
  */
 @Api(tags = "数据源管理")
 @ApiSort(0)
@@ -92,6 +92,13 @@ public class DatasourceController {
     @PostMapping(value = "/test-link")
     public SingleResponse<Boolean> testLink(@Valid @NotNull @RequestBody Long id) {
         return datasourceService.testLink(id);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 8)
+    @ApiOperation(value = "查询数据源中所有表名")
+    @PostMapping(value = "/list-table")
+    public SingleResponse<List<String>> listTable(@Valid @NotNull @RequestBody Long id) {
+        return datasourceService.listTable(id);
     }
 
 }

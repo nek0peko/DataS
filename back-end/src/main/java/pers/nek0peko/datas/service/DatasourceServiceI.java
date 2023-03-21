@@ -14,7 +14,7 @@ import java.util.List;
  * 数据源服务
  *
  * @author nek0peko
- * @date 2022/12/16
+ * @date 2023/03/22
  */
 public interface DatasourceServiceI {
 
@@ -72,5 +72,13 @@ public interface DatasourceServiceI {
      * @return 是否连接成功
      */
     SingleResponse<Boolean> testLink(Long id);
+
+    /**
+     * 查询数据源中所有表名
+     *
+     * @param id 数据源ID
+     * @return 数据表名列表
+     */
+    SingleResponse<List<String>> listTable(Long id);
 
 }

@@ -9,7 +9,7 @@ import pers.nek0peko.datas.dto.BaseDTO;
  * Response
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2023/03/22
  */
 @Getter
 @Setter
@@ -27,13 +27,13 @@ public class Response extends BaseDTO {
     }
 
     public static Response buildSuccess() {
-        Response response = new Response();
+        final Response response = new Response();
         response.setSuccess(true);
         return response;
     }
 
     public static Response buildFailure(String errCode, String errMessage) {
-        Response response = new Response();
+        final Response response = new Response();
         response.setSuccess(false);
         response.setErrCode(errCode);
         response.setErrMessage(errMessage);

@@ -6,7 +6,7 @@ import pers.nek0peko.datas.exception.ErrorCodeI;
  * BusinessErrorEnum
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2023/03/22
  */
 public enum BusinessErrorEnum implements ErrorCodeI {
 
@@ -19,6 +19,8 @@ public enum BusinessErrorEnum implements ErrorCodeI {
     B_DATASOURCE_PARAMETER_ERROR("B_PARAMETER_ERROR", "数据源参数错误！"),
     // 数据源类型不支持
     B_DATASOURCE_UNSUPPORTED("B_DATASOURCE_UNSUPPORTED", "不支持该数据源类型！"),
+    // 数据源连接失败
+    B_DATASOURCE_FAILED("B_DATASOURCE_FAILED", "数据源连接失败！")
     ;
 
     private final String errCode;

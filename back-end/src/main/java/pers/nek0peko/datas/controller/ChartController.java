@@ -1,4 +1,4 @@
-package pers.nek0peko.datas.controller.chart;
+package pers.nek0peko.datas.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSort;
@@ -20,7 +20,7 @@ import java.util.List;
  * 数据可视化
  *
  * @author nek0peko
- * @date 2023/03/21
+ * @date 2023/03/22
  */
 @Api(tags = "数据可视化")
 @ApiSort(1)
@@ -33,7 +33,7 @@ public class ChartController {
     @ApiOperation(value = "测试")
     @PostMapping(value = "/list")
     public SingleResponse<List<ChartViewDTO>> list() {
-        List<ChartViewDTO> chartViewDtos = new ArrayList<>();
+        final List<ChartViewDTO> chartViewDtos = new ArrayList<>();
         chartViewDtos.add(ChartViewDTO.builder()
                 .id(Long.parseLong("11111111111"))
                 .name("TestTestTest")

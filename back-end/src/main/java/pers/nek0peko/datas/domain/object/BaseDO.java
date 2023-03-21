@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * BaseDO
  *
  * @author nek0peko
- * @date 2022/12/12
+ * @date 2023/03/22
  */
 @Getter
 @Setter
@@ -36,8 +36,7 @@ public abstract class BaseDO {
     private LocalDateTime updateTime;
 
     public String toString() {
-        Long var10000 = this.getId();
-        return "BaseDO(id=" + var10000 + ", creator=" + this.getCreator() + ", createTime=" + this.getCreateTime() + ", updateTime=" + this.getUpdateTime() + ")";
+        return "BaseDO(id=" + this.getId() + ", creator=" + this.getCreator() + ", createTime=" + this.getCreateTime() + ", updateTime=" + this.getUpdateTime() + ")";
     }
 
 }

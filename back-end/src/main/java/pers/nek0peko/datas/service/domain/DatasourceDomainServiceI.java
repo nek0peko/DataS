@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ import java.util.Set;
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2022/12/16
+ * @date 2023/03/22
  */
 public interface DatasourceDomainServiceI<T> {
 
@@ -30,6 +31,14 @@ public interface DatasourceDomainServiceI<T> {
      * @return 是否连接成功
      */
     boolean testLink(JSONObject configJson);
+
+    /**
+     * 查询数据源中所有表名
+     *
+     * @param configJson 数据源配置的JSON对象
+     * @return 数据表名列表
+     */
+    List<String> listTable(JSONObject configJson);
 
     /**
      * 校验和过滤数据源配置

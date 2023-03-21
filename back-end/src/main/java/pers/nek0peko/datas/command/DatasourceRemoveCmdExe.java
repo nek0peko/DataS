@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * 删除数据源
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2023/03/22
  */
 @Component
 public class DatasourceRemoveCmdExe {
@@ -24,7 +24,7 @@ public class DatasourceRemoveCmdExe {
 
     @Transactional(rollbackFor = Exception.class)
     public Response execute(List<Long> ids) {
-        List<DatasourceDTO> datasourceList = datasourceGateway.listByIds(ids);
+        final List<DatasourceDTO> datasourceList = datasourceGateway.listByIds(ids);
         if (!datasourceList.isEmpty()) {
             ids = datasourceList.stream().map(DatasourceDTO::getId).collect(Collectors.toList());
             datasourceGateway.removeByIds(ids);

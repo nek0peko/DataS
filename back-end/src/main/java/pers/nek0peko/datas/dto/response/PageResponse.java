@@ -13,7 +13,7 @@ import java.util.List;
  * PageResponse
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2023/03/22
  */
 @NoArgsConstructor
 public class PageResponse<T> extends Response {
@@ -62,13 +62,13 @@ public class PageResponse<T> extends Response {
     }
 
     public static PageResponse buildSuccess() {
-        PageResponse response = new PageResponse();
+        final PageResponse response = new PageResponse();
         response.setSuccess(true);
         return response;
     }
 
     public static PageResponse buildFailure(String errCode, String errMessage) {
-        PageResponse response = new PageResponse();
+        final PageResponse response = new PageResponse();
         response.setSuccess(false);
         response.setErrCode(errCode);
         response.setErrMessage(errMessage);
@@ -80,7 +80,7 @@ public class PageResponse<T> extends Response {
     }
 
     public static <T> PageResponse<T> of(Collection<T> data, int totalCount, int pageSize, int pageIndex) {
-        PageResponse<T> response = new PageResponse();
+        final PageResponse<T> response = new PageResponse();
         response.setSuccess(true);
         response.setData(data);
         response.setTotalCount(totalCount);

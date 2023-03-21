@@ -21,7 +21,7 @@ import java.util.Objects;
  * 修改数据源
  *
  * @author nek0peko
- * @date 2022/12/15
+ * @date 2023/03/22
  */
 @Component
 public class DatasourceModifyCmdExe {
@@ -31,7 +31,7 @@ public class DatasourceModifyCmdExe {
 
     @Transactional(rollbackFor = Exception.class)
     public Response execute(DatasourceModifyCmd cmd) {
-        DatasourceDTO datasource = datasourceGateway.getById(cmd.getId());
+        final DatasourceDTO datasource = datasourceGateway.getById(cmd.getId());
         if (Objects.isNull(datasource)) {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
         }

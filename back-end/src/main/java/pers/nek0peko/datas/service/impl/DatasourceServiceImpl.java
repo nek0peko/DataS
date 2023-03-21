@@ -18,7 +18,7 @@ import java.util.List;
  * 数据源服务
  *
  * @author nek0peko
- * @date 2022/12/16
+ * @date 2023/03/22
  */
 @Service
 public class DatasourceServiceImpl implements DatasourceServiceI {
@@ -43,6 +43,9 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
 
     @Resource
     private transient DatasourceTestLinkCmdExe datasourceTestLinkCmdExe;
+
+    @Resource
+    private transient DatasourceListTableQryExe datasourceListTableQryExe;
 
     @Override
     public Response create(DatasourceCreateCmd cmd) {
@@ -77,6 +80,11 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
     @Override
     public SingleResponse<Boolean> testLink(Long id) {
         return datasourceTestLinkCmdExe.execute(id);
+    }
+
+    @Override
+    public SingleResponse<List<String>> listTable(Long id) {
+        return datasourceListTableQryExe.execute(id);
     }
 
 }
