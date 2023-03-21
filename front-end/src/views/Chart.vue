@@ -25,6 +25,7 @@
 <script>
 import * as echarts from 'echarts'
 import {listChart} from '@/api/chart'
+import {listDs, listDsTable} from '@/api/datasource'
 
 export default {
   name: "Chart",
@@ -245,6 +246,15 @@ export default {
           }
         },
       ]
+    },
+    forTest2() {
+      listDsTable(BigInt("1603328474928513026")).then(res => {
+        if (res.success) {
+          console.log(res.data)
+        } else {
+          this.$message.error(res.errMessage)
+        }
+      })
     }
   }
 }

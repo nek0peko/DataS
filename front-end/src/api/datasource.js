@@ -54,3 +54,11 @@ export function testDsLink(id) {
         data: id
     })
 }
+
+export function listDsTable(id) {
+    return request({
+        url: '/datasource/list-table',
+        method: 'post',
+        data: id
+    })
+}

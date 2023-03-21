@@ -88,7 +88,7 @@
 
     <!-- 数据源详情对话框 -->
     <el-dialog title="数据源详情" width="40%" :visible.sync="dialogViewVisible">
-      <el-descriptions size="small" column="1" border>
+      <el-descriptions size="small" :column="1" border>
         <el-descriptions-item label="ID">{{ dsForm.id }}</el-descriptions-item>
         <el-descriptions-item label="名称">{{ dsForm.name }}</el-descriptions-item>
         <el-descriptions-item label="类型">{{ dsForm.type }}</el-descriptions-item>
