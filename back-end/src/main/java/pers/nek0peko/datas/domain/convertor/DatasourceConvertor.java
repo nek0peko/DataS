@@ -2,7 +2,7 @@ package pers.nek0peko.datas.domain.convertor;
 
 import pers.nek0peko.datas.domain.object.DatasourceDO;
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
-import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 
 import org.mapstruct.Mapper;
 

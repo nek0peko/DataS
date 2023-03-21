@@ -12,7 +12,7 @@ import pers.nek0peko.datas.domain.convertor.DatasourceConvertor;
 import pers.nek0peko.datas.domain.mapper.DatasourceMapper;
 import pers.nek0peko.datas.domain.object.DatasourceDO;
 import pers.nek0peko.datas.dto.command.DatasourceListQry;
-import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.gateway.DatasourceGateway;
 
 import javax.annotation.Resource;

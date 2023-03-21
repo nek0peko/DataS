@@ -2,7 +2,7 @@ package pers.nek0peko.datas.gateway;
 
 import pers.nek0peko.datas.domain.object.PageHolder;
 import pers.nek0peko.datas.dto.command.DatasourceListQry;
-import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 
 import java.util.List;
 

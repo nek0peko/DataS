@@ -2,7 +2,7 @@ package pers.nek0peko.datas.command;
 
 import org.springframework.stereotype.Component;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
-import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.gateway.DatasourceGateway;

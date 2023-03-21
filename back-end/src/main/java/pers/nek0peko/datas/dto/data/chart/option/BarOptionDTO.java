@@ -1,4 +1,4 @@
-package pers.nek0peko.datas.dto.data.option;
+package pers.nek0peko.datas.dto.data.chart.option;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;

@@ -1,4 +1,4 @@
-package pers.nek0peko.datas.dto.data;
+package pers.nek0peko.datas.dto.data.datasource;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonFormat;

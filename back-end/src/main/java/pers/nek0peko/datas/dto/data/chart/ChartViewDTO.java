@@ -1,9 +1,9 @@
-package pers.nek0peko.datas.dto.data;
+package pers.nek0peko.datas.dto.data.chart;
 
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import pers.nek0peko.datas.dto.BaseDTO;
-import pers.nek0peko.datas.dto.data.option.ChartOptionDTO;
+import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 
 /**
  * ChartViewDTO

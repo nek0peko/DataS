@@ -1,7 +1,7 @@
 package pers.nek0peko.datas.factory;
 
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
-import pers.nek0peko.datas.dto.data.DatasourceTypeEnum;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceTypeEnum;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 import pers.nek0peko.datas.util.ApplicationContextHelper;

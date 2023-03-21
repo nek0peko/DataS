@@ -3,7 +3,7 @@ package pers.nek0peko.datas.service.domain.impl;
 import cn.hutool.core.net.url.UrlQuery;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
-import pers.nek0peko.datas.dto.data.config.MysqlConfigDTO;
+import pers.nek0peko.datas.dto.data.datasource.config.MysqlConfigDTO;
 import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 
 import java.sql.Connection;

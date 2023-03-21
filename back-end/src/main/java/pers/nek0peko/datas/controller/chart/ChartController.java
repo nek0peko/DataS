@@ -8,8 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pers.nek0peko.datas.dto.data.ChartViewDTO;
-import pers.nek0peko.datas.dto.data.option.BarOptionDTO;
+import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
+import pers.nek0peko.datas.dto.data.chart.option.BarOptionDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 
 import java.util.ArrayList;

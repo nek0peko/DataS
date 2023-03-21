@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
-import pers.nek0peko.datas.dto.data.DatasourceDTO;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.factory.DatasourceDomainServiceFactory;
