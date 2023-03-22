@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
-import pers.nek0peko.datas.dto.data.chart.config.BarConfigDTO;
-import pers.nek0peko.datas.dto.data.chart.option.BarOptionDTO;
+import pers.nek0peko.datas.dto.data.chart.config.LineConfigDTO;
+import pers.nek0peko.datas.dto.data.chart.option.LineOptionDTO;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.exception.BusinessException;
@@ -22,20 +22,20 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * BarChartDomainServiceImpl
+ * LineChartDomainServiceImpl
  *
  * @author nek0peko
  * @date 2023/03/22
  */
-@Service("bar")
-public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigDTO> {
+@Service("line")
+public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfigDTO> {
 
     @Resource
     private transient DatasourceGateway datasourceGateway;
 
     @Override
-    public BarOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson) {
-        final BarConfigDTO config = configJson.toJavaObject(BarConfigDTO.class);
+    public LineOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson) {
+        final LineConfigDTO config = configJson.toJavaObject(LineConfigDTO.class);
         final DatasourceDTO datasource = datasourceGateway.getById(datasourceId);
         if (Objects.isNull(datasource)) {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
@@ -45,17 +45,17 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
         }
 
         final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
-        final List<BarOptionDTO.Series> series = config.getColumns().parallelStream()
+        final List<LineOptionDTO.Series> series = config.getColumns().parallelStream()
                 .map(column -> {
                     final DatasourceResultHolder columnResultHolder = service.queryColumnSumGroupBy(
                             datasource.getConfig(), column, tableName, config.getAxisX());
                     if (columnResultHolder.isSuccess()) {
                         try {
-                            return BarOptionDTO.Series.builder()
+                            return LineOptionDTO.Series.builder()
                                     .data(((List<String>) columnResultHolder.getData()).stream()
                                             .map(Integer::parseInt)
                                             .collect(Collectors.toList()))
-                                    .type(ChartTypeEnum.BAR.getType())
+                                    .type(ChartTypeEnum.LINE.getType())
                                     .build();
                         } catch (Exception e) {
                             throw new BusinessException(BusinessErrorEnum.B_CHART_COLUMN_TYPE_ERROR);
@@ -70,11 +70,11 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
                 datasource.getConfig(), config.getAxisX(), tableName, config.getAxisX());
 
         if (xAxisResultHolder.isSuccess()) {
-            return BarOptionDTO.builder()
-                    .axisX(BarOptionDTO.AxisX.builder()
+            return LineOptionDTO.builder()
+                    .axisX(LineOptionDTO.AxisX.builder()
                             .data((List<String>) xAxisResultHolder.getData())
                             .build())
-                    .axisY(BarOptionDTO.AxisY.builder().build())
+                    .axisY(LineOptionDTO.AxisY.builder().build())
                     .series(series)
                     .build();
         } else {

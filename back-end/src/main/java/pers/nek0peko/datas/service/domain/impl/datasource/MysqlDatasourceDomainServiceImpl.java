@@ -54,14 +54,21 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
         }
     }
 
-    private DatasourceResultHolder queryTableList(JSONObject configJson) {
-        return queryColumn(configJson, String.format(
-                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
-                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
+    @Override
+    public DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String column, String tableName, String groupBy) {
+        final String sql = String.format(
+                "SELECT %s FROM %s GROUP BY %s ORDER BY %s;", column, tableName, groupBy, groupBy);
+        return queryColumn(configJson, sql);
     }
 
     @Override
-    public DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
+    public DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String column, String tableName, String groupBy) {
+        final String sql = String.format(
+                "SELECT SUM(%s) FROM %s GROUP BY %s ORDER BY %s;", column, tableName, groupBy, groupBy);
+        return queryColumn(configJson, sql);
+    }
+
+    private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
         final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
         String url = String.format("jdbc:mysql://%s:%s/%s?", config.getHost(), config.getPort(), config.getDatabase());
 
@@ -90,6 +97,12 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
             closeConnection(conn, stmt);
         }
         return DatasourceResultHolder.buildSuccessWithData(tableList);
+    }
+
+    private DatasourceResultHolder queryTableList(JSONObject configJson) {
+        return queryColumn(configJson, String.format(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
+                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
     }
 
 }

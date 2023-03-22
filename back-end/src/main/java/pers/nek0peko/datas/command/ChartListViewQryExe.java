@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 获取图表绘制信息
@@ -43,19 +44,20 @@ public class ChartListViewQryExe {
             return SingleResponse.of(Collections.emptyList());
         }
 
-        final List<ChartViewDTO> chartViewDtos = new ArrayList<>();
-        chartDtos.forEach(chartDTO -> {
-            final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
-            final ChartOptionDTO chartOptionDTO = service.loadDataToOption(
-                    chartDTO.getDatasourceId(),
-                    chartDTO.getTableName(),
-                    service.validateAndFilterConfig(chartDTO.getConfig()));
-            chartViewDtos.add(ChartViewDTO.builder()
-                    .id(chartDTO.getId())
-                    .name(chartDTO.getName())
-                    .option(chartOptionDTO)
-                    .build());
-        });
+        final List<ChartViewDTO> chartViewDtos = chartDtos.parallelStream()
+                .map(chartDTO -> {
+                    final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
+                    final ChartOptionDTO chartOptionDTO = service.loadDataToOption(
+                            chartDTO.getDatasourceId(),
+                            chartDTO.getTableName(),
+                            service.validateAndFilterConfig(chartDTO.getConfig()));
+                    return ChartViewDTO.builder()
+                            .id(chartDTO.getId())
+                            .name(chartDTO.getName())
+                            .option(chartOptionDTO)
+                            .build();
+                })
+                .collect(Collectors.toList());
         return SingleResponse.of(chartViewDtos);
     }
 

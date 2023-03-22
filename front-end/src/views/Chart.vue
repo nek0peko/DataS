@@ -76,8 +76,8 @@ export default {
       this.chartLoad = true
       listChartType().then(res => {
         if (res.success) {
+          this.chartTypeList = []
           res.data.forEach(item => {
-            this.chartTypeList = []
             this.chartTypeList.push({
               type: item.type,
               name: item.name

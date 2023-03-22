@@ -51,13 +51,26 @@ public interface DatasourceDomainServiceI<T> {
     List<String> listColumn(JSONObject configJson, String tableName);
 
     /**
-     * 根据SQL进行查询一列结果
+     * 查询按指定列GroupBy后的指定列
      *
-     * @param configJson 数据源配置的JSON对象
-     * @param sql SQL语句
-     * @return 查询结果
+     * @param configJson 数据源配置
+     * @param tableName 表名
+     * @param column 查询的列名
+     * @param groupBy 按此列GroupBy
+     * @return 指定列结果
      */
-    DatasourceResultHolder queryColumn(JSONObject configJson, String sql);
+    DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String tableName, String column, String groupBy);
+
+    /**
+     * 查询按指定列GroupBy后的指定列总和
+     *
+     * @param configJson 数据源配置
+     * @param tableName 表名
+     * @param column 查询的列名
+     * @param groupBy 按此列GroupBy
+     * @return 指定列总和结果
+     */
+    DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String tableName, String column, String groupBy);
 
     /**
      * 校验和过滤数据源配置

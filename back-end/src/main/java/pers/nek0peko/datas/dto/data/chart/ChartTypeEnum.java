@@ -23,6 +23,7 @@ public enum ChartTypeEnum {
      * 支持的图表类型名称
      */
     BAR("bar", "柱状图"),
+    LINE("line", "折线图"),
     ;
 
     private final String type;
