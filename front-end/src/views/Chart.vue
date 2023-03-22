@@ -3,11 +3,11 @@
     <div class="top-element">
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
       <el-checkbox-group class="checkbox" v-model="checkedTypes" @change="handleCheckedTypesChange">
-        <el-checkbox v-for="type in chartTypeList" :label="type" :key="type">{{ type }}</el-checkbox>
+        <el-checkbox v-for="item in chartTypeList" :label="item.type">{{ item.name }}</el-checkbox>
       </el-checkbox-group>
     </div>
 
-    <el-row class="chart-row" type="flex" justify="center" :gutter="50">
+    <el-row class="chart-row" type="flex" justify="center" :gutter="50" v-loading="chartLoad">
       <el-card class="card-create" shadow="hover">
         <el-button class="button-create" @click="handleCreate" circle>+</el-button>
       </el-card>
@@ -24,7 +24,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {listChartView} from '@/api/chart'
+import {listChartType, listChartView} from '@/api/chart'
 import {listDs, listDsTable} from '@/api/datasource'
 
 export default {
@@ -34,6 +34,7 @@ export default {
       checkAll: true,
       checkedTypes: [],
       isIndeterminate: true,
+      chartLoad: true,
       chartList: [],
       chartTypeList: []
     }
@@ -50,6 +51,7 @@ export default {
   methods: {
     loadChartList() {
       // TODO: Get ChartList 时间倒序排列
+      this.chartLoad = true
       listChartView().then(res => {
         if (res.success) {
           this.chartList = res.data
@@ -63,39 +65,56 @@ export default {
               this.resizeChart()
             })
           }
+          this.chartLoad = false
         } else {
           this.$message.error("查询失败：" + res.errMessage)
         }
       })
     },
     loadChartType() {
-      // TODO: Get ChartType
-      this.chartTypeList = ["柱状图", "折线图", "饼图", "散点图"]
-      this.checkedTypes = this.chartTypeList
-    },
-    resizeChart() {
-      // 获取Chart容器自适应后的宽高，为Chart的宽高赋值，实现图表随浏览器窗口大小自适应
-      const chartContainerStyle = window.getComputedStyle(document.getElementById("chart-container"))
-      this.chartList.forEach((val, index) => {
-        const chartDom = document.getElementById(`chart${index}`)
-        chartDom.style.width = chartContainerStyle.width
-        chartDom.style.height = chartContainerStyle.height
-        // 修改样式后，需重新绘制图表
-        const chartInstance = echarts.getInstanceByDom(chartDom)
-        if (chartInstance) {
-          chartInstance.resize()
+      listChartType().then(res => {
+        if (res.success) {
+          res.data.forEach(item => {
+            this.chartTypeList.push({
+              type: item.type,
+              name: item.name
+            })
+          })
+          this.checkedTypes = this.chartTypeList.map(item => item.type)
+        } else {
+          this.$message.error("图表类型加载失败：" + res.errMessage)
         }
       })
     },
-    handleCheckAllChange(val) {
-      this.checkedTypes = val ? this.chartTypeList : []
-      this.isIndeterminate = false
+    resizeChart() {
+      // 获取Chart容器自适应后的宽高，为Chart的宽高赋值，实现图表随浏览器窗口大小自适应
+      const chartContainer = document.getElementById("chart-container")
+      if (chartContainer) {
+        const chartContainerStyle = window.getComputedStyle(chartContainer)
+        this.chartList.forEach((val, index) => {
+          const chartDom = document.getElementById(`chart${index}`)
+          chartDom.style.width = chartContainerStyle.width
+          chartDom.style.height = chartContainerStyle.height
+          // 修改样式后，需重新绘制图表
+          const chartInstance = echarts.getInstanceByDom(chartDom)
+          if (chartInstance) {
+            chartInstance.resize()
+          }
+        })
+      }
     },
-    handleCheckedTypesChange(val) {
-      let checkedCount = val.length
+    handleCheckAllChange(val) {
+      this.checkedTypes = val ? this.chartTypeList.map(item => item.type) : []
+      this.isIndeterminate = false
+      this.loadChartList()
+      // TODO: reload chart list with type
+    },
+    handleCheckedTypesChange() {
+      let checkedCount = this.checkedTypes.length
       this.checkAll = checkedCount === this.chartTypeList.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.chartTypeList.length
-      // TODO: reload chart list
+      this.loadChartList()
+      // TODO: reload chart list with type
     },
     handleCreate() {
       // TODO: 打开dialog
