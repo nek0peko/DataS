@@ -1,17 +1,16 @@
 import request from '@/utils/request'
 
-export function listChartType(data) {
+export function listChartType() {
     return request({
         url: '/chart/list-type',
         method: 'post',
-        data
     })
 }
 
-export function listChartView(data) {
+export function listChartView(types) {
     return request({
         url: '/chart/list-view',
         method: 'post',
-        data
+        data: types
     })
 }

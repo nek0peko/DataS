@@ -186,6 +186,9 @@ export default {
         } else {
           this.$message.error("查询失败：" + res.errMessage)
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     },
     loadDsType() {
@@ -197,6 +200,9 @@ export default {
         } else {
           this.$message.error("数据源类型获取失败：" + res.errMessage)
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     },
 
@@ -252,8 +258,9 @@ export default {
             } else {
               this.$message.error(res.errMessage)
             }
-          }).catch(err => {
-            this.$message.error(err)
+          }).catch((err) => {
+            this.$message.error("系统繁忙！")
+            console.error(err)
           })
         }
       })
@@ -293,6 +300,9 @@ export default {
         } else {
           this.$message.error("删除失败：" + res.errMessage)
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     },
     handleView(row) {
@@ -311,6 +321,9 @@ export default {
         } else {
           this.$message.error("系统繁忙！")
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     }
   }

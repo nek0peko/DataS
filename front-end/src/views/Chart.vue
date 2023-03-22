@@ -40,7 +40,6 @@ export default {
     }
   },
   created() {
-    this.loadChartList()
     this.loadChartType()
   },
   mounted() {
@@ -50,9 +49,8 @@ export default {
   },
   methods: {
     loadChartList() {
-      // TODO: Get ChartList 时间倒序排列
       this.chartLoad = true
-      listChartView().then(res => {
+      listChartView(this.checkedTypes).then(res => {
         if (res.success) {
           this.chartList = res.data
           // this.forTest()
@@ -69,21 +67,30 @@ export default {
         } else {
           this.$message.error("查询失败：" + res.errMessage)
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     },
     loadChartType() {
+      this.chartLoad = true
       listChartType().then(res => {
         if (res.success) {
           res.data.forEach(item => {
+            this.chartTypeList = []
             this.chartTypeList.push({
               type: item.type,
               name: item.name
             })
           })
           this.checkedTypes = this.chartTypeList.map(item => item.type)
+          this.loadChartList()
         } else {
           this.$message.error("图表类型加载失败：" + res.errMessage)
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     },
     resizeChart() {
@@ -107,14 +114,12 @@ export default {
       this.checkedTypes = val ? this.chartTypeList.map(item => item.type) : []
       this.isIndeterminate = false
       this.loadChartList()
-      // TODO: reload chart list with type
     },
     handleCheckedTypesChange() {
       let checkedCount = this.checkedTypes.length
       this.checkAll = checkedCount === this.chartTypeList.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.chartTypeList.length
       this.loadChartList()
-      // TODO: reload chart list with type
     },
     handleCreate() {
       // TODO: 打开dialog
@@ -273,6 +278,9 @@ export default {
         } else {
           this.$message.error(res.errMessage)
         }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
       })
     }
   }

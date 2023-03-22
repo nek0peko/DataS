@@ -45,7 +45,7 @@ public class ChartController {
     @ApiOperationSupport(author = "nek0peko", order = 2)
     @ApiOperation(value = "获取图表绘制信息")
     @PostMapping(value = "/list-view")
-    public SingleResponse<List<ChartViewDTO>> listView(@Valid @NotNull @RequestBody List<String> types) {
+    public SingleResponse<List<ChartViewDTO>> listView(@Valid @RequestBody List<String> types) {
         return chartService.listView(types);
     }
 
