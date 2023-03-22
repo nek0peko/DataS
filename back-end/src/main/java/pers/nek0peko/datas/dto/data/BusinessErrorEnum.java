@@ -13,7 +13,7 @@ public enum BusinessErrorEnum implements ErrorCodeI {
     // 图表名重复
     B_CHART_EXISTS("B_CHART_EXISTS", "图表名重复，请重新输入！"),
     // 图表配置JSON错误
-    B_CHART_INVALID_CONFIG("B_CHART_INVALID_CONFIG", "图表配置校验失败！"),
+    B_CHART_INVALID_CONFIG("B_CHART_INVALID_CONFIG", "图表配置错误！"),
     // 图表列类型错误
     B_CHART_COLUMN_TYPE_ERROR("B_CHART_COLUMN_TYPE_ERROR", "图表列类型错误！"),
     // 图表类型不支持

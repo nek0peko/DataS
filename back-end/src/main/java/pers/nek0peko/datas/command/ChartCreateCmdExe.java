@@ -37,6 +37,8 @@ public class ChartCreateCmdExe {
             gateway.save(convertor.toDTO(cmd));
         } catch (DuplicateKeyException e) {
             throw new BusinessException(BusinessErrorEnum.B_CHART_EXISTS);
+        } catch (Exception e) {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
         }
         return Response.buildSuccess();
     }

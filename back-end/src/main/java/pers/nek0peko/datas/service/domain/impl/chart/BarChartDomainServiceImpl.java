@@ -1,7 +1,9 @@
 package pers.nek0peko.datas.service.domain.impl.chart;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
 import pers.nek0peko.datas.dto.data.chart.config.BarConfigDTO;
@@ -38,6 +40,9 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
         final DatasourceDTO datasource = datasourceGateway.getById(datasourceId);
         if (Objects.isNull(datasource)) {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
+        }
+        if (CollectionUtils.isEmpty(config.getColumns()) || StringUtils.isEmpty(config.getAxisX())) {
+            throw new BusinessException(BusinessErrorEnum.B_CHART_INVALID_CONFIG);
         }
 
         final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
