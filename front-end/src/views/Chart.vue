@@ -24,7 +24,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {listChart} from '@/api/chart'
+import {listChartView} from '@/api/chart'
 import {listDs, listDsTable} from '@/api/datasource'
 
 export default {
@@ -50,7 +50,7 @@ export default {
   methods: {
     loadChartList() {
       // TODO: Get ChartList 时间倒序排列
-      listChart().then(res => {
+      listChartView().then(res => {
         if (res.success) {
           this.chartList = res.data
           // this.forTest()

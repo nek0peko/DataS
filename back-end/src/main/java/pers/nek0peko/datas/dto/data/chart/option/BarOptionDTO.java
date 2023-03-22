@@ -10,7 +10,7 @@ import java.util.List;
  * BarOptionDTO
  *
  * @author nek0peko
- * @date 2023/03/21
+ * @date 2023/03/22
  */
 @ApiModel
 @Builder
@@ -26,7 +26,7 @@ public class BarOptionDTO extends ChartOptionDTO {
     @JsonProperty("yAxis")
     private AxisY axisY;
 
-    private Series series;
+    private List<Series> series;
 
     @ApiModel
     @Builder

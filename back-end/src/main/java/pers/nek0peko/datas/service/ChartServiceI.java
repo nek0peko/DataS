@@ -1,5 +1,6 @@
 package pers.nek0peko.datas.service;
 
+import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 
 import java.util.List;
@@ -19,5 +20,12 @@ public interface ChartServiceI {
      * @return 图表类型列表
      */
     SingleResponse<List<Map<String, String>>> listType();
+
+    /**
+     * 获取图表绘制信息
+     *
+     * @return 图表绘制信息
+     */
+    SingleResponse<List<ChartViewDTO>> listView();
 
 }

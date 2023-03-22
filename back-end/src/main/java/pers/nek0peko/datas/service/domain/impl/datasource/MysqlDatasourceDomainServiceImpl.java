@@ -1,4 +1,4 @@
-package pers.nek0peko.datas.service.domain.impl;
+package pers.nek0peko.datas.service.domain.impl.datasource;
 
 import cn.hutool.core.net.url.UrlQuery;
 import com.alibaba.fastjson.JSONObject;
@@ -29,14 +29,12 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
 
     @Override
     public boolean testLink(JSONObject configJson) {
-        final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
-        return listTable(config).isSuccess();
+        return queryTableList(configJson).isSuccess();
     }
 
     @Override
     public List<String> listTable(JSONObject configJson) {
-        final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
-        final DatasourceResultHolder resultHolder = listTable(config);
+        final DatasourceResultHolder resultHolder = queryTableList(configJson);
         if (resultHolder.isSuccess()) {
             return (List<String>) resultHolder.getData();
         } else {
@@ -46,11 +44,9 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
 
     @Override
     public List<String> listColumn(JSONObject configJson, String table) {
-        final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
-        final String sql = String.format(
+        final DatasourceResultHolder resultHolder = queryColumn(configJson, String.format(
                 "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
-                table, config.getDatabase());
-        final DatasourceResultHolder resultHolder = query(config, sql);
+                table, configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
         if (resultHolder.isSuccess()) {
             return (List<String>) resultHolder.getData();
         } else {
@@ -58,14 +54,15 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
         }
     }
 
-    private DatasourceResultHolder listTable(MysqlConfigDTO config) {
-        final String sql = String.format(
+    private DatasourceResultHolder queryTableList(JSONObject configJson) {
+        return queryColumn(configJson, String.format(
                 "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
-                config.getDatabase());
-        return query(config, sql);
+                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
     }
 
-    private DatasourceResultHolder query(MysqlConfigDTO config, String sql) {
+    @Override
+    public DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
+        final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
         String url = String.format("jdbc:mysql://%s:%s/%s?", config.getHost(), config.getPort(), config.getDatabase());
 
         // 由于TCP/IP的结构，Socket没有办法检测到网络错误，因此应用不能检测到与数据库到连接断开了。

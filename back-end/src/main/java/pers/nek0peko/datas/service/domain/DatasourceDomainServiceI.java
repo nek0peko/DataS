@@ -2,6 +2,7 @@ package pers.nek0peko.datas.service.domain;
 
 import com.alibaba.fastjson.JSONObject;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.util.ApplicationContextHelper;
 
@@ -50,6 +51,15 @@ public interface DatasourceDomainServiceI<T> {
     List<String> listColumn(JSONObject configJson, String table);
 
     /**
+     * 根据SQL进行查询一列结果
+     *
+     * @param configJson 数据源配置的JSON对象
+     * @param sql SQL语句
+     * @return 查询结果
+     */
+    DatasourceResultHolder queryColumn(JSONObject configJson, String sql);
+
+    /**
      * 校验和过滤数据源配置
      *
      * @param configJson 数据源配置的JSON对象
@@ -78,7 +88,7 @@ public interface DatasourceDomainServiceI<T> {
         constraintViolationSet.stream()
                 .findFirst()
                 .ifPresent(x -> {
-                    throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_PARAMETER_ERROR);
+                    throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_INVALID_CONFIG);
                 });
 
         // 由于前端会传入额外字段，在这里过滤掉其它数据源的字段；虽然这些字段并不会造成影响，但会让数据库存储冗余数据。

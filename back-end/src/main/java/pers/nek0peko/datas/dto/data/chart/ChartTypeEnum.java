@@ -22,12 +22,21 @@ public enum ChartTypeEnum {
     /**
      * 支持的图表类型名称
      */
-    BAR("Bar", "柱状图"),
+    BAR("bar", "柱状图"),
     ;
 
     private final String type;
 
     private final String name;
+
+    public static boolean isSupportedType(String type) {
+        for (final ChartTypeEnum supportedType : ChartTypeEnum.values()) {
+            if (supportedType.type.equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static List<Map<String, String>> listType() {
         final List<Map<String, String>> types = new ArrayList<>();

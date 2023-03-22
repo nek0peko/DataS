@@ -43,25 +43,10 @@ public class ChartController {
     }
 
     @ApiOperationSupport(author = "nek0peko", order = 2)
-    @ApiOperation(value = "测试")
-    @PostMapping(value = "/list")
-    public SingleResponse<List<ChartViewDTO>> list() {
-        final List<ChartViewDTO> chartViewDtos = new ArrayList<>();
-        chartViewDtos.add(ChartViewDTO.builder()
-                .id(Long.parseLong("11111111111"))
-                .name("TestTestTest")
-                .option(BarOptionDTO.builder()
-                        .axisX(BarOptionDTO.AxisX.builder()
-                                .data(Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
-                                .build())
-                        .axisY(BarOptionDTO.AxisY.builder().build())
-                        .series(BarOptionDTO.Series.builder()
-                                .type("bar")
-                                .data(Arrays.asList(23, 24, 18, 25, 27, 28, 25))
-                                .build())
-                        .build())
-                .build());
-        return SingleResponse.of(chartViewDtos);
+    @ApiOperation(value = "获取图表绘制信息")
+    @PostMapping(value = "/list-view")
+    public SingleResponse<List<ChartViewDTO>> listView() {
+        return chartService.listView();
     }
 
 }

@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function listChart(data) {
+export function listChartView(data) {
     return request({
-        url: '/chart/list',
+        url: '/chart/list-view',
         method: 'post',
         data
     })
