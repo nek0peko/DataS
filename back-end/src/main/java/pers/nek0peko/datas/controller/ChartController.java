@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
 import pers.nek0peko.datas.dto.data.chart.option.BarOptionDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
+import pers.nek0peko.datas.service.ChartServiceI;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据可视化
@@ -29,7 +32,17 @@ import java.util.List;
 @Validated
 public class ChartController {
 
+    @Resource
+    private transient ChartServiceI chartService;
+
     @ApiOperationSupport(author = "nek0peko", order = 1)
+    @ApiOperation(value = "查询图表类型列表")
+    @PostMapping(value = "/list-type")
+    public SingleResponse<List<Map<String, String>>> listType() {
+        return chartService.listType();
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 2)
     @ApiOperation(value = "测试")
     @PostMapping(value = "/list")
     public SingleResponse<List<ChartViewDTO>> list() {
