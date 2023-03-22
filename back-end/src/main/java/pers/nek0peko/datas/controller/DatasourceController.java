@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.command.DatasourceListColumnQry;
 import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
@@ -99,6 +100,13 @@ public class DatasourceController {
     @PostMapping(value = "/list-table")
     public SingleResponse<List<String>> listTable(@Valid @NotNull @RequestBody Long id) {
         return datasourceService.listTable(id);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 9)
+    @ApiOperation(value = "查询数据表中所有列名")
+    @PostMapping(value = "/list-column")
+    public SingleResponse<List<String>> listColumn(@Valid @NotNull @RequestBody DatasourceListColumnQry qry) {
+        return datasourceService.listColumn(qry);
     }
 
 }

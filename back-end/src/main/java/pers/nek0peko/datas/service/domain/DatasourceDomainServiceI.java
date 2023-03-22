@@ -41,6 +41,15 @@ public interface DatasourceDomainServiceI<T> {
     List<String> listTable(JSONObject configJson);
 
     /**
+     * 查询数据表中所有列名
+     *
+     * @param configJson 数据源配置的JSON对象
+     * @param table 数据表名
+     * @return 数据列名列表
+     */
+    List<String> listColumn(JSONObject configJson, String table);
+
+    /**
      * 校验和过滤数据源配置
      *
      * @param configJson 数据源配置的JSON对象

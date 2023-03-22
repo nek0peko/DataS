@@ -1,6 +1,7 @@
 package pers.nek0peko.datas.service;
 
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.command.DatasourceListColumnQry;
 import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
@@ -80,5 +81,13 @@ public interface DatasourceServiceI {
      * @return 数据表名列表
      */
     SingleResponse<List<String>> listTable(Long id);
+
+    /**
+     * 查询数据表中所有列名
+     *
+     * @param qry 指定数据源和表
+     * @return 数据列名列表
+     */
+    SingleResponse<List<String>> listColumn(DatasourceListColumnQry qry);
 
 }

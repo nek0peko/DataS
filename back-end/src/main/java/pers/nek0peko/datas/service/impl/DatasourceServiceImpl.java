@@ -3,6 +3,7 @@ package pers.nek0peko.datas.service.impl;
 import org.springframework.stereotype.Service;
 import pers.nek0peko.datas.command.*;
 import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
+import pers.nek0peko.datas.dto.command.DatasourceListColumnQry;
 import pers.nek0peko.datas.dto.command.DatasourceListQry;
 import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
@@ -22,6 +23,9 @@ import java.util.List;
  */
 @Service
 public class DatasourceServiceImpl implements DatasourceServiceI {
+
+    @Resource
+    private transient DatasourceListColumnQryExe datasourceListColumnQryExe;
 
     @Resource
     private transient DatasourceCreateCmdExe datasourceCreateCmdExe;
@@ -85,6 +89,11 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
     @Override
     public SingleResponse<List<String>> listTable(Long id) {
         return datasourceListTableQryExe.execute(id);
+    }
+
+    @Override
+    public SingleResponse<List<String>> listColumn(DatasourceListColumnQry qry) {
+        return datasourceListColumnQryExe.execute(qry);
     }
 
 }

@@ -38,7 +38,21 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
         final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
         final DatasourceResultHolder resultHolder = listTable(config);
         if (resultHolder.isSuccess()) {
-            return (List<String>) listTable(config).getData();
+            return (List<String>) resultHolder.getData();
+        } else {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        }
+    }
+
+    @Override
+    public List<String> listColumn(JSONObject configJson, String table) {
+        final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
+        final String sql = String.format(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
+                table, config.getDatabase());
+        final DatasourceResultHolder resultHolder = query(config, sql);
+        if (resultHolder.isSuccess()) {
+            return (List<String>) resultHolder.getData();
         } else {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
         }
@@ -48,7 +62,10 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
         final String sql = String.format(
                 "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
                 config.getDatabase());
+        return query(config, sql);
+    }
 
+    private DatasourceResultHolder query(MysqlConfigDTO config, String sql) {
         String url = String.format("jdbc:mysql://%s:%s/%s?", config.getHost(), config.getPort(), config.getDatabase());
 
         // 由于TCP/IP的结构，Socket没有办法检测到网络错误，因此应用不能检测到与数据库到连接断开了。
