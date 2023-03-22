@@ -29,6 +29,15 @@ public enum ChartTypeEnum {
 
     private final String name;
 
+    public static boolean isSupportedType(List<String> types) {
+        for (final String type : types) {
+            if (!isSupportedType(type)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean isSupportedType(String type) {
         for (final ChartTypeEnum supportedType : ChartTypeEnum.values()) {
             if (supportedType.type.equals(type)) {

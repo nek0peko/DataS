@@ -6,16 +6,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
-import pers.nek0peko.datas.dto.data.chart.option.BarOptionDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.service.ChartServiceI;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +45,8 @@ public class ChartController {
     @ApiOperationSupport(author = "nek0peko", order = 2)
     @ApiOperation(value = "获取图表绘制信息")
     @PostMapping(value = "/list-view")
-    public SingleResponse<List<ChartViewDTO>> listView() {
-        return chartService.listView();
+    public SingleResponse<List<ChartViewDTO>> listView(@Valid @NotNull @RequestBody List<String> types) {
+        return chartService.listView(types);
     }
 
 }

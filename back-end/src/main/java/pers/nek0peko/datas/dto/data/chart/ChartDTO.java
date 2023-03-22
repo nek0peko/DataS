@@ -50,7 +50,7 @@ public class ChartDTO extends BaseDTO {
     /**
      * 数据表名
      */
-    private String table;
+    private String tableName;
 
     /**
      * 配置

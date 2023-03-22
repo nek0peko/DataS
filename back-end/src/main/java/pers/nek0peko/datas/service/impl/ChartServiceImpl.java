@@ -32,8 +32,8 @@ public class ChartServiceImpl implements ChartServiceI {
     }
 
     @Override
-    public SingleResponse<List<ChartViewDTO>> listView() {
-        return chartListViewQryExe.execute();
+    public SingleResponse<List<ChartViewDTO>> listView(List<String> types) {
+        return chartListViewQryExe.execute(types);
     }
 
 }

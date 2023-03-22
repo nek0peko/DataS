@@ -33,7 +33,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
     private transient DatasourceGateway datasourceGateway;
 
     @Override
-    public BarOptionDTO loadDataToOption(Long datasourceId, String table, JSONObject configJson) {
+    public BarOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson) {
         final BarConfigDTO config = configJson.toJavaObject(BarConfigDTO.class);
         final DatasourceDTO datasource = datasourceGateway.getById(datasourceId);
         if (Objects.isNull(datasource)) {
@@ -45,7 +45,8 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
         final List<BarOptionDTO.Series> series = new ArrayList<>();
         for (final String column : config.getColumns()) {
             final DatasourceResultHolder columnResultHolder = service.queryColumn(datasource.getConfig(), String.format(
-                    "SELECT SUM(%s) FROM %s GROUP BY %s ORDER BY %s;", column, table, config.getAxisX(), config.getAxisX()));
+                    "SELECT SUM(%s) FROM %s GROUP BY %s ORDER BY %s;",
+                    column, tableName, config.getAxisX(), config.getAxisX()));
             if (columnResultHolder.isSuccess()) {
                 try {
                     series.add(BarOptionDTO.Series.builder()
@@ -63,7 +64,8 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
         }
 
         final DatasourceResultHolder xAxisResultHolder = service.queryColumn(datasource.getConfig(), String.format(
-                "SELECT %s FROM %s GROUP BY %s ORDER BY %s;", config.getAxisX(), table, config.getAxisX(), config.getAxisX()));
+                "SELECT %s FROM %s GROUP BY %s ORDER BY %s;",
+                config.getAxisX(), tableName, config.getAxisX(), config.getAxisX()));
 
         if (xAxisResultHolder.isSuccess()) {
             return BarOptionDTO.builder()

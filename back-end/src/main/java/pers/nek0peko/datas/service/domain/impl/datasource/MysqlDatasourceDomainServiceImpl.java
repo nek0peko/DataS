@@ -43,10 +43,10 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
     }
 
     @Override
-    public List<String> listColumn(JSONObject configJson, String table) {
+    public List<String> listColumn(JSONObject configJson, String tableName) {
         final DatasourceResultHolder resultHolder = queryColumn(configJson, String.format(
                 "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
-                table, configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
+                tableName, configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
         if (resultHolder.isSuccess()) {
             return (List<String>) resultHolder.getData();
         } else {

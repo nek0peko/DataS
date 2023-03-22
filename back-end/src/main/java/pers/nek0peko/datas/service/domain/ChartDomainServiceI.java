@@ -25,11 +25,11 @@ public interface ChartDomainServiceI<T> {
      * 从数据源中查询得到绘制图表所需数据
      *
      * @param datasourceId 数据源ID
-     * @param table 数据表名
+     * @param tableName 数据表名
      * @param configJson 图表JSON配置
      * @return 包含数据的图表配置
      */
-    ChartOptionDTO loadDataToOption(Long datasourceId, String table, JSONObject configJson);
+    ChartOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson);
 
     /**
      * 校验和过滤图表配置

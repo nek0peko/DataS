@@ -24,8 +24,9 @@ public interface ChartServiceI {
     /**
      * 获取图表绘制信息
      *
+     * @param types 图表类型
      * @return 图表绘制信息
      */
-    SingleResponse<List<ChartViewDTO>> listView();
+    SingleResponse<List<ChartViewDTO>> listView(List<String> types);
 
 }

@@ -1,6 +1,5 @@
 package pers.nek0peko.datas;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Application
  *
  * @author nek0peko
- * @date 2022/11/16
+ * @date 2023/03/22
  */
 @SpringBootApplication
 public class Application {

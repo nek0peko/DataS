@@ -41,7 +41,7 @@ public class ChartDO extends BaseDO {
     /**
      * 数据表名
      */
-    private String table;
+    private String tableName;
 
     /**
      * 配置

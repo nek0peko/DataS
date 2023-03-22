@@ -1,17 +1,21 @@
 package pers.nek0peko.datas.command;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartDTO;
+import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
-import pers.nek0peko.datas.dto.data.chart.config.BarConfigDTO;
 import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
+import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.factory.ChartDomainServiceFactory;
+import pers.nek0peko.datas.gateway.ChartGateway;
 import pers.nek0peko.datas.service.domain.ChartDomainServiceI;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,33 +27,35 @@ import java.util.List;
 @Component
 public class ChartListViewQryExe {
 
-    public SingleResponse<List<ChartViewDTO>> execute() {
-        final BarConfigDTO barConfigDTO = new BarConfigDTO();
-        barConfigDTO.setAxisX("week");
-        barConfigDTO.setColumns(Arrays.asList("num", "num2"));
-        final ChartDTO chartDTO = new ChartDTO();
-        chartDTO.setId(Long.parseLong("11111111111"));
-        chartDTO.setName("TestTestTest");
-        chartDTO.setType("bar");
-        chartDTO.setDatasourceId(Long.parseLong("1603321370415116289"));
-        chartDTO.setTable("test");
-        chartDTO.setConfig(JSONObject.parseObject(JSONObject.toJSONString(barConfigDTO)));
+    @Resource
+    private transient ChartGateway gateway;
 
-        final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
-        final ChartOptionDTO chartOptionDTO =
-                service.loadDataToOption(chartDTO.getDatasourceId(), chartDTO.getTable(), service.validateAndFilterConfig(chartDTO.getConfig()));
+    public SingleResponse<List<ChartViewDTO>> execute(List<String> types) {
+        if (CollectionUtils.isEmpty(types)) {
+            return SingleResponse.of(Collections.emptyList());
+        }
+        if (!ChartTypeEnum.isSupportedType(types)) {
+            throw new BusinessException(BusinessErrorEnum.B_CHART_UNSUPPORTED);
+        }
+
+        final List<ChartDTO> chartDtos = gateway.list(types);
+        if (CollectionUtils.isEmpty(chartDtos)) {
+            return SingleResponse.of(Collections.emptyList());
+        }
 
         final List<ChartViewDTO> chartViewDtos = new ArrayList<>();
-        chartViewDtos.add(ChartViewDTO.builder()
-                .id(chartDTO.getId())
-                .name(chartDTO.getName())
-                .option(chartOptionDTO)
-                .build());
-        chartViewDtos.add(ChartViewDTO.builder()
-                .id(chartDTO.getId())
-                .name(chartDTO.getName())
-                .option(chartOptionDTO)
-                .build());
+        chartDtos.forEach(chartDTO -> {
+            final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
+            final ChartOptionDTO chartOptionDTO = service.loadDataToOption(
+                    chartDTO.getDatasourceId(),
+                    chartDTO.getTableName(),
+                    service.validateAndFilterConfig(chartDTO.getConfig()));
+            chartViewDtos.add(ChartViewDTO.builder()
+                    .id(chartDTO.getId())
+                    .name(chartDTO.getName())
+                    .option(chartOptionDTO)
+                    .build());
+        });
         return SingleResponse.of(chartViewDtos);
     }
 

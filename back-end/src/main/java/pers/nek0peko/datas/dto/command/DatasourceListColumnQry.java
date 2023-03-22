@@ -20,6 +20,6 @@ public class DatasourceListColumnQry extends BaseQuery {
     private Long id;
 
     @ApiModelProperty(value = "表名", position = 2)
-    private String table;
+    private String tableName;
 
 }

@@ -45,10 +45,10 @@ public interface DatasourceDomainServiceI<T> {
      * 查询数据表中所有列名
      *
      * @param configJson 数据源配置的JSON对象
-     * @param table 数据表名
+     * @param tableName 数据表名
      * @return 数据列名列表
      */
-    List<String> listColumn(JSONObject configJson, String table);
+    List<String> listColumn(JSONObject configJson, String tableName);
 
     /**
      * 根据SQL进行查询一列结果

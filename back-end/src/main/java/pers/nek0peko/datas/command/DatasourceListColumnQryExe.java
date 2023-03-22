@@ -32,7 +32,7 @@ public class DatasourceListColumnQryExe {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
         }
         final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
-        return SingleResponse.of(service.listColumn(datasource.getConfig(), qry.getTable()));
+        return SingleResponse.of(service.listColumn(datasource.getConfig(), qry.getTableName()));
     }
 
 }
