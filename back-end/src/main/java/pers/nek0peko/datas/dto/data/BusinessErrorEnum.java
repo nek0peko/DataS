@@ -10,14 +10,17 @@ import pers.nek0peko.datas.exception.ErrorCodeI;
  */
 public enum BusinessErrorEnum implements ErrorCodeI {
 
+    // 图表名重复
+    B_CHART_EXISTS("B_CHART_EXISTS", "图表名重复，请重新输入！"),
     // 图表配置JSON错误
     B_CHART_INVALID_CONFIG("B_CHART_INVALID_CONFIG", "图表配置校验失败！"),
     // 图表列类型错误
     B_CHART_COLUMN_TYPE_ERROR("B_CHART_COLUMN_TYPE_ERROR", "图表列类型错误！"),
     // 图表类型不支持
     B_CHART_UNSUPPORTED("B_CHART_UNSUPPORTED", "不支持该图表类型！"),
+
     // 数据源名重复
-    B_DATASOURCE_EXISTS("B_DATASOURCE_EXISTS", "数据源已存在，请重新输入！"),
+    B_DATASOURCE_EXISTS("B_DATASOURCE_EXISTS", "数据源名重复，请重新输入！"),
     // 数据源ID不存在
     B_DATASOURCE_NOT_EXISTS("B_DATASOURCE_NOT_EXISTS", "数据源不存在！"),
     // 数据源配置JSON错误

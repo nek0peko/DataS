@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pers.nek0peko.datas.dto.command.ChartCreateCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
+import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.service.ChartServiceI;
 
@@ -47,6 +49,13 @@ public class ChartController {
     @PostMapping(value = "/list-view")
     public SingleResponse<List<ChartViewDTO>> listView(@Valid @RequestBody List<String> types) {
         return chartService.listView(types);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 3)
+    @ApiOperation(value = "新增图表")
+    @PostMapping(value = "/create")
+    public Response create(@Valid @NotNull @RequestBody ChartCreateCmd cmd) {
+        return chartService.create(cmd);
     }
 
 }

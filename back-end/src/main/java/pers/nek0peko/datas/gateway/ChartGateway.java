@@ -15,6 +15,13 @@ import java.util.List;
 public interface ChartGateway {
 
     /**
+     * 保存图表
+     *
+     * @param chart 图表DTO
+     */
+    void save(ChartDTO chart);
+
+    /**
      * 根据图表类型查询
      *
      * @param types 图表类型

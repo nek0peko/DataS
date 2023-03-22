@@ -1,9 +1,12 @@
 package pers.nek0peko.datas.service.impl;
 
 import org.springframework.stereotype.Service;
+import pers.nek0peko.datas.command.ChartCreateCmdExe;
 import pers.nek0peko.datas.command.ChartListTypeQryExe;
 import pers.nek0peko.datas.command.ChartListViewQryExe;
+import pers.nek0peko.datas.dto.command.ChartCreateCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
+import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.service.ChartServiceI;
 
@@ -26,6 +29,9 @@ public class ChartServiceImpl implements ChartServiceI {
     @Resource
     private transient ChartListViewQryExe chartListViewQryExe;
 
+    @Resource
+    private transient ChartCreateCmdExe chartCreateCmdExe;
+
     @Override
     public SingleResponse<List<Map<String, String>>> listType() {
         return chartListTypeQryExe.execute();
@@ -34,6 +40,11 @@ public class ChartServiceImpl implements ChartServiceI {
     @Override
     public SingleResponse<List<ChartViewDTO>> listView(List<String> types) {
         return chartListViewQryExe.execute(types);
+    }
+
+    @Override
+    public Response create(ChartCreateCmd cmd) {
+        return chartCreateCmdExe.execute(cmd);
     }
 
 }

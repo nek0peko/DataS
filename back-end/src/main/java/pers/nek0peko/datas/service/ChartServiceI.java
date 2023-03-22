@@ -1,6 +1,8 @@
 package pers.nek0peko.datas.service;
 
+import pers.nek0peko.datas.dto.command.ChartCreateCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
+import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 
 import java.util.List;
@@ -28,5 +30,13 @@ public interface ChartServiceI {
      * @return 图表绘制信息
      */
     SingleResponse<List<ChartViewDTO>> listView(List<String> types);
+
+    /**
+     * 新增图表
+     *
+     * @param cmd 新增图表请求
+     * @return 是否新增成功
+     */
+    Response create(ChartCreateCmd cmd);
 
 }
