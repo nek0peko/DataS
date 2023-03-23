@@ -6,7 +6,6 @@ import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartDTO;
 import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
-import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.factory.ChartDomainServiceFactory;
@@ -43,22 +42,25 @@ public class ChartListViewQryExe {
             return SingleResponse.of(Collections.emptyList());
         }
 
+        // 并发调高处理效率
         final List<ChartViewDTO> chartViewDtos = chartDtos.parallelStream()
                 .map(chartDTO -> {
+                    final ChartViewDTO chartViewDTO = ChartViewDTO.builder()
+                            .id(chartDTO.getId())
+                            .name(chartDTO.getName())
+                            .createTime(chartDTO.getCreateTime())
+                            .updateTime(chartDTO.getUpdateTime())
+                            .build();
                     final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
                     try {
-                        final ChartOptionDTO chartOptionDTO = service.loadDataToOption(
-                                chartDTO.getDatasourceId(),
-                                chartDTO.getTableName(),
-                                service.validateAndFilterConfig(chartDTO.getConfig()));
-                        return ChartViewDTO.builder()
-                                .id(chartDTO.getId())
-                                .name(chartDTO.getName())
-                                .option(chartOptionDTO)
-                                .build();
-                    } catch (Exception e) {
-                        return new ChartViewDTO();
+                        chartViewDTO.setOption(service.loadDataToOption(
+                                        chartDTO.getDatasourceId(),
+                                        chartDTO.getTableName(),
+                                        service.validateAndFilterConfig(chartDTO.getConfig())));
+                    } catch (Exception ignored) {
+                        // 返回一个不带Option的DTO，前端显示空白图表
                     }
+                    return chartViewDTO;
                 })
                 .collect(Collectors.toList());
         return SingleResponse.of(chartViewDtos);

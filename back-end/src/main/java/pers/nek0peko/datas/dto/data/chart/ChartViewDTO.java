@@ -1,9 +1,12 @@
 package pers.nek0peko.datas.dto.data.chart;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import pers.nek0peko.datas.dto.BaseDTO;
 import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
+
+import java.time.LocalDateTime;
 
 /**
  * ChartViewDTO
@@ -16,7 +19,6 @@ import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-@NoArgsConstructor
 public class ChartViewDTO extends BaseDTO {
 
     /**
@@ -33,5 +35,17 @@ public class ChartViewDTO extends BaseDTO {
      * 视图详情
      */
     private ChartOptionDTO option;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private LocalDateTime createTime;
+
+    /**
+     * 更新时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private LocalDateTime updateTime;
 
 }

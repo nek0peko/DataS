@@ -22,7 +22,7 @@
 
     <el-dialog title="新建图表" width="40%" :visible.sync="createDialogVisible">
 
-      <el-steps space="50%" align-center :active="createDialogActive">
+      <el-steps :space="5000" align-center :active="createDialogActive">
         <el-step title="步骤 1"></el-step>
         <el-step title="步骤 2"></el-step>
         <el-step title="步骤 3"></el-step>
@@ -74,7 +74,7 @@
 <script>
 import * as echarts from 'echarts'
 import {listChartType, listChartView} from '@/api/chart'
-import {listDs, listDsTable} from '@/api/datasource'
+import {listDs, listDsTable, listDsColumn} from '@/api/datasource'
 
 export default {
   name: "Chart",
@@ -131,6 +131,7 @@ export default {
       this.chartLoad = true
       listChartView(this.checkedTypes).then(res => {
         if (res.success) {
+          this.clearChart()
           this.chartList = res.data
           // this.forTest()
           if (this.chartList.length > 0) {
@@ -191,6 +192,17 @@ export default {
         })
       }
     },
+    clearChart() {
+      this.chartList.forEach((val, index) => {
+        const chartDom = document.getElementById(`chart${index}`)
+        if (chartDom) {
+          const chartInstance = echarts.getInstanceByDom(document.getElementById(`chart${index}`))
+          if (chartInstance) {
+            chartInstance.dispose()
+          }
+        }
+      })
+    },
 
     handleCheckAllChange(val) {
       this.checkedTypes = val ? this.chartTypeList.map(item => item.type) : []
@@ -233,6 +245,8 @@ export default {
       if (this.createDialogActive === 1) {
         this.createForm.tableName = ""
       }
+      if (this.createDialogActive === 2) {
+      }
       if (this.createDialogActive !== 0) {
         this.createDialogActive--
       }
@@ -257,15 +271,32 @@ export default {
       })
     },
     handleNextTwo() {
+      this.clearForm()
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
-          this.createDialogActive = 2
+          this.createDialogLoad = true
+          listDsColumn({id: this.createForm.datasourceId, tableName: this.createForm.tableName})
+              .then(res => {
+                if (res.success) {
+                  this.columnList = res.data
+                  this.createDialogActive = 2
+                } else {
+                  this.$message.error(res.errMessage)
+                }
+              }).catch((err) => {
+            this.$message.error("系统繁忙！")
+            console.error(err)
+          })
+          this.createDialogLoad = false
         }
       })
     },
     handleCreateSubmit() {
       this.createDialogVisible = false
       // TODO: submit
+    },
+    clearForm() {
+      this.barLineForm = {}
     },
 
     forTest() {

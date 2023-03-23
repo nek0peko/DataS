@@ -62,3 +62,11 @@ export function listDsTable(id) {
         data: id
     })
 }
+
+export function listDsColumn(data) {
+    return request({
+        url: '/datasource/list-column',
+        method: 'post',
+        data
+    })
+}
