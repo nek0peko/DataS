@@ -14,7 +14,6 @@ import pers.nek0peko.datas.gateway.ChartGateway;
 import pers.nek0peko.datas.service.domain.ChartDomainServiceI;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,15 +46,19 @@ public class ChartListViewQryExe {
         final List<ChartViewDTO> chartViewDtos = chartDtos.parallelStream()
                 .map(chartDTO -> {
                     final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
-                    final ChartOptionDTO chartOptionDTO = service.loadDataToOption(
-                            chartDTO.getDatasourceId(),
-                            chartDTO.getTableName(),
-                            service.validateAndFilterConfig(chartDTO.getConfig()));
-                    return ChartViewDTO.builder()
-                            .id(chartDTO.getId())
-                            .name(chartDTO.getName())
-                            .option(chartOptionDTO)
-                            .build();
+                    try {
+                        final ChartOptionDTO chartOptionDTO = service.loadDataToOption(
+                                chartDTO.getDatasourceId(),
+                                chartDTO.getTableName(),
+                                service.validateAndFilterConfig(chartDTO.getConfig()));
+                        return ChartViewDTO.builder()
+                                .id(chartDTO.getId())
+                                .name(chartDTO.getName())
+                                .option(chartOptionDTO)
+                                .build();
+                    } catch (Exception e) {
+                        return new ChartViewDTO();
+                    }
                 })
                 .collect(Collectors.toList());
         return SingleResponse.of(chartViewDtos);

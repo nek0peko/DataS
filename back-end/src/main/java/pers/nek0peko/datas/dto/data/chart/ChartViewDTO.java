@@ -16,6 +16,7 @@ import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChartViewDTO extends BaseDTO {
 
     /**

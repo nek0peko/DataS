@@ -137,7 +137,9 @@ export default {
             this.$nextTick(() => {
               this.chartList.forEach((val, index) => {
                 const myChart = echarts.init(document.getElementById(`chart${index}`))
-                myChart.setOption(this.chartList[index].option)
+                if (this.chartList[index].option) {
+                  myChart.setOption(this.chartList[index].option)
+                }
               })
               this.resizeChart()
             })
