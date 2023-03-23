@@ -14,6 +14,7 @@ import pers.nek0peko.datas.service.domain.ChartDomainServiceI;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,7 @@ public class ChartListViewQryExe {
                     }
                     return chartViewDTO;
                 })
+                .sorted(Comparator.comparing(ChartViewDTO::getCreateTime).reversed())
                 .collect(Collectors.toList());
         return SingleResponse.of(chartViewDtos);
     }
