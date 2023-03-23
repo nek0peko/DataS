@@ -29,43 +29,57 @@
       </el-steps>
 
       <el-form class="create-dialog-form" label-width="100px" v-loading="createDialogLoad"
-               ref="createForm" :model="createForm" :rules="createDialogRule">
-
+               ref="createForm" :model="createForm" :rules="createFormRule">
         <el-form-item label="图表类型" prop="type" v-if="createDialogActive===0">
           <el-select v-model="createForm.type" placeholder="请选择图表类型">
-            <el-option v-for="item in chartTypeList" :label="item.name" :value="item.type">
-            </el-option>
+            <el-option v-for="item in chartTypeList" :label="item.name" :value="item.type"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="数据源" prop="datasourceId" v-if="createDialogActive===0">
           <el-select v-model="createForm.datasourceId" placeholder="请选择数据源">
-            <el-option v-for="item in datasourceList" :label="item.name" :value="item.id">
-            </el-option>
+            <el-option v-for="item in datasourceList" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-
         <el-form-item label="数据表" prop="tableName" v-if="createDialogActive===1">
           <el-select v-model="createForm.tableName" placeholder="请选择数据表">
-            <el-option v-for="name in tableList" :label="name" :value="name">
-            </el-option>
+            <el-option v-for="name in tableList" :label="name" :value="name"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="图表名称" prop="name" v-if="createDialogActive===2">
+          <el-input style="width: 90%" v-model="createForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" prop="description" v-if="createDialogActive===2">
+          <el-input style="width: 90%" v-model="createForm.description" type="textarea"></el-input>
+        </el-form-item>
+      </el-form>
 
-        <el-form-item label="横轴列" prop="xAxis"
+      <!-- 柱状图或折线图 -->
+      <el-form class="create-dialog-form" label-width="100px"
+               ref="barLineForm" :model="barLineForm" :rules="barLineFormRule">
+        <el-form-item label="横轴列" prop="axisX"
                       v-if="createDialogActive===2 && (createForm.type==='bar' || createForm.type==='line')">
-          <el-select v-model="barLineForm.xAxis" placeholder="请选择数据列">
-            <el-option v-for="column in columnList" :label="column" :value="column">
-            </el-option>
+          <el-select v-model="barLineForm.axisX" placeholder="请选择数据列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
-
+        <el-form-item label="纵轴列" prop="columns"
+                      v-if="createDialogActive===2 && (createForm.type==='bar' || createForm.type==='line')">
+          <el-select v-model="barLineForm.columns" multiple placeholder="请选择一个或多个数据列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
 
       <el-row class="create-dialog-button">
         <el-button @click="handlePrev" v-if="createDialogActive===1 || createDialogActive===2">上一步</el-button>
-        <el-button @click="handleNextOne" type="primary" v-if="createDialogActive===0">下一步</el-button>
-        <el-button @click="handleNextTwo" type="primary" v-if="createDialogActive===1">下一步</el-button>
-        <el-button @click="handleCreateSubmit" type="primary" v-if="createDialogActive===2">提交</el-button>
+        <el-button @click="handleNextOne" type="primary" :loading="createButtonLoad"
+                   v-if="createDialogActive===0">下一步</el-button>
+        <el-button @click="handleNextTwo" type="primary" :loading="createButtonLoad"
+                   v-if="createDialogActive===1">下一步</el-button>
+        <el-button @click="handlePreview" plain type="primary" icon="el-icon-zoom-in"
+                   v-if="createDialogActive===2">预览</el-button>
+        <el-button @click="handleCreateSubmit" type="primary"
+                   v-if="createDialogActive===2">创建</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -73,7 +87,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {listChartType, listChartView} from '@/api/chart'
+import {listChartType, listChartView, createChart} from '@/api/chart'
 import {listDs, listDsTable, listDsColumn} from '@/api/datasource'
 
 export default {
@@ -87,6 +101,7 @@ export default {
       createDialogVisible: false,
       createDialogActive: 0,
       createDialogLoad: true,
+      createButtonLoad: false,
       createForm: {
         name: "",
         type: "",
@@ -95,7 +110,7 @@ export default {
         tableName: "",
         config: {}
       },
-      createDialogRule: {
+      createFormRule: {
         name: [
           {required: true, message: '请输入图表名称', trigger: 'blur'},
           {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
@@ -109,6 +124,10 @@ export default {
         axisX: "",
         columns: []
       },
+      barLineFormRule: {
+        axisX: [{required: true, message: '请选择横轴', trigger: 'change'}],
+        columns: [{required: true, message: '请至少选择一个作为纵轴', trigger: 'change'}]
+      },
 
       chartLoad: true,
       chartList: [],
@@ -119,7 +138,7 @@ export default {
     }
   },
   created() {
-    this.loadChartType()
+    this.loadChartAll()
   },
   mounted() {
     window.onresize = () => {
@@ -127,6 +146,27 @@ export default {
     }
   },
   methods: {
+    loadChartAll() {
+      this.chartLoad = true
+      listChartType().then(res => {
+        if (res.success) {
+          this.chartTypeList = []
+          res.data.forEach(item => {
+            this.chartTypeList.push({
+              type: item.type,
+              name: item.name
+            })
+          })
+          this.checkedTypes = this.chartTypeList.map(item => item.type)
+          this.loadChartList()
+        } else {
+          this.$message.error("图表类型加载失败：" + res.errMessage)
+        }
+      }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
+      })
+    },
     loadChartList() {
       this.chartLoad = true
       listChartView(this.checkedTypes).then(res => {
@@ -148,27 +188,6 @@ export default {
           this.chartLoad = false
         } else {
           this.$message.error("查询失败：" + res.errMessage)
-        }
-      }).catch((err) => {
-        this.$message.error("系统繁忙！")
-        console.error(err)
-      })
-    },
-    loadChartType() {
-      this.chartLoad = true
-      listChartType().then(res => {
-        if (res.success) {
-          this.chartTypeList = []
-          res.data.forEach(item => {
-            this.chartTypeList.push({
-              type: item.type,
-              name: item.name
-            })
-          })
-          this.checkedTypes = this.chartTypeList.map(item => item.type)
-          this.loadChartList()
-        } else {
-          this.$message.error("图表类型加载失败：" + res.errMessage)
         }
       }).catch((err) => {
         this.$message.error("系统繁忙！")
@@ -254,7 +273,7 @@ export default {
     handleNextOne() {
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
-          this.createDialogLoad = true
+          this.createButtonLoad = true
           listDsTable(this.createForm.datasourceId).then(res => {
             if (res.success) {
               this.tableList = res.data
@@ -266,7 +285,7 @@ export default {
             this.$message.error("系统繁忙！")
             console.error(err)
           })
-          this.createDialogLoad = false
+          this.createButtonLoad = false
         }
       })
     },
@@ -274,7 +293,7 @@ export default {
       this.clearForm()
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
-          this.createDialogLoad = true
+          this.createButtonLoad = true
           listDsColumn({id: this.createForm.datasourceId, tableName: this.createForm.tableName})
               .then(res => {
                 if (res.success) {
@@ -287,16 +306,48 @@ export default {
             this.$message.error("系统繁忙！")
             console.error(err)
           })
-          this.createDialogLoad = false
+          this.createButtonLoad = false
         }
       })
     },
+    handlePreview() {
+    },
     handleCreateSubmit() {
-      this.createDialogVisible = false
-      // TODO: submit
+      this.$refs['createForm'].validate((valid) => {
+        if (valid) {
+          this.createButtonLoad = true
+          let isValid = false
+          if (this.createForm.type === "bar" || this.createForm.type === "line") {
+            this.createForm.config = this.barLineForm
+            this.$refs['barLineForm'].validate((valid) => {
+              if (valid) {
+                isValid = true
+              }
+            })
+          }
+          if (isValid) {
+            createChart(this.createForm).then(res => {
+              if (res.success) {
+                this.createDialogVisible = false
+                this.$message.success("保存成功！")
+                this.loadChartAll()
+              } else {
+                this.$message.error(res.errMessage)
+              }
+            }).catch((err) => {
+              this.$message.error("系统繁忙！")
+              console.error(err)
+            })
+          }
+          this.createForm.config = {}
+          this.createButtonLoad = false
+        }
+      })
     },
     clearForm() {
-      this.barLineForm = {}
+      if (this.createForm.type === "bar" || this.createForm.type === "line") {
+        this.barLineForm = {}
+      }
     },
 
     forTest() {
@@ -509,7 +560,7 @@ export default {
 
 .create-dialog-form {
   margin-top: 40px;
-  margin-bottom: 40px
+  margin-bottom: 60px
 }
 
 .create-dialog-button {

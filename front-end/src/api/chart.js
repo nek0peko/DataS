@@ -14,3 +14,11 @@ export function listChartView(types) {
         data: types
     })
 }
+
+export function createChart(data) {
+    return request({
+        url: '/chart/create',
+        method: 'post',
+        data
+    })
+}
