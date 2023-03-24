@@ -22,7 +22,7 @@
 
     <el-dialog title="新建图表" width="35%" :visible.sync="createDialogVisible">
 
-      <el-steps :space="5000" align-center :active="createDialogActive">
+      <el-steps :space="5000" align-center :active="step">
         <el-step title="步骤 1"></el-step>
         <el-step title="步骤 2"></el-step>
         <el-step title="步骤 3"></el-step>
@@ -30,25 +30,25 @@
 
       <el-form class="create-dialog-form-1" label-width="100px" v-loading="createDialogLoad"
                ref="createForm" :model="createForm" :rules="createFormRule">
-        <el-form-item label="图表类型" prop="type" v-if="createDialogActive===0">
+        <el-form-item label="图表类型" prop="type" v-if="step===0">
           <el-select v-model="createForm.type" placeholder="请选择图表类型">
             <el-option v-for="item in chartTypeList" :label="item.name" :value="item.type"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="数据源" prop="datasourceId" v-if="createDialogActive===0">
+        <el-form-item label="数据源" prop="datasourceId" v-if="step===0">
           <el-select v-model="createForm.datasourceId" placeholder="请选择数据源">
             <el-option v-for="item in datasourceList" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="数据表" prop="tableName" v-if="createDialogActive===1">
+        <el-form-item label="数据表" prop="tableName" v-if="step===1">
           <el-select v-model="createForm.tableName" placeholder="请选择数据表">
             <el-option v-for="name in tableList" :label="name" :value="name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="图表名称" prop="name" v-if="createDialogActive===2">
+        <el-form-item label="图表名称" prop="name" v-if="step===2">
           <el-input style="width: 90%" v-model="createForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
         </el-form-item>
-        <el-form-item label="描述" prop="description" v-if="createDialogActive===2">
+        <el-form-item label="描述" prop="description" v-if="step===2">
           <el-input style="width: 90%" v-model="createForm.description" type="textarea"></el-input>
         </el-form-item>
       </el-form>
@@ -57,35 +57,32 @@
       <el-form class="create-dialog-form-2" label-width="100px"
                ref="barLineForm" :model="barLineForm" :rules="barLineFormRule">
         <el-form-item label="横轴列" prop="axisX"
-                      v-if="createDialogActive===2 && (createForm.type==='bar' || createForm.type==='line')">
+                      v-if="step===2 && (createForm.type==='bar' || createForm.type==='line')">
           <el-select v-model="barLineForm.axisX" placeholder="请选择数据列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="纵轴列" prop="columns"
-                      v-if="createDialogActive===2 && (createForm.type==='bar' || createForm.type==='line')">
+                      v-if="step===2 && (createForm.type==='bar' || createForm.type==='line')">
           <el-select v-model="barLineForm.columns" multiple placeholder="请选择一个或多个数据列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
 
-        <el-card class="card-create-preview" shadow="always" :body-style="{ padding: '0px' }" v-if="previewChartVisible && createDialogActive===2">
-          <div id="chart-preview-container">
-            <div class="chart-preview" id="chart-preview"></div>
-          </div>
-        </el-card>
+      <el-card class="card-create-preview" shadow="always" :body-style="{ padding: '0px' }"
+               v-if="previewChartVisible && step===2">
+        <div id="chart-preview-container">
+          <div class="chart-preview" id="chart-preview"></div>
+        </div>
+      </el-card>
 
       <el-row class="create-dialog-button">
-        <el-button @click="handlePrev" v-if="createDialogActive===1 || createDialogActive===2">上一步</el-button>
-        <el-button @click="handleNextOne" type="primary" :loading="createButtonLoad"
-                   v-if="createDialogActive===0">下一步</el-button>
-        <el-button @click="handleNextTwo" type="primary" :loading="createButtonLoad"
-                   v-if="createDialogActive===1">下一步</el-button>
-        <el-button @click="handlePreview" plain type="primary" icon="el-icon-zoom-in"
-                   v-if="createDialogActive===2">预览</el-button>
-        <el-button @click="handleCreateSubmit" type="primary"
-                   v-if="createDialogActive===2">创建</el-button>
+        <el-button @click="handlePrev" v-if="step===1 || step===2">上一步</el-button>
+        <el-button @click="handleNextOne" type="primary" :loading="buttonLoad" v-if="step===0">下一步</el-button>
+        <el-button @click="handleNextTwo" type="primary" :loading="buttonLoad" v-if="step===1">下一步</el-button>
+        <el-button @click="handlePreview" type="primary" plain icon="el-icon-zoom-in" v-if="step===2">预览</el-button>
+        <el-button @click="handleCreateSubmit" type="primary" v-if="step===2">创建</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -104,11 +101,11 @@ export default {
       checkedTypes: [],
       isIndeterminate: true,
 
-      previewChartVisible: false,
+      step: 0,
+      buttonLoad: false,
       createDialogVisible: false,
-      createDialogActive: 0,
       createDialogLoad: true,
-      createButtonLoad: false,
+      previewChartVisible: false,
       chartListLoad: true,
 
       createForm: {
@@ -259,9 +256,9 @@ export default {
     // Dialog
     handleCreate() {
       this.clearPreview()
-      this.createDialogLoad = true
-      this.createDialogActive = 0
+      this.step = 0
       this.createForm = {}
+      this.createDialogLoad = true
       this.createDialogVisible = true
 
       this.datasourceList = []
@@ -284,24 +281,24 @@ export default {
       })
     },
     handlePrev() {
-      if (this.createDialogActive === 1) {
+      if (this.step === 1) {
         this.createForm.tableName = ""
       }
-      if (this.createDialogActive === 2) {
+      if (this.step === 2) {
         this.clearPreview()
       }
-      if (this.createDialogActive !== 0) {
-        this.createDialogActive--
+      if (this.step !== 0) {
+        this.step--
       }
     },
     handleNextOne() {
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
-          this.createButtonLoad = true
+          this.buttonLoad = true
           listDsTable(this.createForm.datasourceId).then(res => {
             if (res.success) {
               this.tableList = res.data
-              this.createDialogActive = 1
+              this.step = 1
             } else {
               this.$message.error(res.errMessage)
             }
@@ -309,7 +306,7 @@ export default {
             this.$message.error("系统繁忙！")
             console.error(err)
           })
-          this.createButtonLoad = false
+          this.buttonLoad = false
         }
       })
     },
@@ -318,12 +315,12 @@ export default {
       this.clearPreview()
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
-          this.createButtonLoad = true
+          this.buttonLoad = true
           listDsColumn({id: this.createForm.datasourceId, tableName: this.createForm.tableName})
               .then(res => {
                 if (res.success) {
                   this.columnList = res.data
-                  this.createDialogActive = 2
+                  this.step = 2
                 } else {
                   this.$message.error(res.errMessage)
                 }
@@ -331,7 +328,7 @@ export default {
             this.$message.error("系统繁忙！")
             console.error(err)
           })
-          this.createButtonLoad = false
+          this.buttonLoad = false
         }
       })
     },
@@ -359,7 +356,7 @@ export default {
     handleCreateSubmit() {
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
-          this.createButtonLoad = true
+          this.buttonLoad = true
           this.loadAndValidateConfig((isValid) => {
             if (isValid) {
               createChart(this.createForm).then(res => {
@@ -377,7 +374,7 @@ export default {
             }
           })
           this.createForm.config = {}
-          this.createButtonLoad = false
+          this.buttonLoad = false
         }
       })
     },
