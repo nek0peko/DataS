@@ -7,20 +7,20 @@
       </el-checkbox-group>
     </div>
 
-    <el-row class="chart-row" type="flex" justify="center" :gutter="50" v-loading="chartLoad">
+    <el-row class="chart-row" type="flex" justify="center" :gutter="50" v-loading="chartListLoad">
       <el-card class="card-create" shadow="hover">
         <el-button class="button-create" @click="handleCreate" circle>+</el-button>
       </el-card>
       <el-card class="card-chart" :body-style="{ padding: '10px' }" shadow="always"
                v-for="(chart, index) in chartList" :key="index">
         <div id="chart-container">
-          <div class="chart-preview" :id="`chart${index}`"></div>
+          <div class="chart-main" :id="`chart${index}`"></div>
         </div>
         <div class="chart-title">{{ chart.name }}</div>
       </el-card>
     </el-row>
 
-    <el-dialog title="新建图表" width="40%" :visible.sync="createDialogVisible">
+    <el-dialog title="新建图表" width="35%" :visible.sync="createDialogVisible">
 
       <el-steps :space="5000" align-center :active="createDialogActive">
         <el-step title="步骤 1"></el-step>
@@ -28,7 +28,7 @@
         <el-step title="步骤 3"></el-step>
       </el-steps>
 
-      <el-form class="create-dialog-form" label-width="100px" v-loading="createDialogLoad"
+      <el-form class="create-dialog-form-1" label-width="100px" v-loading="createDialogLoad"
                ref="createForm" :model="createForm" :rules="createFormRule">
         <el-form-item label="图表类型" prop="type" v-if="createDialogActive===0">
           <el-select v-model="createForm.type" placeholder="请选择图表类型">
@@ -54,7 +54,7 @@
       </el-form>
 
       <!-- 柱状图或折线图 -->
-      <el-form class="create-dialog-form" label-width="100px"
+      <el-form class="create-dialog-form-2" label-width="100px"
                ref="barLineForm" :model="barLineForm" :rules="barLineFormRule">
         <el-form-item label="横轴列" prop="axisX"
                       v-if="createDialogActive===2 && (createForm.type==='bar' || createForm.type==='line')">
@@ -69,6 +69,12 @@
           </el-select>
         </el-form-item>
       </el-form>
+
+        <el-card class="card-create-preview" shadow="always" :body-style="{ padding: '0px' }" v-if="previewChartVisible && createDialogActive===2">
+          <div id="chart-preview-container">
+            <div class="chart-preview" id="chart-preview"></div>
+          </div>
+        </el-card>
 
       <el-row class="create-dialog-button">
         <el-button @click="handlePrev" v-if="createDialogActive===1 || createDialogActive===2">上一步</el-button>
@@ -87,7 +93,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {listChartType, listChartView, createChart} from '@/api/chart'
+import {listChartType, listChartView, previewChart, createChart} from '@/api/chart'
 import {listDs, listDsTable, listDsColumn} from '@/api/datasource'
 
 export default {
@@ -98,10 +104,13 @@ export default {
       checkedTypes: [],
       isIndeterminate: true,
 
+      previewChartVisible: false,
       createDialogVisible: false,
       createDialogActive: 0,
       createDialogLoad: true,
       createButtonLoad: false,
+      chartListLoad: true,
+
       createForm: {
         name: "",
         type: "",
@@ -129,7 +138,7 @@ export default {
         columns: [{required: true, message: '请至少选择一个作为纵轴', trigger: 'change'}]
       },
 
-      chartLoad: true,
+      chartPreview: {},
       chartList: [],
       chartTypeList: [],
       datasourceList: [],
@@ -143,24 +152,22 @@ export default {
   mounted() {
     window.onresize = () => {
       this.resizeChart()
+      this.resizeChartPreview()
     }
   },
   methods: {
     loadChartAll() {
-      this.chartLoad = true
+      this.chartListLoad = true
       listChartType().then(res => {
         if (res.success) {
           this.chartTypeList = []
           res.data.forEach(item => {
-            this.chartTypeList.push({
-              type: item.type,
-              name: item.name
-            })
+            this.chartTypeList.push({type: item.type, name: item.name})
           })
           this.checkedTypes = this.chartTypeList.map(item => item.type)
           this.loadChartList()
         } else {
-          this.$message.error("图表类型加载失败：" + res.errMessage)
+          this.$message.error("图表类型获取失败：" + res.errMessage)
         }
       }).catch((err) => {
         this.$message.error("系统繁忙！")
@@ -168,7 +175,7 @@ export default {
       })
     },
     loadChartList() {
-      this.chartLoad = true
+      this.chartListLoad = true
       listChartView(this.checkedTypes).then(res => {
         if (res.success) {
           this.clearChart()
@@ -185,7 +192,7 @@ export default {
               this.resizeChart()
             })
           }
-          this.chartLoad = false
+          this.chartListLoad = false
         } else {
           this.$message.error("查询失败：" + res.errMessage)
         }
@@ -211,11 +218,24 @@ export default {
         })
       }
     },
+    resizeChartPreview() {
+      const chartPreviewContainer = document.getElementById("chart-preview-container")
+      if (chartPreviewContainer) {
+        const chartPreviewContainerStyle = window.getComputedStyle(chartPreviewContainer)
+        const chartPreviewDom = document.getElementById("chart-preview")
+        chartPreviewDom.style.width = chartPreviewContainerStyle.width
+        chartPreviewDom.style.height = chartPreviewContainerStyle.height
+        const chartPreviewInstance = echarts.getInstanceByDom(chartPreviewDom)
+        if (chartPreviewInstance) {
+          chartPreviewInstance.resize()
+        }
+      }
+    },
     clearChart() {
       this.chartList.forEach((val, index) => {
         const chartDom = document.getElementById(`chart${index}`)
         if (chartDom) {
-          const chartInstance = echarts.getInstanceByDom(document.getElementById(`chart${index}`))
+          const chartInstance = echarts.getInstanceByDom(chartDom)
           if (chartInstance) {
             chartInstance.dispose()
           }
@@ -223,6 +243,7 @@ export default {
       })
     },
 
+    // CheckBox
     handleCheckAllChange(val) {
       this.checkedTypes = val ? this.chartTypeList.map(item => item.type) : []
       this.isIndeterminate = false
@@ -235,7 +256,9 @@ export default {
       this.loadChartList()
     },
 
+    // Dialog
     handleCreate() {
+      this.clearPreview()
       this.createDialogLoad = true
       this.createDialogActive = 0
       this.createForm = {}
@@ -265,6 +288,7 @@ export default {
         this.createForm.tableName = ""
       }
       if (this.createDialogActive === 2) {
+        this.clearPreview()
       }
       if (this.createDialogActive !== 0) {
         this.createDialogActive--
@@ -291,6 +315,7 @@ export default {
     },
     handleNextTwo() {
       this.clearForm()
+      this.clearPreview()
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
           this.createButtonLoad = true
@@ -311,34 +336,46 @@ export default {
       })
     },
     handlePreview() {
+      this.clearPreview()
+      this.loadAndValidateConfig((isValid) => {
+        if (isValid) {
+          previewChart(this.createForm).then(res => {
+            if (res.success) {
+              this.previewChartVisible = true
+              this.$nextTick(() => {
+                echarts.init(document.getElementById("chart-preview")).setOption(res.data.option)
+                this.resizeChartPreview()
+              })
+            } else {
+              this.$message.error(res.errMessage)
+            }
+          }).catch((err) => {
+            this.$message.error("系统繁忙！")
+            console.error(err)
+          })
+        }
+      })
     },
     handleCreateSubmit() {
       this.$refs['createForm'].validate((valid) => {
         if (valid) {
           this.createButtonLoad = true
-          let isValid = false
-          if (this.createForm.type === "bar" || this.createForm.type === "line") {
-            this.createForm.config = this.barLineForm
-            this.$refs['barLineForm'].validate((valid) => {
-              if (valid) {
-                isValid = true
-              }
-            })
-          }
-          if (isValid) {
-            createChart(this.createForm).then(res => {
-              if (res.success) {
-                this.createDialogVisible = false
-                this.$message.success("保存成功！")
-                this.loadChartAll()
-              } else {
-                this.$message.error(res.errMessage)
-              }
-            }).catch((err) => {
-              this.$message.error("系统繁忙！")
-              console.error(err)
-            })
-          }
+          this.loadAndValidateConfig((isValid) => {
+            if (isValid) {
+              createChart(this.createForm).then(res => {
+                if (res.success) {
+                  this.createDialogVisible = false
+                  this.$message.success("保存成功！")
+                  this.loadChartAll()
+                } else {
+                  this.$message.error(res.errMessage)
+                }
+              }).catch((err) => {
+                this.$message.error("系统繁忙！")
+                console.error(err)
+              })
+            }
+          })
           this.createForm.config = {}
           this.createButtonLoad = false
         }
@@ -349,153 +386,23 @@ export default {
         this.barLineForm = {}
       }
     },
-
-    forTest() {
-      this.chartList = [
-        {
-          "name": "测试2",
-          "option": {
-            "xAxis": {
-              "type": "category",
-              "data": ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-            },
-            "yAxis": {
-              "type": "value"
-            },
-            "series": [
-              {
-                "data": [150, 230, 224, 218, 535, 107, 260],
-                "type": "line"
-              }
-            ]
-          }
-        },
-        {
-          "name": "测试3",
-          "option": {
-            "title": {
-              "text": 'World Population'
-            },
-            "tooltip": {
-              "trigger": 'axis',
-              "axisPointer": {
-                "type": 'shadow'
-              }
-            },
-            "legend": {},
-            "grid": {
-              "left": '3%',
-              "right": '4%',
-              "bottom": '3%',
-              "containLabel": true
-            },
-            "xAxis": {
-              "type": 'value',
-              "boundaryGap": [0, 0.01]
-            },
-            "yAxis": {
-              "type": 'category',
-              "data": ['Brazil', 'Indonesia', 'USA', 'India', 'China', 'World']
-            },
-            "series": [
-              {
-                "name": '2011',
-                "type": 'bar',
-                "data": [18203, 23489, 29034, 104970, 131744, 630230]
-              },
-              {
-                "name": '2012',
-                "type": 'bar',
-                "data": [19325, 23438, 31000, 121594, 134141, 681807]
-              }
-            ]
-          }
-        },
-        {
-          "name": "测试4",
-          "option": {
-            "tooltip": {
-              "trigger": 'item'
-            },
-            "legend": {
-              "top": '5%',
-              "left": 'center'
-            },
-            "series": [
-              {
-                "name": 'Access From',
-                "type": 'pie',
-                "radius": ['40%', '70%'],
-                "avoidLabelOverlap": false,
-                "itemStyle": {
-                  "borderRadius": 10,
-                  "borderColor": '#fff',
-                  "borderWidth": 2
-                },
-                "label": {
-                  "show": false,
-                  "position": 'center'
-                },
-                "emphasis": {
-                  "label": {
-                    "show": true,
-                    "fontSize": 40,
-                    "fontWeight": 'bold'
-                  }
-                },
-                "labelLine": {
-                  "show": false
-                },
-                "data": [
-                  {"value": 1048, "name": 'Search Engine'},
-                  {"value": 735, "name": 'Direct'},
-                  {"value": 580, "name": 'Email'},
-                  {"value": 484, "name": 'Union Ads'},
-                  {"value": 300, "name": 'Video Ads'}
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "测试6",
-          "option": {
-            "title": {
-              "text": 'Basic Radar Chart'
-            },
-            "legend": {
-              "data": ['Allocated Budget', 'Actual Spending']
-            },
-            "radar": {
-              // shape: 'circle',
-              "indicator": [
-                {"name": 'Sales', "max": 6500},
-                {"name": 'Administration', "max": 16000},
-                {"name": 'Information Technology', "max": 30000},
-                {"name": 'Customer Support', "max": 38000},
-                {"name": 'Development', "max": 52000},
-                {"name": 'Marketing', "max": 25000}
-              ]
-            },
-            "series": [
-              {
-                "name": 'Budget vs spending',
-                "type": 'radar',
-                "data": [
-                  {
-                    "value": [4200, 3000, 20000, 35000, 50000, 18000],
-                    "name": 'Allocated Budget'
-                  },
-                  {
-                    "value": [5000, 14000, 28000, 26000, 42000, 21000],
-                    "name": 'Actual Spending'
-                  }
-                ]
-              }
-            ]
-          }
-        },
-      ]
+    clearPreview() {
+      this.previewChartVisible = false
+      const chartDom = document.getElementById("chart-preview")
+      if (chartDom) {
+        const chartInstance = echarts.getInstanceByDom(chartDom)
+        if (chartInstance) {
+          chartInstance.dispose()
+        }
+      }
+    },
+    loadAndValidateConfig(callback) {
+      if (this.createForm.type === "bar" || this.createForm.type === "line") {
+        this.createForm.config = this.barLineForm
+        this.$refs['barLineForm'].validate((valid) => {
+          callback(valid.valueOf())
+        })
+      }
     },
   }
 }
@@ -548,6 +455,24 @@ export default {
   /* background-color: #cccccc */
 }
 
+.chart-main {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto
+}
+
+.card-create-preview {
+  width: 95%;
+  height: 50%;
+  margin: 0 auto 10% auto
+}
+
+#chart-preview-container {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto
+}
+
 .chart-preview {
   width: 300px;
   height: 300px;
@@ -558,9 +483,13 @@ export default {
   text-align: center
 }
 
-.create-dialog-form {
-  margin-top: 40px;
-  margin-bottom: 60px
+.create-dialog-form-1 {
+  margin-top: 30px
+}
+
+.create-dialog-form-2 {
+  margin-top: 20px;
+  margin-bottom: 40px;
 }
 
 .create-dialog-button {

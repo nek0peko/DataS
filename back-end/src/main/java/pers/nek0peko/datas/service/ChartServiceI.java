@@ -1,6 +1,7 @@
 package pers.nek0peko.datas.service;
 
 import pers.nek0peko.datas.dto.command.ChartCreateCmd;
+import pers.nek0peko.datas.dto.command.ChartPreviewCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
 import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.dto.response.SingleResponse;
@@ -12,7 +13,7 @@ import java.util.Map;
  * 图表服务
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/03/24
  */
 public interface ChartServiceI {
 
@@ -30,6 +31,14 @@ public interface ChartServiceI {
      * @return 图表绘制信息
      */
     SingleResponse<List<ChartViewDTO>> listView(List<String> types);
+
+    /**
+     * 预览图表
+     *
+     * @param cmd 预览图表请求
+     * @return 图表绘制信息
+     */
+    SingleResponse<ChartViewDTO> preview(ChartPreviewCmd cmd);
 
     /**
      * 新增图表

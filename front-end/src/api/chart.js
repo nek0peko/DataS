@@ -15,6 +15,14 @@ export function listChartView(types) {
     })
 }
 
+export function previewChart(data) {
+    return request({
+        url: '/chart/preview',
+        method: 'post',
+        data
+    })
+}
+
 export function createChart(data) {
     return request({
         url: '/chart/create',

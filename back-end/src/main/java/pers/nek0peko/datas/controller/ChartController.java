@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.command.ChartCreateCmd;
+import pers.nek0peko.datas.dto.command.ChartPreviewCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
 import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.dto.response.SingleResponse;
@@ -25,7 +26,7 @@ import java.util.Map;
  * 数据可视化
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/03/24
  */
 @Api(tags = "数据可视化")
 @ApiSort(1)
@@ -52,6 +53,13 @@ public class ChartController {
     }
 
     @ApiOperationSupport(author = "nek0peko", order = 3)
+    @ApiOperation(value = "预览图表")
+    @PostMapping(value = "/preview")
+    public SingleResponse<ChartViewDTO> preview(@Valid @NotNull @RequestBody ChartPreviewCmd cmd) {
+        return chartService.preview(cmd);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 4)
     @ApiOperation(value = "新增图表")
     @PostMapping(value = "/create")
     public Response create(@Valid @NotNull @RequestBody ChartCreateCmd cmd) {
