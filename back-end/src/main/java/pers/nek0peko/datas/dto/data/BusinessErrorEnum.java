@@ -1,13 +1,17 @@
 package pers.nek0peko.datas.dto.data;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import pers.nek0peko.datas.exception.ErrorCodeI;
 
 /**
  * BusinessErrorEnum
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/03
  */
+@Getter
+@AllArgsConstructor
 public enum BusinessErrorEnum implements ErrorCodeI {
 
     // 图表名重复
@@ -34,18 +38,5 @@ public enum BusinessErrorEnum implements ErrorCodeI {
     private final String errCode;
 
     private final String errMessage;
-
-    BusinessErrorEnum(String errCode, String errMessage) {
-        this.errCode = errCode;
-        this.errMessage = errMessage;
-    }
-
-    public String getErrCode() {
-        return errCode;
-    }
-
-    public String getErrMessage() {
-        return errMessage;
-    }
 
 }
