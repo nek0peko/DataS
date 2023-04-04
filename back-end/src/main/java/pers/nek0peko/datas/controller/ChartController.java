@@ -3,6 +3,7 @@ package pers.nek0peko.datas.controller;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSort;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import pers.nek0peko.datas.service.ChartServiceI;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ import java.util.Map;
  * 数据可视化
  *
  * @author nek0peko
- * @date 2023/03/24
+ * @date 2023/04/04
  */
 @Api(tags = "数据可视化")
 @ApiSort(1)
@@ -64,6 +66,14 @@ public class ChartController {
     @PostMapping(value = "/create")
     public Response create(@Valid @NotNull @RequestBody ChartCreateCmd cmd) {
         return chartService.create(cmd);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 5)
+    @ApiOperation(value = "删除图表")
+    @ApiImplicitParam(name = "id", value = "图表ID", required = true, dataType = "Long", dataTypeClass = Long.class)
+    @PostMapping(value = "/remove")
+    public Response remove(@Valid @NotNull @RequestBody Long id) {
+        return chartService.remove(id);
     }
 
 }

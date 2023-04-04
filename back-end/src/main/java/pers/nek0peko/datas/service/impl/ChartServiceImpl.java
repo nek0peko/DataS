@@ -1,10 +1,7 @@
 package pers.nek0peko.datas.service.impl;
 
 import org.springframework.stereotype.Service;
-import pers.nek0peko.datas.command.ChartCreateCmdExe;
-import pers.nek0peko.datas.command.ChartListTypeQryExe;
-import pers.nek0peko.datas.command.ChartListViewQryExe;
-import pers.nek0peko.datas.command.ChartPreviewCmdExe;
+import pers.nek0peko.datas.command.*;
 import pers.nek0peko.datas.dto.command.ChartCreateCmd;
 import pers.nek0peko.datas.dto.command.ChartPreviewCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
@@ -20,7 +17,7 @@ import java.util.Map;
  * 图表服务
  *
  * @author nek0peko
- * @date 2023/03/24
+ * @date 2023/04/04
  */
 @Service
 public class ChartServiceImpl implements ChartServiceI {
@@ -36,6 +33,9 @@ public class ChartServiceImpl implements ChartServiceI {
 
     @Resource
     private transient ChartCreateCmdExe chartCreateCmdExe;
+
+    @Resource
+    private transient ChartRemoveCmdExe chartRemoveCmdExe;
 
     @Override
     public SingleResponse<List<Map<String, String>>> listType() {
@@ -55,6 +55,11 @@ public class ChartServiceImpl implements ChartServiceI {
     @Override
     public Response create(ChartCreateCmd cmd) {
         return chartCreateCmdExe.execute(cmd);
+    }
+
+    @Override
+    public Response remove(Long id) {
+        return chartRemoveCmdExe.execute(id);
     }
 
 }

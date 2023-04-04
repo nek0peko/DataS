@@ -20,7 +20,7 @@ import java.util.Objects;
  * ChartGatewayImpl
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/04
  */
 @Component
 public class ChartGatewayImpl implements ChartGateway {
@@ -38,6 +38,22 @@ public class ChartGatewayImpl implements ChartGateway {
         } else {
             modify(chart);
         }
+    }
+
+    @Override
+    public void removeById(Long id) {
+        if (Objects.isNull(id)) {
+            throw new PersistenceException("图表ID为空");
+        }
+        mapper.deleteById(id);
+    }
+
+    @Override
+    public ChartDTO listById(Long id) {
+        if (Objects.isNull(id)) {
+            throw new PersistenceException("图表ID为空");
+        }
+        return convertor.toDTO(mapper.selectById(id));
     }
 
     @Override

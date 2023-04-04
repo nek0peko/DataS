@@ -13,7 +13,7 @@ import java.util.Map;
  * 图表服务
  *
  * @author nek0peko
- * @date 2023/03/24
+ * @date 2023/04/04
  */
 public interface ChartServiceI {
 
@@ -47,5 +47,13 @@ public interface ChartServiceI {
      * @return 是否新增成功
      */
     Response create(ChartCreateCmd cmd);
+
+    /**
+     * 删除图表
+     *
+     * @param id 图表ID
+     * @return 是否删除成功
+     */
+    Response remove(Long id);
 
 }

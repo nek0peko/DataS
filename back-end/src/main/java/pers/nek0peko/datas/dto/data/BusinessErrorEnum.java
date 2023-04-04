@@ -8,7 +8,7 @@ import pers.nek0peko.datas.exception.ErrorCodeI;
  * BusinessErrorEnum
  *
  * @author nek0peko
- * @date 2023/04/03
+ * @date 2023/04/04
  */
 @Getter
 @AllArgsConstructor
@@ -16,6 +16,8 @@ public enum BusinessErrorEnum implements ErrorCodeI {
 
     // 图表名重复
     B_CHART_EXISTS("B_CHART_EXISTS", "图表名重复，请重新输入！"),
+    // 图表ID不存在
+    B_CHART_NOT_EXISTS("B_CHART_NOT_EXISTS", "图表不存在！"),
     // 图表配置JSON错误
     B_CHART_INVALID_CONFIG("B_CHART_INVALID_CONFIG", "图表配置错误！"),
     // 图表列类型错误
