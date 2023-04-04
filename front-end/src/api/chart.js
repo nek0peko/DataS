@@ -30,3 +30,11 @@ export function createChart(data) {
         data
     })
 }
+
+export function removeChart(id) {
+    return request({
+        url: '/chart/remove',
+        method: 'post',
+        data: id
+    })
+}

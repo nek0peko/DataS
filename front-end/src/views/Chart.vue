@@ -14,6 +14,20 @@
       <el-card class="card-chart" :body-style="{ padding: '10px' }" shadow="always"
                v-for="(chart, index) in chartList" :key="index">
         <div id="chart-container">
+          <div class="chart-buttons">
+            <el-tooltip content="详情" placement="top">
+              <el-button icon="el-icon-view" circle @click="viewChart(chart)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="编辑" placement="top">
+              <el-button icon="el-icon-edit" circle @click="editChart(index)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="下载" placement="top">
+              <el-button icon="el-icon-download" circle @click="downloadChart(chart)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button icon="el-icon-delete" circle @click="handleRemove(chart.id)"></el-button>
+            </el-tooltip>
+          </div>
           <div class="chart-main" :id="`chart${index}`"></div>
         </div>
         <div class="chart-title">{{ chart.name }}</div>
@@ -90,7 +104,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {listChartType, listChartView, previewChart, createChart} from '@/api/chart'
+import {listChartType, listChartView, previewChart, createChart, removeChart} from '@/api/chart'
 import {listDs, listDsTable, listDsColumn} from '@/api/datasource'
 
 export default {
@@ -251,6 +265,30 @@ export default {
       this.checkAll = checkedCount === this.chartTypeList.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.chartTypeList.length
       this.loadChartList()
+    },
+
+    // Button
+    handleRemove(id) {
+      this.$confirm('此操作将永久删除该图表，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(id)
+        removeChart(id).then(res => {
+          if (res.success) {
+            this.$message.success("删除成功！")
+            this.loadChartAll()
+          } else {
+            this.$message.error("删除失败：" + res.errMessage)
+          }
+        }).catch((err) => {
+          this.$message.error("系统繁忙！")
+          console.error(err)
+        })
+      }).catch(() => {
+        this.$message({type: 'info', message: '已取消删除'})
+      })
     },
 
     // Dialog
@@ -432,6 +470,7 @@ export default {
 }
 
 .card-chart {
+  position: relative;
   width: 500px;
   height: 350px;
   margin: 15px 20px
@@ -455,7 +494,13 @@ export default {
 .chart-main {
   width: 300px;
   height: 300px;
-  margin: 0 auto
+  margin: 20px auto 0
+}
+
+.chart-buttons {
+  position: absolute;
+  top: 10px;
+  right: 10px
 }
 
 .card-create-preview {
@@ -477,6 +522,9 @@ export default {
 }
 
 .chart-title {
+  position: relative;
+  top: -100%;
+  transform: translateY(-50%);
   text-align: center
 }
 
