@@ -39,7 +39,7 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
         if (CollectionUtils.isEmpty(config.getColumns()) || StringUtils.isEmpty(config.getAxisX())) {
             throw new BusinessException(BusinessErrorEnum.B_CHART_INVALID_CONFIG);
         }
-        
+
         final DatasourceDTO datasource = datasourceGateway.getById(datasourceId);
         final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
 
@@ -55,7 +55,7 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
                                                     .collect(Collectors.toList()))
                                             .type(ChartTypeEnum.LINE.getType())
                                             .build();
-                                } catch (Exception e) {
+                                } catch (NumberFormatException e) {
                                     throw new BusinessException(BusinessErrorEnum.B_CHART_COLUMN_TYPE_ERROR);
                                 }
                             } else {

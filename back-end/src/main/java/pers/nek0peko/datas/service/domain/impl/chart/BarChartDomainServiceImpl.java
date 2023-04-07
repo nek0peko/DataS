@@ -55,7 +55,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
                                                     .collect(Collectors.toList()))
                                             .type(ChartTypeEnum.BAR.getType())
                                             .build();
-                                } catch (Exception e) {
+                                } catch (NumberFormatException e) {
                                     throw new BusinessException(BusinessErrorEnum.B_CHART_COLUMN_TYPE_ERROR);
                                 }
                             } else {
