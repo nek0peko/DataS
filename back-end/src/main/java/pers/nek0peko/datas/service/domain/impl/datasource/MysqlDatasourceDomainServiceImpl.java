@@ -20,7 +20,7 @@ import java.util.List;
  * MysqlDatasourceDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/07
  */
 @Service("MySQL")
 public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainServiceI<MysqlConfigDTO> {
@@ -68,6 +68,12 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
         return queryColumn(configJson, sql);
     }
 
+    private DatasourceResultHolder queryTableList(JSONObject configJson) {
+        return queryColumn(configJson, String.format(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
+                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
+    }
+
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
         final MysqlConfigDTO config = configJson.toJavaObject(MysqlConfigDTO.class);
         String url = String.format("jdbc:mysql://%s:%s/%s?", config.getHost(), config.getPort(), config.getDatabase());
@@ -97,12 +103,6 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
             closeConnection(conn, stmt);
         }
         return DatasourceResultHolder.buildSuccessWithData(tableList);
-    }
-
-    private DatasourceResultHolder queryTableList(JSONObject configJson) {
-        return queryColumn(configJson, String.format(
-                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
-                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
     }
 
 }

@@ -12,7 +12,9 @@ import pers.nek0peko.datas.domain.convertor.DatasourceConvertor;
 import pers.nek0peko.datas.domain.mapper.DatasourceMapper;
 import pers.nek0peko.datas.domain.object.DatasourceDO;
 import pers.nek0peko.datas.dto.command.DatasourceListQry;
+import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
+import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.gateway.DatasourceGateway;
 
 import javax.annotation.Resource;
@@ -46,7 +48,11 @@ public class DatasourceGatewayImpl implements DatasourceGateway {
 
     @Override
     public DatasourceDTO getById(Long id) {
-        return convertor.toDTO(mapper.selectById(id));
+        final DatasourceDTO datasourceDTO = convertor.toDTO(mapper.selectById(id));
+        if (Objects.isNull(datasourceDTO)) {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
+        }
+        return datasourceDTO;
     }
 
     @Override

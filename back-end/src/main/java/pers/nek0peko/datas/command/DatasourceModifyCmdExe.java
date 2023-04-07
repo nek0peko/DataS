@@ -15,13 +15,12 @@ import pers.nek0peko.datas.gateway.DatasourceGateway;
 import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 
 import javax.annotation.Resource;
-import java.util.Objects;
 
 /**
  * 修改数据源
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/07
  */
 @Component
 public class DatasourceModifyCmdExe {
@@ -32,9 +31,6 @@ public class DatasourceModifyCmdExe {
     @Transactional(rollbackFor = Exception.class)
     public Response execute(DatasourceModifyCmd cmd) {
         final DatasourceDTO datasource = datasourceGateway.getById(cmd.getId());
-        if (Objects.isNull(datasource)) {
-            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_NOT_EXISTS);
-        }
 
         final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
         cmd.setConfig(service.validateAndFilterConfig(cmd.getConfig()));
