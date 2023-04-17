@@ -3,6 +3,7 @@ package pers.nek0peko.datas.service.domain;
 import com.alibaba.fastjson.JSONObject;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
+import pers.nek0peko.datas.dto.data.datasource.config.DatasourceConfigDTO;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.util.ApplicationContextHelper;
 
@@ -21,9 +22,9 @@ import java.util.Set;
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/17
  */
-public interface DatasourceDomainServiceI<T> {
+public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
 
     /**
      * 测试数据源连接

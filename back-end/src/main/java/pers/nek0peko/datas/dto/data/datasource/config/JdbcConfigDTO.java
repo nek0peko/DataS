@@ -13,13 +13,13 @@ import javax.validation.constraints.Pattern;
  * JdbcConfigDTO
  *
  * @author nek0peko
- * @date 2022/12/15
+ * @date 2023/04/17
  */
 @ApiModel
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class JdbcConfigDTO extends BaseDTO {
+public class JdbcConfigDTO extends DatasourceConfigDTO {
 
     @ApiModelProperty(value = "主机名/IP地址", position = 1, required = true)
     @Pattern(regexp = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$", message = "主机名/IP格式错误")

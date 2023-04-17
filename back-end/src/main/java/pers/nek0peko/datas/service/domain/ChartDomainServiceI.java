@@ -2,6 +2,7 @@ package pers.nek0peko.datas.service.domain;
 
 import com.alibaba.fastjson.JSONObject;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
+import pers.nek0peko.datas.dto.data.chart.config.ChartConfigDTO;
 import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.util.ApplicationContextHelper;
@@ -17,9 +18,9 @@ import java.util.Set;
  * ChartDomainServiceI
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/17
  */
-public interface ChartDomainServiceI<T> {
+public interface ChartDomainServiceI<T extends ChartConfigDTO> {
 
     /**
      * 从数据源中查询得到绘制图表所需数据
