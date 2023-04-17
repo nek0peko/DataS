@@ -35,27 +35,45 @@ public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider i
 
     @Override
     public boolean testLink(JSONObject configJson) {
-        return false;
+        return queryTableList(configJson).isSuccess();
     }
 
     @Override
     public List<String> listTable(JSONObject configJson) {
-        return null;
+        final DatasourceResultHolder resultHolder = queryTableList(configJson);
+        if (resultHolder.isSuccess()) {
+            return (List<String>) resultHolder.getData();
+        } else {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        }
     }
 
     @Override
     public List<String> listColumn(JSONObject configJson, String tableName) {
-        return null;
+        final DatasourceResultHolder resultHolder = queryColumn(configJson, String.format(
+                "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '%s' AND OWNER = '%s'",
+                tableName, configJson.toJavaObject(OracleConfigDTO.class).getSchema()));
+        if (resultHolder.isSuccess()) {
+            return (List<String>) resultHolder.getData();
+        } else {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        }
     }
 
     @Override
-    public DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String tableName, String column, String groupBy) {
-        return null;
+    public DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String column, String tableName, String groupBy) {
+        final String schema = configJson.toJavaObject(OracleConfigDTO.class).getSchema();
+        final String sql = String.format(
+                "SELECT %s FROM %s.%s GROUP BY %s ORDER BY %s", column, schema, tableName, groupBy, groupBy);
+        return queryColumn(configJson, sql);
     }
 
     @Override
-    public DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String tableName, String column, String groupBy) {
-        return null;
+    public DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String column, String tableName, String groupBy) {
+        final String schema = configJson.toJavaObject(OracleConfigDTO.class).getSchema();
+        final String sql = String.format(
+                "SELECT SUM(%s) FROM %s.%s GROUP BY %s ORDER BY %s", column, schema, tableName, groupBy, groupBy);
+        return queryColumn(configJson, sql);
     }
 
     public List<String> querySchema(JSONObject configJson) {
@@ -65,6 +83,12 @@ public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider i
         } else {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
         }
+    }
+
+    private DatasourceResultHolder queryTableList(JSONObject configJson) {
+        return queryColumn(configJson, String.format(
+                "SELECT TABLE_NAME FROM DBA_TABLES WHERE OWNER = '%s'",
+                configJson.toJavaObject(OracleConfigDTO.class).getSchema()));
     }
 
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
