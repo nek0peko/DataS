@@ -6,7 +6,7 @@ import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.dto.data.datasource.config.OracleConfigDTO;
 import pers.nek0peko.datas.exception.BusinessException;
-import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
+import pers.nek0peko.datas.service.domain.DatasourceSchemaDomainServiceI;
 import pers.nek0peko.datas.util.BaseClassLoaderProvider;
 import pers.nek0peko.datas.util.MyClassLoader;
 
@@ -22,16 +22,26 @@ import java.util.Properties;
  * OracleDatasourceDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/18
  */
 @Service("Oracle")
-public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider implements DatasourceDomainServiceI {
+public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider implements DatasourceSchemaDomainServiceI<OracleConfigDTO> {
 
     private final static String DRIVER = "oracle.jdbc.OracleDriver";
 
     private final static String SERVICE_NAME = "serviceName";
 
     private final static String SID = "sid";
+
+    @Override
+    public List<String> listSchema(JSONObject configJson) {
+        final DatasourceResultHolder resultHolder = queryColumn(configJson, "SELECT * FROM all_users");
+        if (resultHolder.isSuccess()) {
+            return (List<String>) resultHolder.getData();
+        } else {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        }
+    }
 
     @Override
     public boolean testLink(JSONObject configJson) {
@@ -74,15 +84,6 @@ public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider i
         final String sql = String.format(
                 "SELECT SUM(%s) FROM %s.%s GROUP BY %s ORDER BY %s", column, schema, tableName, groupBy, groupBy);
         return queryColumn(configJson, sql);
-    }
-
-    public List<String> querySchema(JSONObject configJson) {
-        final DatasourceResultHolder resultHolder = queryColumn(configJson, "SELECT * FROM all_users");
-        if (resultHolder.isSuccess()) {
-            return (List<String>) resultHolder.getData();
-        } else {
-            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
-        }
     }
 
     private DatasourceResultHolder queryTableList(JSONObject configJson) {

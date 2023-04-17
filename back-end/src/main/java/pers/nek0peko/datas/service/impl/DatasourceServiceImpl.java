@@ -2,10 +2,7 @@ package pers.nek0peko.datas.service.impl;
 
 import org.springframework.stereotype.Service;
 import pers.nek0peko.datas.command.*;
-import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
-import pers.nek0peko.datas.dto.command.DatasourceListColumnQry;
-import pers.nek0peko.datas.dto.command.DatasourceListQry;
-import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
+import pers.nek0peko.datas.dto.command.*;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.response.PageResponse;
 import pers.nek0peko.datas.dto.response.Response;
@@ -19,7 +16,7 @@ import java.util.List;
  * 数据源服务
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/17
  */
 @Service
 public class DatasourceServiceImpl implements DatasourceServiceI {
@@ -50,6 +47,9 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
 
     @Resource
     private transient DatasourceListTableQryExe datasourceListTableQryExe;
+
+    @Resource
+    private transient DatasourceListSchemaQryExe datasourceListSchemaQryExe;
 
     @Override
     public Response create(DatasourceCreateCmd cmd) {
@@ -94,6 +94,11 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
     @Override
     public SingleResponse<List<String>> listColumn(DatasourceListColumnQry qry) {
         return datasourceListColumnQryExe.execute(qry);
+    }
+
+    @Override
+    public SingleResponse<List<String>> listSchema(DatasourceListSchemaQry qry) {
+        return datasourceListSchemaQryExe.execute(qry);
     }
 
 }

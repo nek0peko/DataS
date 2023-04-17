@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
-import pers.nek0peko.datas.dto.command.DatasourceListColumnQry;
-import pers.nek0peko.datas.dto.command.DatasourceListQry;
-import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
+import pers.nek0peko.datas.dto.command.*;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.response.PageResponse;
 import pers.nek0peko.datas.dto.response.Response;
@@ -30,7 +27,7 @@ import java.util.Optional;
  * 数据源管理
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/17
  */
 @Api(tags = "数据源管理")
 @ApiSort(0)
@@ -107,6 +104,13 @@ public class DatasourceController {
     @PostMapping(value = "/list-column")
     public SingleResponse<List<String>> listColumn(@Valid @NotNull @RequestBody DatasourceListColumnQry qry) {
         return datasourceService.listColumn(qry);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 10)
+    @ApiOperation(value = "查询数据源中所有Schema名")
+    @PostMapping(value = "/list-schema")
+    public SingleResponse<List<String>> getSchema(@Valid @NotNull @RequestBody DatasourceListSchemaQry qry) {
+        return datasourceService.listSchema(qry);
     }
 
 }

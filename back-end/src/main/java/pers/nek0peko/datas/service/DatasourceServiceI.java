@@ -1,9 +1,6 @@
 package pers.nek0peko.datas.service;
 
-import pers.nek0peko.datas.dto.command.DatasourceCreateCmd;
-import pers.nek0peko.datas.dto.command.DatasourceListColumnQry;
-import pers.nek0peko.datas.dto.command.DatasourceListQry;
-import pers.nek0peko.datas.dto.command.DatasourceModifyCmd;
+import pers.nek0peko.datas.dto.command.*;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.response.PageResponse;
 import pers.nek0peko.datas.dto.response.Response;
@@ -15,7 +12,7 @@ import java.util.List;
  * 数据源服务
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/17
  */
 public interface DatasourceServiceI {
 
@@ -89,5 +86,13 @@ public interface DatasourceServiceI {
      * @return 数据列名列表
      */
     SingleResponse<List<String>> listColumn(DatasourceListColumnQry qry);
+
+    /**
+     * 查询数据源中所有Schema名
+     *
+     * @param qry 数据源连接信息
+     * @return Schema列表
+     */
+    SingleResponse<List<String>> listSchema(DatasourceListSchemaQry qry);
 
 }
