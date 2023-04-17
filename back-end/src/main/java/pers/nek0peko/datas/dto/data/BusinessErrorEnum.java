@@ -8,7 +8,7 @@ import pers.nek0peko.datas.exception.ErrorCodeI;
  * BusinessErrorEnum
  *
  * @author nek0peko
- * @date 2023/04/04
+ * @date 2023/04/17
  */
 @Getter
 @AllArgsConstructor
@@ -35,6 +35,11 @@ public enum BusinessErrorEnum implements ErrorCodeI {
     B_DATASOURCE_UNSUPPORTED("B_DATASOURCE_UNSUPPORTED", "不支持该数据源类型！"),
     // 数据源连接失败
     B_DATASOURCE_FAILED("B_DATASOURCE_FAILED", "数据源连接失败！"),
+
+    // 未找到数据源驱动
+    B_DATASOURCE_DRIVER_NOT_FOUND("B_DATASOURCE_DRIVER_NOT_FOUND", "未找到该数据源驱动！"),
+    // Oracle连接方式错误
+    B_DATASOURCE_ORACLE_METHOD_ERROR("B_DATASOURCE_ORACLE_METHOD_ERROR", "Oracle连接方式错误，请输入“serviceName”或“sid”"),
     ;
 
     private final String errCode;

@@ -10,7 +10,7 @@ import java.util.List;
  * 支持的数据源类型
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/17
  */
 @Getter
 @AllArgsConstructor
@@ -19,12 +19,11 @@ public enum DatasourceTypeEnum {
     /**
      * 支持的数据源类型名称
      */
-    MYSQL("MySQL", false),
+    MYSQL("MySQL"),
+    ORACLE("Oracle"),
     ;
 
     private final String type;
-
-    private final boolean supportSchema;
 
     public static boolean isSupportedType(String type) {
         for (final DatasourceTypeEnum supportedType : DatasourceTypeEnum.values()) {

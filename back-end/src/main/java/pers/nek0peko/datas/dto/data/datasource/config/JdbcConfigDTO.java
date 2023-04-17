@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import pers.nek0peko.datas.dto.BaseDTO;
 
 import javax.validation.constraints.Pattern;
 
