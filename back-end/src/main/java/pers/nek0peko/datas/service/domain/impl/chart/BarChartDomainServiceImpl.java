@@ -46,7 +46,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
         final CompletableFuture<List<BarOptionDTO.Series>> seriesFuture = CompletableFuture.supplyAsync(() ->
                 config.getColumns().parallelStream().map(column -> {
                             final DatasourceResultHolder columnResultHolder = service.queryColumnSumGroupBy(
-                                    datasource.getConfig(), column, tableName, config.getAxisX());
+                                    datasource.getConfig(), tableName, column, config.getAxisX());
                             if (columnResultHolder.isSuccess()) {
                                 try {
                                     return BarOptionDTO.Series.builder()
@@ -66,7 +66,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
 
         final CompletableFuture<BarOptionDTO.AxisX> xAxisFuture = CompletableFuture.supplyAsync(() -> {
             final DatasourceResultHolder xAxisResultHolder = service.queryColumnGroupBy(
-                    datasource.getConfig(), config.getAxisX(), tableName, config.getAxisX());
+                    datasource.getConfig(), tableName, config.getAxisX(), config.getAxisX());
             if (xAxisResultHolder.isSuccess()) {
                 return BarOptionDTO.AxisX.builder().data((List<String>) xAxisResultHolder.getData()).build();
             } else {

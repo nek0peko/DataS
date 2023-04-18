@@ -26,7 +26,7 @@ public class DatasourceCreateCmd extends BaseCommand {
     @NotBlank(message = "数据源名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "MySQL, Oracle")
+    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "MySQL, Oracle, Postgres")
     @NotBlank(message = "数据源类型不能为空")
     private String type;
 

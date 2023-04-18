@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
-import pers.nek0peko.datas.dto.data.datasource.config.OracleConfigDTO;
+import pers.nek0peko.datas.dto.data.datasource.config.PostgresConfigDTO;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.service.domain.DatasourceSchemaDomainServiceI;
 import pers.nek0peko.datas.util.BaseClassLoaderProvider;
@@ -13,23 +13,19 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * OracleDatasourceDomainServiceImpl
+ * PostgresDatasourceDomainServiceImpl
  *
  * @author nek0peko
  * @date 2023/04/18
  */
-@Service("Oracle")
-public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider implements DatasourceSchemaDomainServiceI<OracleConfigDTO> {
+@Service("Postgres")
+public class PostgresDatasourceDomainServiceImpl extends BaseClassLoaderProvider implements DatasourceSchemaDomainServiceI<PostgresConfigDTO> {
 
-    private final static String DRIVER = "oracle.jdbc.OracleDriver";
-
-    private final static String SERVICE_NAME = "serviceName";
-
-    private final static String SID = "sid";
+    private final static String DRIVER = "org.postgresql.Driver";
 
     @Override
     public List<String> listSchema(JSONObject configJson) {
-        final DatasourceResultHolder resultHolder = queryColumn(configJson, "SELECT * FROM all_users");
+        final DatasourceResultHolder resultHolder = queryColumn(configJson, "SELECT schema_name FROM information_schema.schemata;");
         if (resultHolder.isSuccess()) {
             return (List<String>) resultHolder.getData();
         } else {
@@ -40,15 +36,15 @@ public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider i
     @Override
     public DatasourceResultHolder queryTableList(JSONObject configJson) {
         return queryColumn(configJson, String.format(
-                "SELECT TABLE_NAME FROM DBA_TABLES WHERE OWNER = '%s'",
-                configJson.toJavaObject(OracleConfigDTO.class).getSchema()));
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = '%s';",
+                configJson.toJavaObject(PostgresConfigDTO.class).getSchema()));
     }
 
     @Override
     public List<String> listColumn(JSONObject configJson, String tableName) {
         final DatasourceResultHolder resultHolder = queryColumn(configJson, String.format(
-                "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '%s' AND OWNER = '%s'",
-                tableName, configJson.toJavaObject(OracleConfigDTO.class).getSchema()));
+                "SELECT column_name FROM information_schema.columns WHERE table_name = '%s' AND table_schema = '%s'",
+                tableName, configJson.toJavaObject(PostgresConfigDTO.class).getSchema()));
         if (resultHolder.isSuccess()) {
             return (List<String>) resultHolder.getData();
         } else {
@@ -58,37 +54,30 @@ public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider i
 
     @Override
     public DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String tableName, String column, String groupBy) {
-        final String schema = configJson.toJavaObject(OracleConfigDTO.class).getSchema();
+        final String schema = configJson.toJavaObject(PostgresConfigDTO.class).getSchema();
         return queryColumn(configJson, String.format(
                 "SELECT %s FROM %s.%s GROUP BY %s ORDER BY %s", column, schema, tableName, groupBy, groupBy));
     }
 
     @Override
     public DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String tableName, String column, String groupBy) {
-        final String schema = configJson.toJavaObject(OracleConfigDTO.class).getSchema();
+        final String schema = configJson.toJavaObject(PostgresConfigDTO.class).getSchema();
         return queryColumn(configJson, String.format(
                 "SELECT SUM(%s) FROM %s.%s GROUP BY %s ORDER BY %s", column, schema, tableName, groupBy, groupBy));
     }
 
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
-        final OracleConfigDTO config = configJson.toJavaObject(OracleConfigDTO.class);
+        final PostgresConfigDTO config = configJson.toJavaObject(PostgresConfigDTO.class);
         return queryColumnByDriver(myClassLoader, DRIVER, sql,
                 configUrl(config), configProperties(config.getUsername(), config.getPassword()));
     }
 
-    private static String configUrl(OracleConfigDTO config) {
-        if (SERVICE_NAME.equalsIgnoreCase(config.getConnectionType())) {
-            return String.format("jdbc:oracle:thin:@%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
-        } else if (SID.equalsIgnoreCase(config.getConnectionType())) {
-            return String.format("jdbc:oracle:thin:@%s:%s:%s", config.getHost(), config.getPort(), config.getDatabase());
-        } else {
-            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_ORACLE_METHOD_ERROR);
-        }
+    private static String configUrl(PostgresConfigDTO config) {
+        return String.format("jdbc:postgresql://%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
     }
 
     private static Properties configProperties(String user, String password) {
         final Properties props = new Properties();
-        props.put("oracle.net.CONNECT_TIMEOUT", "5000");
         props.setProperty("user", user);
         props.setProperty("password", password);
         return props;

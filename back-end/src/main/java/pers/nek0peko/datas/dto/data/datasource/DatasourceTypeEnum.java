@@ -23,6 +23,7 @@ public enum DatasourceTypeEnum {
      */
     MYSQL("MySQL", false),
     ORACLE("Oracle", true),
+    POSTGRES("Postgres", true),
     ;
 
     private final String type;

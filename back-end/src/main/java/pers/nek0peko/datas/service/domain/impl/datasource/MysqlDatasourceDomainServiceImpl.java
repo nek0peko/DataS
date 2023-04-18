@@ -20,7 +20,7 @@ import java.util.List;
  * MysqlDatasourceDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/07
+ * @date 2023/04/18
  */
 @Service("MySQL")
 public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainServiceI<MysqlConfigDTO> {
@@ -28,18 +28,10 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
     @Override
-    public boolean testLink(JSONObject configJson) {
-        return queryTableList(configJson).isSuccess();
-    }
-
-    @Override
-    public List<String> listTable(JSONObject configJson) {
-        final DatasourceResultHolder resultHolder = queryTableList(configJson);
-        if (resultHolder.isSuccess()) {
-            return (List<String>) resultHolder.getData();
-        } else {
-            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
-        }
+    public DatasourceResultHolder queryTableList(JSONObject configJson) {
+        return queryColumn(configJson, String.format(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
+                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
     }
 
     @Override
@@ -55,23 +47,15 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
     }
 
     @Override
-    public DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String column, String tableName, String groupBy) {
-        final String sql = String.format(
-                "SELECT %s FROM %s GROUP BY %s ORDER BY %s;", column, tableName, groupBy, groupBy);
-        return queryColumn(configJson, sql);
+    public DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String tableName, String column, String groupBy) {
+        return queryColumn(configJson, String.format(
+                "SELECT %s FROM %s GROUP BY %s ORDER BY %s;", column, tableName, groupBy, groupBy));
     }
 
     @Override
-    public DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String column, String tableName, String groupBy) {
-        final String sql = String.format(
-                "SELECT SUM(%s) FROM %s GROUP BY %s ORDER BY %s;", column, tableName, groupBy, groupBy);
-        return queryColumn(configJson, sql);
-    }
-
-    private DatasourceResultHolder queryTableList(JSONObject configJson) {
+    public DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String tableName, String column, String groupBy) {
         return queryColumn(configJson, String.format(
-                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '%s';",
-                configJson.toJavaObject(MysqlConfigDTO.class).getDatabase()));
+                "SELECT SUM(%s) FROM %s GROUP BY %s ORDER BY %s;", column, tableName, groupBy, groupBy));
     }
 
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
@@ -87,14 +71,14 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
 
         Connection conn = null;
         Statement stmt = null;
-        final List<String> tableList = new ArrayList<>();
+        final List<String> column = new ArrayList<>();
         try {
             Class.forName(DRIVER);
             conn = DriverManager.getConnection(url, config.getUsername(), config.getPassword());
             stmt = conn.createStatement();
             final ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                tableList.add(rs.getString(1));
+                column.add(rs.getString(1));
             }
             rs.close();
         } catch (Exception e) {
@@ -102,7 +86,7 @@ public class MysqlDatasourceDomainServiceImpl implements DatasourceDomainService
         } finally {
             closeConnection(conn, stmt);
         }
-        return DatasourceResultHolder.buildSuccessWithData(tableList);
+        return DatasourceResultHolder.buildSuccessWithData(column);
     }
 
 }

@@ -6,33 +6,22 @@ import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.dto.data.datasource.config.DatasourceConfigDTO;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.util.ApplicationContextHelper;
+import pers.nek0peko.datas.util.MyClassLoader;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 
 /**
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/18
  */
 public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
-
-    /**
-     * 测试数据源连接
-     *
-     * @param configJson 数据源配置的JSON对象
-     * @return 是否连接成功
-     */
-    boolean testLink(JSONObject configJson);
 
     /**
      * 查询数据源中所有表名
@@ -40,7 +29,7 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      * @param configJson 数据源配置的JSON对象
      * @return 数据表名列表
      */
-    List<String> listTable(JSONObject configJson);
+    DatasourceResultHolder queryTableList(JSONObject configJson);
 
     /**
      * 查询数据表中所有列名
@@ -72,6 +61,31 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      * @return 指定列总和结果
      */
     DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String tableName, String column, String groupBy);
+
+    /**
+     * 测试数据源连接
+     *
+     * @param configJson 数据源配置的JSON对象
+     * @return 是否连接成功
+     */
+    default boolean testLink(JSONObject configJson) {
+        return queryTableList(configJson).isSuccess();
+    }
+
+    /**
+     * 查询数据源中所有表名
+     *
+     * @param configJson 数据源配置的JSON对象
+     * @return 数据表名列表
+     */
+    default List<String> listTable(JSONObject configJson) {
+        final DatasourceResultHolder resultHolder = queryTableList(configJson);
+        if (resultHolder.isSuccess()) {
+            return (List<String>) resultHolder.getData();
+        } else {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        }
+    }
 
     /**
      * 校验和过滤数据源配置
@@ -107,6 +121,62 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
 
         // 由于前端会传入额外字段，在这里过滤掉其它数据源的字段；虽然这些字段并不会造成影响，但会让数据库存储冗余数据。
         return JSONObject.parseObject(JSONObject.toJSONString(configJson.toJavaObject(clazz)));
+    }
+
+    /**
+     * 加载驱动查询数据列
+     *
+     * @param driver 驱动名
+     * @param url URL
+     * @param properties Property
+     * @param sql 查询语句
+     * @param myClassLoader 自定义类加载器
+     * @return 数据列
+     */
+    default DatasourceResultHolder queryColumnByDriver(MyClassLoader myClassLoader, String driver, String sql, String url, Properties properties) {
+        Connection conn = null;
+        Statement stmt = null;
+        final List<String> column = new ArrayList<>();
+
+        final Driver driverClass = loadDriver(myClassLoader, driver);
+        // 获取当前类加载器（用于还原）
+        final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        // 设置新类加载器
+        Thread.currentThread().setContextClassLoader(myClassLoader);
+
+        try {
+            conn = driverClass.connect(url, properties);
+            stmt = conn.createStatement();
+            final ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                column.add(rs.getString(1));
+            }
+            rs.close();
+        } catch (Exception e) {
+            return DatasourceResultHolder.buildEmptyFailure();
+        } finally {
+            // 还原类加载器
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+            closeConnection(conn, stmt);
+        }
+        return DatasourceResultHolder.buildSuccessWithData(column);
+    }
+
+    /**
+     * 获取数据源驱动
+     *
+     * @param classLoader 自定义类加载器
+     * @param driver 数据源驱动名
+     * @return 数据源驱动
+     */
+    default Driver loadDriver(MyClassLoader classLoader, String driver) {
+        Driver driverClass;
+        try {
+            driverClass = (Driver) classLoader.loadClass(driver).getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_DRIVER_NOT_FOUND);
+        }
+        return driverClass;
     }
 
     /**
