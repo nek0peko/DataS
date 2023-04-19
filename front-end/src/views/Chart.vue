@@ -16,7 +16,7 @@
         <div id="chart-container">
           <div class="chart-buttons">
             <el-tooltip content="详情" placement="top">
-              <el-button icon="el-icon-view" circle @click="viewChart(chart)"></el-button>
+              <el-button icon="el-icon-view" circle @click="viewChart(index)"></el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
               <el-button icon="el-icon-edit" circle @click="editChart(index)"></el-button>
@@ -35,7 +35,6 @@
     </el-row>
 
     <el-dialog title="新建图表" width="35%" :visible.sync="createDialogVisible">
-
       <el-steps :space="5000" align-center :active="step">
         <el-step title="步骤 1"></el-step>
         <el-step title="步骤 2"></el-step>
@@ -99,6 +98,10 @@
         <el-button @click="handleCreateSubmit" type="primary" v-if="step===2">创建</el-button>
       </el-row>
     </el-dialog>
+
+    <el-dialog title="图表详情" width="50%" :visible.sync="detailDialogVisible"></el-dialog>
+
+    <el-dialog title="编辑图表" width="35%" :visible.sync="modifyDialogVisible"></el-dialog>
   </div>
 </template>
 
@@ -120,6 +123,8 @@ export default {
       createDialogVisible: false,
       createDialogLoad: true,
       previewChartVisible: false,
+      detailDialogVisible: false,
+      modifyDialogVisible: false,
       chartListLoad: true,
 
       createForm: {
@@ -270,6 +275,12 @@ export default {
     },
 
     // Button
+    viewChart(index) {
+      this.detailDialogVisible = true
+    },
+    editChart(index) {
+      this.modifyDialogVisible = true
+    },
     downloadChart(index, name) {
       const chart = echarts.getInstanceByDom(document.getElementById(`chart${index}`))
       const baseImage = chart.getDataURL({
