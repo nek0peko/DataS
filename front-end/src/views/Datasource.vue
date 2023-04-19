@@ -48,7 +48,7 @@
     </div>
 
     <!-- 对话框 -->
-    <el-dialog title="新建数据源" width="40%" :visible.sync="dialogFormVisible">
+    <el-dialog :title="dialogTitle" width="40%" :visible.sync="dialogFormVisible">
       <el-form status-icon label-width="80px" ref="dsForm" :model="dsForm" :rules="dsFormRules">
         <el-form-item label="名称" prop="name">
           <el-input v-model="dsForm.name" placeholder="请输入数据源名称（20字符以内）"></el-input>
@@ -134,6 +134,7 @@ export default {
       multipleSelection: [],
 
       // Dialog
+      dialogTitle: "",
       dialogFormVisible: false,
       dialogViewVisible: false,
       showSchemaForm: false,
@@ -247,6 +248,7 @@ export default {
       this.dsForm = {config: {jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true"}}
       this.schemaList = {}
       this.saveMode = 0
+      this.dialogTitle = "新建数据源"
       this.showSchemaForm = false
       this.dialogFormVisible = true
     },
@@ -270,6 +272,7 @@ export default {
       this.dsForm = Object.assign({}, row) // 将row拷贝到空对象中，防止没点确定前数据改变
       this.schemaList = {}
       this.saveMode = 1
+      this.dialogTitle = "编辑数据源"
       this.showSchemaForm = this.dsForm.type in this.dsTypeList && this.dsTypeList[this.dsForm.type];
       this.dialogFormVisible = true
     },
