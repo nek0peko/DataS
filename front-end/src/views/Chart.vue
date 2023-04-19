@@ -191,16 +191,18 @@ export default {
         if (res.success) {
           this.clearChart()
           this.chartList = res.data
-          // this.forTest()
           if (this.chartList.length > 0) {
             this.$nextTick(() => {
+              const chartContainerStyle = window.getComputedStyle(document.getElementById("chart-container"))
               this.chartList.forEach((val, index) => {
-                const myChart = echarts.init(document.getElementById(`chart${index}`))
+                const chartDom = document.getElementById(`chart${index}`)
+                chartDom.style.width = chartContainerStyle.width
+                chartDom.style.height = chartContainerStyle.height
+                const myChart = echarts.init(chartDom)
                 if (this.chartList[index].option) {
                   myChart.setOption(this.chartList[index].option)
                 }
               })
-              this.resizeChart()
             })
           }
           this.chartListLoad = false
