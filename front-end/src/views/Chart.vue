@@ -22,7 +22,7 @@
               <el-button icon="el-icon-edit" circle @click="editChart(index)"></el-button>
             </el-tooltip>
             <el-tooltip content="下载" placement="top">
-              <el-button icon="el-icon-download" circle @click="downloadChart(chart)"></el-button>
+              <el-button icon="el-icon-download" circle @click="downloadChart(index, chart.name)"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button icon="el-icon-delete" circle @click="handleRemove(chart.id)"></el-button>
@@ -270,6 +270,22 @@ export default {
     },
 
     // Button
+    downloadChart(index, name) {
+      const chart = echarts.getInstanceByDom(document.getElementById(`chart${index}`))
+      const baseImage = chart.getDataURL({
+        type: 'png',
+        pixelRatio: 2,
+        backgroundColor: '#fff'
+      });
+      const a = document.createElement('a');
+      a.download = name;
+      a.style.display = 'none';
+      a.href = baseImage;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(baseImage);
+      document.body.removeChild(a)
+    },
     handleRemove(id) {
       this.$confirm('此操作将永久删除该图表，是否继续？', '提示', {
         confirmButtonText: '确定',
