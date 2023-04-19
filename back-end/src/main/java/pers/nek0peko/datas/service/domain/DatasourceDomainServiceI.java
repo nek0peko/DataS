@@ -19,7 +19,7 @@ import java.util.*;
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2023/04/18
+ * @date 2023/04/19
  */
 public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
 
@@ -100,7 +100,8 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
             for (final Type type : getClass().getGenericInterfaces()) {
                 if (type instanceof ParameterizedType) {
                     final ParameterizedType parameterizedType = (ParameterizedType) type;
-                    if (parameterizedType.getRawType() != DatasourceDomainServiceI.class) {
+                    if (!DatasourceDomainServiceI.class.isAssignableFrom(
+                            Class.forName(parameterizedType.getRawType().getTypeName()))) {
                         continue;
                     }
                     clazz = (Class<T>) parameterizedType.getActualTypeArguments()[0];

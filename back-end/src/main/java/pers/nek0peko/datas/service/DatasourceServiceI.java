@@ -7,12 +7,13 @@ import pers.nek0peko.datas.dto.response.Response;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据源服务
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/19
  */
 public interface DatasourceServiceI {
 
@@ -61,7 +62,7 @@ public interface DatasourceServiceI {
      *
      * @return 数据源类型列表
      */
-    SingleResponse<List<String>> listType();
+    SingleResponse<Map<String, Boolean>> listType();
 
     /**
      * 测试数据源连接

@@ -11,12 +11,13 @@ import pers.nek0peko.datas.service.DatasourceServiceI;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据源服务
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/19
  */
 @Service
 public class DatasourceServiceImpl implements DatasourceServiceI {
@@ -77,7 +78,7 @@ public class DatasourceServiceImpl implements DatasourceServiceI {
     }
 
     @Override
-    public SingleResponse<List<String>> listType() {
+    public SingleResponse<Map<String, Boolean>> listType() {
         return datasourceListTypeQryExe.execute();
     }
 

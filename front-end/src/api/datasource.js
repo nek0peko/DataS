@@ -55,6 +55,14 @@ export function testDsLink(id) {
     })
 }
 
+export function listSchema(data) {
+    return request({
+        url: '/datasource/list-schema',
+        method: 'post',
+        data
+    })
+}
+
 export function listDsTable(id) {
     return request({
         url: '/datasource/list-table',

@@ -54,24 +54,34 @@
           <el-input v-model="dsForm.name" placeholder="请输入数据源名称（20字符以内）"></el-input>
         </el-form-item>
         <el-form-item label="类型" prop="type">
-          <el-select v-model="dsForm.type" placeholder="请选择数据源类型">
-            <el-option v-for="type in dsTypeList" :label="type.name" :value="type.name"></el-option>
+          <el-select v-model="dsForm.type" placeholder="请选择数据源类型" @change="onTypeChange">
+            <el-option v-for="(_ , type) in dsTypeList" :label="type" :value="type"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="主机名/IP" prop="host">
           <el-input v-model="dsForm.config.host" placeholder="请输入主机名或IP地址"></el-input>
         </el-form-item>
         <el-form-item label="端口号" prop="port">
-          <el-input v-model="dsForm.config.port"  placeholder="请输入端口号"></el-input>
-        </el-form-item>
-        <el-form-item label="数据库名" prop="database">
-          <el-input v-model="dsForm.config.database"  placeholder="请输入数据库名"></el-input>
+          <el-input v-model="dsForm.config.port" placeholder="请输入端口号"></el-input>
         </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="dsForm.config.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="dsForm.config.password" placeholder="请输入密码" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="数据库名" prop="database">
+          <el-input v-model="dsForm.config.database" placeholder="请输入数据库名"></el-input>
+        </el-form-item>
+        <el-form-item label="连接方式" prop="connectionType" v-if="showSchemaForm && dsForm.type==='Oracle'">
+          <el-radio v-model="dsForm.config.connectionType" label="sid">SID</el-radio>
+          <el-radio v-model="dsForm.config.connectionType" label="serviceName">ServiceName</el-radio>
+        </el-form-item>
+        <el-form-item label="Schema" prop="schema" v-if="showSchemaForm">
+          <el-select v-model="dsForm.config.schema" placeholder="请选择Schema">
+            <el-option v-for="schema in schemaList" :label="schema" :value="schema"></el-option>
+          </el-select>
+          <el-button class="ml-10" type="text" size="mini" @click="loadSchema">获取Schema</el-button>
         </el-form-item>
         <el-form-item label="JDBC参数" prop="jdbc">
           <el-input v-model="dsForm.config.jdbc" placeholder="额外的JDBC连接字符串"></el-input>
@@ -105,7 +115,7 @@
 </template>
 
 <script>
-import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink} from "@/api/datasource"
+import {createDs, listDs, listDsType, modifyDs, removeDs, testDsLink, listSchema} from "@/api/datasource"
 
 export default {
   name: "Datasource",
@@ -126,8 +136,10 @@ export default {
       // Dialog
       dialogFormVisible: false,
       dialogViewVisible: false,
+      showSchemaForm: false,
       saveMode: 0,
-      dsTypeList: [],
+      dsTypeList: {},
+      schemaList: {},
       dsForm: {
         id: "",
         name: "",
@@ -139,7 +151,9 @@ export default {
           username: "",
           password: "",
           database: "",
-          jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true"
+          jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true",
+          schema: "",
+          connectionType: "",
         }
       },
       dsFormRules: {
@@ -194,9 +208,7 @@ export default {
     loadDsType() {
       listDsType().then(res => {
         if (res.success) {
-          res.data.forEach(type => {
-            this.dsTypeList.push({name: type})
-          })
+          this.dsTypeList = res.data
         } else {
           this.$message.error("数据源类型获取失败：" + res.errMessage)
         }
@@ -233,12 +245,32 @@ export default {
     // CRUD
     handleCreate() {
       this.dsForm = {config: {jdbc: "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true"}}
+      this.schemaList = {}
       this.saveMode = 0
+      this.showSchemaForm = false
       this.dialogFormVisible = true
+    },
+    onTypeChange() {
+      this.showSchemaForm = this.dsForm.type in this.dsTypeList && this.dsTypeList[this.dsForm.type];
+    },
+    loadSchema() {
+      listSchema(this.dsForm).then(res => {
+        if (res.success) {
+          this.schemaList = res.data
+          this.$message.success("获取成功！")
+        } else {
+          this.$message.error(res.errMessage)
+        }
+      }).catch((err) => {
+        this.$message.error("获取失败！")
+        console.error(err)
+      })
     },
     handleModify(row) {
       this.dsForm = Object.assign({}, row) // 将row拷贝到空对象中，防止没点确定前数据改变
+      this.schemaList = {}
       this.saveMode = 1
+      this.showSchemaForm = this.dsForm.type in this.dsTypeList && this.dsTypeList[this.dsForm.type];
       this.dialogFormVisible = true
     },
     handleSave() {

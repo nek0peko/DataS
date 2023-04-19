@@ -5,14 +5,14 @@ import lombok.Getter;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.exception.BusinessException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 支持的数据源类型
  *
  * @author nek0peko
- * @date 2023/04/18
+ * @date 2023/04/19
  */
 @Getter
 @AllArgsConstructor
@@ -48,10 +48,10 @@ public enum DatasourceTypeEnum {
         throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_UNSUPPORTED);
     }
 
-    public static List<String> listType() {
-        final List<String> types = new ArrayList<>();
+    public static Map<String, Boolean> listType() {
+        final Map<String, Boolean> types = new HashMap<>();
         for (final DatasourceTypeEnum supportedType : DatasourceTypeEnum.values()) {
-            types.add(supportedType.getType());
+            types.put(supportedType.getType(), supportedType.isSupportSchema());
         }
         return types;
     }

@@ -21,13 +21,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * 数据源管理
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/19
  */
 @Api(tags = "数据源管理")
 @ApiSort(0)
@@ -80,7 +81,7 @@ public class DatasourceController {
     @ApiOperationSupport(author = "nek0peko", order = 6)
     @ApiOperation(value = "查询数据源类型列表")
     @PostMapping(value = "/list-type")
-    public SingleResponse<List<String>> listType() {
+    public SingleResponse<Map<String, Boolean>> listType() {
         return datasourceService.listType();
     }
 
