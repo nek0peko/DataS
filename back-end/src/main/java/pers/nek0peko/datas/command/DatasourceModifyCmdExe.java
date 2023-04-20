@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  * 修改数据源
  *
  * @author nek0peko
- * @date 2023/04/07
+ * @date 2023/04/20
  */
 @Component
 public class DatasourceModifyCmdExe {
@@ -30,11 +30,10 @@ public class DatasourceModifyCmdExe {
 
     @Transactional(rollbackFor = Exception.class)
     public Response execute(DatasourceModifyCmd cmd) {
-        final DatasourceDTO datasource = datasourceGateway.getById(cmd.getId());
-
-        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
+        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(cmd.getType());
         cmd.setConfig(service.validateAndFilterConfig(cmd.getConfig()));
 
+        final DatasourceDTO datasource = datasourceGateway.getById(cmd.getId());
         BeanUtil.copyProperties(cmd, datasource, CopyOptions.create().ignoreNullValue());
         try {
             datasourceGateway.save(datasource);

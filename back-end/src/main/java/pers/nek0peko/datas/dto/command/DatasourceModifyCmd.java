@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * 修改数据源
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2023/04/20
  */
 @ApiModel
 @Data
@@ -30,11 +30,15 @@ public class DatasourceModifyCmd extends BaseCommand {
     @NotBlank(message = "数据源名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "描述：长度不超过50", position = 2, allowEmptyValue = true)
+    @ApiModelProperty(value = "类型", required = true, position = 2, allowableValues = "MySQL, Oracle, Postgres")
+    @NotBlank(message = "数据源类型不能为空")
+    private String type;
+
+    @ApiModelProperty(value = "描述：长度不超过50", position = 3, allowEmptyValue = true)
     @Length(max = 50, message = "描述长度应不超过50")
     private String description;
 
-    @ApiModelProperty(value = "配置", required = true, position = 3)
+    @ApiModelProperty(value = "配置", required = true, position = 4)
     @NotNull(message = "数据源配置不能为空")
     private JSONObject config;
 
