@@ -68,16 +68,30 @@
 
       <!-- 柱状图或折线图 -->
       <el-form class="create-dialog-form-2" label-width="100px"
-               ref="barLineForm" :model="barLineForm" :rules="barLineFormRule">
-        <el-form-item label="横轴列" prop="axisX"
-                      v-if="step===2 && (createForm.type==='bar' || createForm.type==='line')">
+               ref="barLineForm" :model="barLineForm" :rules="barLineFormRule"
+               v-if="step===2 && (createForm.type==='bar' || createForm.type==='line')">
+        <el-form-item label="横轴列" prop="axisX">
           <el-select v-model="barLineForm.axisX" placeholder="请选择数据列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="纵轴列" prop="columns"
-                      v-if="step===2 && (createForm.type==='bar' || createForm.type==='line')">
+        <el-form-item label="纵轴列" prop="columns">
           <el-select v-model="barLineForm.columns" multiple placeholder="请选择一个或多个数据列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <!-- 饼图 -->
+      <el-form class="create-dialog-form-2" label-width="100px" ref="pieForm" :model="pieForm" :rules="pieFormRule"
+               v-if="step===2 && createForm.type==='pie'">
+        <el-form-item label="类别列" prop="typeColumn">
+          <el-select v-model="pieForm.typeColumn" placeholder="请选择类别列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数值列" prop="valueColumn">
+          <el-select v-model="pieForm.valueColumn" placeholder="请选择数值列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
@@ -149,9 +163,17 @@ export default {
         axisX: "",
         columns: []
       },
+      pieForm: {
+        typeColumn: "",
+        valueColumn: ""
+      },
       barLineFormRule: {
         axisX: [{required: true, message: '请选择横轴', trigger: 'change'}],
         columns: [{required: true, message: '请至少选择一个作为纵轴', trigger: 'change'}]
+      },
+      pieFormRule: {
+        typeColumn: [{required: true, message: '请选择类别列', trigger: 'change'}],
+        valueColumn: [{required: true, message: '请选择数值列', trigger: 'change'}]
       },
 
       chartPreview: {},
@@ -466,6 +488,11 @@ export default {
         this.$refs['barLineForm'].validate((valid) => {
           callback(valid.valueOf())
         })
+      } else if (this.createForm.type === 'pie') {
+        this.createForm.config = this.pieForm
+        this.$refs['pieForm'].validate((valid) => {
+          callback(valid.valueOf())
+        })
       }
     },
   }
@@ -517,7 +544,6 @@ export default {
   width: 100%;
   height: 100%;
   margin: 0 auto
-  /* background-color: #cccccc */
 }
 
 .chart-main {
