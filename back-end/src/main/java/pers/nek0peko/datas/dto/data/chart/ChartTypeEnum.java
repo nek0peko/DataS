@@ -25,6 +25,7 @@ public enum ChartTypeEnum {
     BAR("bar", "柱状图"),
     LINE("line", "折线图"),
     PIE("pie", "饼图"),
+    SCATTER("scatter", "散点图"),
     ;
 
     private final String type;
