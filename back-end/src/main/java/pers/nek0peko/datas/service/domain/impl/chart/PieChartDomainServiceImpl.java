@@ -8,15 +8,12 @@ import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
 import pers.nek0peko.datas.dto.data.chart.config.PieConfigDTO;
 import pers.nek0peko.datas.dto.data.chart.option.PieOptionDTO;
-import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.factory.DatasourceDomainServiceFactory;
-import pers.nek0peko.datas.gateway.DatasourceGateway;
 import pers.nek0peko.datas.service.domain.ChartDomainServiceI;
 import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -30,22 +27,18 @@ import java.util.concurrent.CompletionException;
 @Service("pie")
 public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigDTO> {
 
-    @Resource
-    private transient DatasourceGateway datasourceGateway;
-
     @Override
-    public PieOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson) {
+    public PieOptionDTO loadDataToOption(String dsType, JSONObject dsConfig, String tableName, JSONObject configJson) {
         final PieConfigDTO config = configJson.toJavaObject(PieConfigDTO.class);
         if (StringUtils.isEmpty(config.getTypeColumn()) || StringUtils.isEmpty(config.getValueColumn())) {
             throw new BusinessException(BusinessErrorEnum.B_CHART_INVALID_CONFIG);
         }
 
-        final DatasourceDTO datasource = datasourceGateway.getById(datasourceId);
-        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
+        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(dsType);
 
         final CompletableFuture<List<String>> typesFuture = CompletableFuture.supplyAsync(() -> {
             final DatasourceResultHolder typesResultHolder = service.queryColumnGroupBy(
-                    datasource.getConfig(), tableName, config.getTypeColumn(), config.getTypeColumn());
+                    dsConfig, tableName, config.getTypeColumn(), config.getTypeColumn());
             if (typesResultHolder.isSuccess()) {
                 return (List<String>) typesResultHolder.getData();
             } else {
@@ -55,7 +48,7 @@ public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigD
 
         final CompletableFuture<List<Integer>> valuesFuture = CompletableFuture.supplyAsync(() -> {
             final DatasourceResultHolder valuesResultHolder = service.queryColumnSumGroupBy(
-                    datasource.getConfig(), tableName, config.getValueColumn(), config.getTypeColumn());
+                    dsConfig, tableName, config.getValueColumn(), config.getTypeColumn());
             if (valuesResultHolder.isSuccess()) {
                 return (List<Integer>) valuesResultHolder.getData();
             } else {

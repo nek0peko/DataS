@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * ChartViewDTO
  *
  * @author nek0peko
- * @date 2023/03/21
+ * @date 2023/04/20
  */
 @ApiModel
 @Builder
@@ -32,9 +32,34 @@ public class ChartViewDTO extends BaseDTO {
     private String name;
 
     /**
+     * 描述
+     */
+    private String description;
+
+    /**
+     * 数据源名
+     */
+    private String datasourceName;
+
+    /**
+     * 数据源类型
+     */
+    private String datasourceType;
+
+    /**
+     * 数据表名
+     */
+    private String tableName;
+
+    /**
      * 视图详情
      */
     private ChartOptionDTO option;
+
+    /**
+     * 创建者
+     */
+    private String creator;
 
     /**
      * 创建时间

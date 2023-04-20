@@ -42,34 +42,34 @@
       </el-steps>
 
       <el-form class="create-dialog-form-1" label-width="100px" v-loading="createDialogLoad"
-               ref="createForm" :model="createForm" :rules="createFormRule">
+               ref="chartForm" :model="chartForm" :rules="chartFormRule">
         <el-form-item label="图表类型" prop="type" v-if="step===0">
-          <el-select v-model="createForm.type" placeholder="请选择图表类型">
+          <el-select v-model="chartForm.type" placeholder="请选择图表类型">
             <el-option v-for="item in chartTypeList" :label="item.name" :value="item.type"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="数据源" prop="datasourceId" v-if="step===0">
-          <el-select v-model="createForm.datasourceId" placeholder="请选择数据源">
+          <el-select v-model="chartForm.datasourceId" placeholder="请选择数据源">
             <el-option v-for="item in datasourceList" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="数据表" prop="tableName" v-if="step===1">
-          <el-select v-model="createForm.tableName" placeholder="请选择数据表">
+          <el-select v-model="chartForm.tableName" placeholder="请选择数据表">
             <el-option v-for="name in tableList" :label="name" :value="name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="图表名称" prop="name" v-if="step===2">
-          <el-input style="width: 90%" v-model="createForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
+          <el-input style="width: 90%" v-model="chartForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="description" v-if="step===2">
-          <el-input style="width: 90%" v-model="createForm.description" type="textarea"></el-input>
+          <el-input style="width: 90%" v-model="chartForm.description" type="textarea"></el-input>
         </el-form-item>
       </el-form>
 
       <!-- 柱状图、折线图、散点图 -->
       <el-form class="create-dialog-form-2" label-width="100px"
                ref="barLineScatterForm" :model="barLineScatterForm" :rules="barLineScatterFormRule"
-               v-if="step===2 && (createForm.type==='bar' || createForm.type==='line' || createForm.type==='scatter')">
+               v-if="step===2 && (chartForm.type==='bar' || chartForm.type==='line' || chartForm.type==='scatter')">
         <el-form-item label="横轴列" prop="axisX">
           <el-select v-model="barLineScatterForm.axisX" placeholder="请选择数据列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
@@ -89,7 +89,7 @@
       <!-- 饼图、漏斗图 -->
       <el-form class="create-dialog-form-2" label-width="100px"
                ref="pieFunnelForm" :model="pieFunnelForm" :rules="pieFunnelFormRule"
-               v-if="step===2 && (createForm.type==='pie' || createForm.type==='funnel')">
+               v-if="step===2 && (chartForm.type==='pie' || chartForm.type==='funnel')">
         <el-form-item label="类别列" prop="typeColumn">
           <el-select v-model="pieFunnelForm.typeColumn" placeholder="请选择类别列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
@@ -122,9 +122,24 @@
       </el-row>
     </el-dialog>
 
-    <el-dialog title="图表详情" width="50%" :visible.sync="detailDialogVisible"></el-dialog>
+    <el-dialog title="图表详情" width="40%" :visible.sync="detailDialogVisible">
+      <el-descriptions size="small" :column="1" border>
+        <el-descriptions-item label="ID">{{ chartList[detailIndex].id }}</el-descriptions-item>
+        <el-descriptions-item label="名称">{{ chartList[detailIndex].name }}</el-descriptions-item>
+        <el-descriptions-item label="描述">{{ chartList[detailIndex].description }}</el-descriptions-item>
+        <el-descriptions-item label="数据源类型">{{ chartList[detailIndex].datasourceType}}</el-descriptions-item>
+        <el-descriptions-item label="数据源名">{{ chartList[detailIndex].datasourceName }}</el-descriptions-item>
+        <el-descriptions-item label="数据表名">{{ chartList[detailIndex].tableName }}</el-descriptions-item>
+        <el-descriptions-item label="图表配置">{{ chartList[detailIndex].option }}</el-descriptions-item>
+        <el-descriptions-item label="创建者">{{ chartList[detailIndex].creator }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ chartList[detailIndex].createTime }}</el-descriptions-item>
+        <el-descriptions-item label="修改时间">{{ chartList[detailIndex].updateTime }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
 
-    <el-dialog title="编辑图表" width="35%" :visible.sync="modifyDialogVisible"></el-dialog>
+    <el-dialog title="编辑图表" width="35%" :visible.sync="modifyDialogVisible">
+      
+    </el-dialog>
   </div>
 </template>
 
@@ -146,11 +161,12 @@ export default {
       createDialogVisible: false,
       createDialogLoad: true,
       previewChartVisible: false,
-      detailDialogVisible: false,
       modifyDialogVisible: false,
+      detailDialogVisible: false,
+      detailIndex: 0,
       chartListLoad: true,
 
-      createForm: {
+      chartForm: {
         name: "",
         type: "",
         description: "",
@@ -158,7 +174,7 @@ export default {
         tableName: "",
         config: {}
       },
-      createFormRule: {
+      chartFormRule: {
         name: [
           {required: true, message: '请输入图表名称', trigger: 'blur'},
           {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
@@ -190,7 +206,20 @@ export default {
       },
 
       chartPreview: {},
-      chartList: [],
+      chartList: [
+        {
+          id: "",
+          name: "",
+          description: "",
+          datasourceName: "",
+          datasourceType: "",
+          tableName: "",
+          option: {},
+          creator: "",
+          createTime: "",
+          updateTime: ""
+        }
+      ],
       chartTypeList: [],
       datasourceList: [],
       tableList: [],
@@ -311,6 +340,7 @@ export default {
 
     // Button
     viewChart(index) {
+      this.detailIndex = index
       this.detailDialogVisible = true
     },
     editChart(index) {
@@ -359,7 +389,7 @@ export default {
     handleCreate() {
       this.clearPreview()
       this.step = 0
-      this.createForm = {}
+      this.chartForm = {}
       this.createDialogLoad = true
       this.createDialogVisible = true
 
@@ -384,7 +414,7 @@ export default {
     },
     handlePrev() {
       if (this.step === 1) {
-        this.createForm.tableName = ""
+        this.chartForm.tableName = ""
       }
       if (this.step === 2) {
         this.clearPreview()
@@ -394,10 +424,10 @@ export default {
       }
     },
     handleNextOne() {
-      this.$refs['createForm'].validate((valid) => {
+      this.$refs['chartForm'].validate((valid) => {
         if (valid) {
           this.buttonLoad = true
-          listDsTable(this.createForm.datasourceId).then(res => {
+          listDsTable(this.chartForm.datasourceId).then(res => {
             if (res.success) {
               this.tableList = res.data
               this.step = 1
@@ -415,10 +445,10 @@ export default {
     handleNextTwo() {
       this.clearForm()
       this.clearPreview()
-      this.$refs['createForm'].validate((valid) => {
+      this.$refs['chartForm'].validate((valid) => {
         if (valid) {
           this.buttonLoad = true
-          listDsColumn({id: this.createForm.datasourceId, tableName: this.createForm.tableName})
+          listDsColumn({id: this.chartForm.datasourceId, tableName: this.chartForm.tableName})
               .then(res => {
                 if (res.success) {
                   this.columnList = res.data
@@ -438,7 +468,7 @@ export default {
       this.clearPreview()
       this.loadAndValidateConfig((isValid) => {
         if (isValid) {
-          previewChart(this.createForm).then(res => {
+          previewChart(this.chartForm).then(res => {
             if (res.success) {
               this.previewChartVisible = true
               this.$nextTick(() => {
@@ -456,12 +486,12 @@ export default {
       })
     },
     handleCreateSubmit() {
-      this.$refs['createForm'].validate((valid) => {
+      this.$refs['chartForm'].validate((valid) => {
         if (valid) {
           this.buttonLoad = true
           this.loadAndValidateConfig((isValid) => {
             if (isValid) {
-              createChart(this.createForm).then(res => {
+              createChart(this.chartForm).then(res => {
                 if (res.success) {
                   this.createDialogVisible = false
                   this.$message.success("保存成功！")
@@ -475,16 +505,16 @@ export default {
               })
             }
           })
-          this.createForm.config = {}
+          this.chartForm.config = {}
           this.buttonLoad = false
         }
       })
     },
     clearForm() {
-      if (this.createForm.type === "bar" || this.createForm.type === "line" || this.createForm.type === "scatter") {
+      if (this.chartForm.type === "bar" || this.chartForm.type === "line" || this.chartForm.type === "scatter") {
         this.barLineScatterForm = {}
       }
-      if (this.createForm.type === "pie" || this.createForm.type === "funnel") {
+      if (this.chartForm.type === "pie" || this.chartForm.type === "funnel") {
         this.pieFunnelForm = {}
       }
     },
@@ -499,13 +529,13 @@ export default {
       }
     },
     loadAndValidateConfig(callback) {
-      if (this.createForm.type === "bar" || this.createForm.type === "line" || this.createForm.type === "scatter") {
-        this.createForm.config = this.barLineScatterForm
+      if (this.chartForm.type === "bar" || this.chartForm.type === "line" || this.chartForm.type === "scatter") {
+        this.chartForm.config = this.barLineScatterForm
         this.$refs['barLineScatterForm'].validate((valid) => {
           callback(valid.valueOf())
         })
-      } else if (this.createForm.type === 'pie' || this.createForm.type === 'funnel') {
-        this.createForm.config = this.pieFunnelForm
+      } else if (this.chartForm.type === 'pie' || this.chartForm.type === 'funnel') {
+        this.chartForm.config = this.pieFunnelForm
         this.$refs['pieFunnelForm'].validate((valid) => {
           callback(valid.valueOf())
         })

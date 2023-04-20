@@ -18,19 +18,20 @@ import java.util.Set;
  * ChartDomainServiceI
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/20
  */
 public interface ChartDomainServiceI<T extends ChartConfigDTO> {
 
     /**
      * 从数据源中查询得到绘制图表所需数据
      *
-     * @param datasourceId 数据源ID
+     * @param dsType 数据源类型
+     * @param dsConfig 数据源JSON配置
      * @param tableName 数据表名
      * @param configJson 图表JSON配置
      * @return 包含数据的图表配置
      */
-    ChartOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson);
+    ChartOptionDTO loadDataToOption(String dsType, JSONObject dsConfig, String tableName, JSONObject configJson);
 
     /**
      * 校验和过滤图表配置

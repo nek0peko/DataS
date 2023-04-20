@@ -8,15 +8,12 @@ import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
 import pers.nek0peko.datas.dto.data.chart.config.BarConfigDTO;
 import pers.nek0peko.datas.dto.data.chart.option.BarOptionDTO;
-import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.factory.DatasourceDomainServiceFactory;
-import pers.nek0peko.datas.gateway.DatasourceGateway;
 import pers.nek0peko.datas.service.domain.ChartDomainServiceI;
 import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -31,23 +28,19 @@ import java.util.stream.Collectors;
 @Service("bar")
 public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigDTO> {
 
-    @Resource
-    private transient DatasourceGateway datasourceGateway;
-
     @Override
-    public BarOptionDTO loadDataToOption(Long datasourceId, String tableName, JSONObject configJson) {
+    public BarOptionDTO loadDataToOption(String dsType, JSONObject dsConfig, String tableName, JSONObject configJson) {
         final BarConfigDTO config = configJson.toJavaObject(BarConfigDTO.class);
         if (CollectionUtils.isEmpty(config.getColumns()) || StringUtils.isEmpty(config.getAxisX())) {
             throw new BusinessException(BusinessErrorEnum.B_CHART_INVALID_CONFIG);
         }
 
-        final DatasourceDTO datasource = datasourceGateway.getById(datasourceId);
-        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(datasource.getType());
+        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(dsType);
 
         final CompletableFuture<List<BarOptionDTO.Series>> seriesFuture = CompletableFuture.supplyAsync(() ->
                 config.getColumns().parallelStream().map(column -> {
                             final DatasourceResultHolder columnResultHolder = service.queryColumnSumGroupBy(
-                                    datasource.getConfig(), tableName, column, config.getAxisX());
+                                    dsConfig, tableName, column, config.getAxisX());
                             if (columnResultHolder.isSuccess()) {
                                 try {
                                     return BarOptionDTO.Series.builder()
@@ -68,7 +61,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
 
         final CompletableFuture<BarOptionDTO.AxisX> xAxisFuture = CompletableFuture.supplyAsync(() -> {
             final DatasourceResultHolder xAxisResultHolder = service.queryColumnGroupBy(
-                    datasource.getConfig(), tableName, config.getAxisX(), config.getAxisX());
+                    dsConfig, tableName, config.getAxisX(), config.getAxisX());
             if (xAxisResultHolder.isSuccess()) {
                 return BarOptionDTO.AxisX.builder().data((List<String>) xAxisResultHolder.getData()).build();
             } else {

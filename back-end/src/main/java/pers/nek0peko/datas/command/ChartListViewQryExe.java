@@ -6,10 +6,12 @@ import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartDTO;
 import pers.nek0peko.datas.dto.data.chart.ChartTypeEnum;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
+import pers.nek0peko.datas.dto.data.datasource.DatasourceDTO;
 import pers.nek0peko.datas.dto.response.SingleResponse;
 import pers.nek0peko.datas.exception.BusinessException;
 import pers.nek0peko.datas.factory.ChartDomainServiceFactory;
 import pers.nek0peko.datas.gateway.ChartGateway;
+import pers.nek0peko.datas.gateway.DatasourceGateway;
 import pers.nek0peko.datas.service.domain.ChartDomainServiceI;
 
 import javax.annotation.Resource;
@@ -22,13 +24,16 @@ import java.util.stream.Collectors;
  * 获取图表绘制信息
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/20
  */
 @Component
 public class ChartListViewQryExe {
 
     @Resource
-    private transient ChartGateway gateway;
+    private transient ChartGateway chartGateway;
+
+    @Resource
+    private transient DatasourceGateway datasourceGateway;
 
     public SingleResponse<List<ChartViewDTO>> execute(List<String> types) {
         if (CollectionUtils.isEmpty(types)) {
@@ -38,7 +43,7 @@ public class ChartListViewQryExe {
             throw new BusinessException(BusinessErrorEnum.B_CHART_UNSUPPORTED);
         }
 
-        final List<ChartDTO> chartDtos = gateway.list(types);
+        final List<ChartDTO> chartDtos = chartGateway.list(types);
         if (CollectionUtils.isEmpty(chartDtos)) {
             return SingleResponse.of(Collections.emptyList());
         }
@@ -46,18 +51,25 @@ public class ChartListViewQryExe {
         // 并发调高处理效率
         final List<ChartViewDTO> chartViewDtos = chartDtos.parallelStream()
                 .map(chartDTO -> {
+                    final DatasourceDTO datasourceDTO = datasourceGateway.getById(chartDTO.getDatasourceId());
                     final ChartViewDTO chartViewDTO = ChartViewDTO.builder()
                             .id(chartDTO.getId())
                             .name(chartDTO.getName())
+                            .description(chartDTO.getDescription())
+                            .datasourceName(datasourceDTO.getName())
+                            .datasourceType(datasourceDTO.getType())
+                            .tableName(chartDTO.getTableName())
+                            .creator(chartDTO.getCreator())
                             .createTime(chartDTO.getCreateTime())
                             .updateTime(chartDTO.getUpdateTime())
                             .build();
                     final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
                     try {
                         chartViewDTO.setOption(service.loadDataToOption(
-                                        chartDTO.getDatasourceId(),
-                                        chartDTO.getTableName(),
-                                        service.validateAndFilterConfig(chartDTO.getConfig())));
+                                datasourceDTO.getType(),
+                                datasourceDTO.getConfig(),
+                                chartDTO.getTableName(),
+                                service.validateAndFilterConfig(chartDTO.getConfig())));
                     } catch (Exception ignored) {
                         // 返回一个不带Option的DTO，前端显示空白图表
                     }
