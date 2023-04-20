@@ -39,6 +39,13 @@ public class FunnelOptionDTO extends ChartOptionDTO {
     @Builder
     @Data
     public static class Legend {
+
+        private String orient;
+
+        private String left;
+
+        private String top;
+
     }
 
     @ApiModel

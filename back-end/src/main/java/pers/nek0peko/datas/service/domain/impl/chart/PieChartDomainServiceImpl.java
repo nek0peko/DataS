@@ -86,10 +86,7 @@ public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigD
                         .type(ChartTypeEnum.PIE.getType())
                         .data(data)
                         .build()))
-                .legend(PieOptionDTO.Legend.builder()
-                        .orient("vertical")
-                        .left("left")
-                        .build())
+                .legend(PieOptionDTO.Legend.builder().orient("vertical").left("left").build())
                 .tooltip(PieOptionDTO.Tooltip.builder().trigger("item").build())
                 .build();
     }
