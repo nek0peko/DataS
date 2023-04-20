@@ -86,7 +86,7 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
                 .series(seriesFuture.join())
                 .axisX(xAxisFuture.join())
                 .axisY(LineOptionDTO.AxisY.builder().build())
-                .legend(LineOptionDTO.Legend.builder().left("5%").build())
+                .legend(config.getNeedLegend() ? LineOptionDTO.Legend.builder().left("5%").build() : null)
                 .tooltip(LineOptionDTO.Tooltip.builder()
                         .trigger("axis")
                         .axisPointer(LineOptionDTO.Tooltip.AxisPointer.builder().type("cross").build())

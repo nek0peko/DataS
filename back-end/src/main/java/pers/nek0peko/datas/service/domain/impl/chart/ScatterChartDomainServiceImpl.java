@@ -86,7 +86,7 @@ public class ScatterChartDomainServiceImpl implements ChartDomainServiceI<Scatte
                 .series(seriesFuture.join())
                 .axisX(xAxisFuture.join())
                 .axisY(ScatterOptionDTO.AxisY.builder().build())
-                .legend(ScatterOptionDTO.Legend.builder().left("5%").build())
+                .legend(config.getNeedLegend() ? ScatterOptionDTO.Legend.builder().left("5%").build() : null)
                 .tooltip(ScatterOptionDTO.Tooltip.builder()
                         .trigger("item")
                         .axisPointer(ScatterOptionDTO.Tooltip.AxisPointer.builder().type("cross").build())

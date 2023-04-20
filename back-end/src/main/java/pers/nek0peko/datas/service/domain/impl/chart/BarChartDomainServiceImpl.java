@@ -86,7 +86,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
                 .series(seriesFuture.join())
                 .axisX(xAxisFuture.join())
                 .axisY(BarOptionDTO.AxisY.builder().build())
-                .legend(BarOptionDTO.Legend.builder().left("5%").build())
+                .legend(config.getNeedLegend() ? BarOptionDTO.Legend.builder().left("5%").build() : null)
                 .tooltip(BarOptionDTO.Tooltip.builder()
                         .trigger("axis")
                         .axisPointer(BarOptionDTO.Tooltip.AxisPointer.builder().type("shadow").build())

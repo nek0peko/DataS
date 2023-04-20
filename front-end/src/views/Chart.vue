@@ -80,6 +80,10 @@
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="图例" prop="needLegend">
+          <el-radio v-model="barLineScatterForm.needLegend" label=true>开启</el-radio>
+          <el-radio v-model="barLineScatterForm.needLegend" label=false>关闭</el-radio>
+        </el-form-item>
       </el-form>
 
       <!-- 饼图、漏斗图 -->
@@ -95,6 +99,10 @@
           <el-select v-model="pieFunnelForm.valueColumn" placeholder="请选择数值列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="图例" prop="needLegend">
+          <el-radio v-model="pieFunnelForm.needLegend" label=true>开启</el-radio>
+          <el-radio v-model="pieFunnelForm.needLegend" label=false>关闭</el-radio>
         </el-form-item>
       </el-form>
 
@@ -162,19 +170,23 @@ export default {
       },
       barLineScatterForm: {
         axisX: "",
-        columns: []
+        columns: [],
+        needLegend: false
       },
       pieFunnelForm: {
         typeColumn: "",
-        valueColumn: ""
+        valueColumn: "",
+        needLegend: false
       },
       barLineScatterFormRule: {
         axisX: [{required: true, message: '请选择横轴', trigger: 'change'}],
-        columns: [{required: true, message: '请至少选择一个作为纵轴', trigger: 'change'}]
+        columns: [{required: true, message: '请至少选择一个作为纵轴', trigger: 'change'}],
+        needLegend: [{required: true, message: '请选择是否需要图例', trigger: 'blur'}]
       },
       pieFunnelFormRule: {
         typeColumn: [{required: true, message: '请选择类别列', trigger: 'change'}],
-        valueColumn: [{required: true, message: '请选择数值列', trigger: 'change'}]
+        valueColumn: [{required: true, message: '请选择数值列', trigger: 'change'}],
+        needLegend: [{required: true, message: '请选择是否需要图例', trigger: 'blur'}]
       },
 
       chartPreview: {},

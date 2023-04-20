@@ -24,4 +24,7 @@ public class PieConfigDTO extends ChartConfigDTO {
     @ApiModelProperty(value = "类别列名", position = 2, required = true)
     private String typeColumn;
 
+    @ApiModelProperty(value = "是否需要图例", position = 3, required = true)
+    private Boolean needLegend;
+
 }

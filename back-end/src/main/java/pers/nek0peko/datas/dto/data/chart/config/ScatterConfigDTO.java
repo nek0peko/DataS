@@ -26,4 +26,7 @@ public class ScatterConfigDTO extends ChartConfigDTO {
     @ApiModelProperty(value = "数据列名", position = 2, required = true)
     private List<String> columns;
 
+    @ApiModelProperty(value = "是否需要图例", position = 3, required = true)
+    private Boolean needLegend;
+
 }
