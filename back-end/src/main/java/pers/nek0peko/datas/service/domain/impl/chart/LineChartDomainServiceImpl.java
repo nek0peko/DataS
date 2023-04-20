@@ -54,6 +54,7 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
                                             .data(((List<String>) columnResultHolder.getData()).stream()
                                                     .map(Integer::parseInt)
                                                     .collect(Collectors.toList()))
+                                            .name(column)
                                             .type(ChartTypeEnum.LINE.getType())
                                             .build();
                                 } catch (NumberFormatException e) {
@@ -85,6 +86,11 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
                 .series(seriesFuture.join())
                 .axisX(xAxisFuture.join())
                 .axisY(LineOptionDTO.AxisY.builder().build())
+                .legend(LineOptionDTO.Legend.builder().left("5%").build())
+                .tooltip(LineOptionDTO.Tooltip.builder()
+                        .trigger("axis")
+                        .axisPointer(LineOptionDTO.Tooltip.AxisPointer.builder().type("cross").build())
+                        .build())
                 .build();
     }
 

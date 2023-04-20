@@ -87,6 +87,7 @@ public class FunnelChartDomainServiceImpl implements ChartDomainServiceI<FunnelC
                                 .data(data)
                                 .build()))
                 .legend(FunnelOptionDTO.Legend.builder().build())
+                .tooltip(FunnelOptionDTO.Tooltip.builder().trigger("item").build())
                 .build();
     }
 

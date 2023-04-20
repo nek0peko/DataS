@@ -54,6 +54,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
                                             .data(((List<String>) columnResultHolder.getData()).stream()
                                                     .map(Integer::parseInt)
                                                     .collect(Collectors.toList()))
+                                            .name(column)
                                             .type(ChartTypeEnum.BAR.getType())
                                             .build();
                                 } catch (NumberFormatException e) {
@@ -85,6 +86,11 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
                 .series(seriesFuture.join())
                 .axisX(xAxisFuture.join())
                 .axisY(BarOptionDTO.AxisY.builder().build())
+                .legend(BarOptionDTO.Legend.builder().left("5%").build())
+                .tooltip(BarOptionDTO.Tooltip.builder()
+                        .trigger("axis")
+                        .axisPointer(BarOptionDTO.Tooltip.AxisPointer.builder().type("shadow").build())
+                        .build())
                 .build();
     }
 

@@ -90,6 +90,7 @@ public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigD
                         .orient("vertical")
                         .left("left")
                         .build())
+                .tooltip(PieOptionDTO.Tooltip.builder().trigger("item").build())
                 .build();
     }
 

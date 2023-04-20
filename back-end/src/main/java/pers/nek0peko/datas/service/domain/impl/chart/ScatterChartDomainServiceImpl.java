@@ -54,6 +54,7 @@ public class ScatterChartDomainServiceImpl implements ChartDomainServiceI<Scatte
                                             .data(((List<String>) columnResultHolder.getData()).stream()
                                                     .map(Integer::parseInt)
                                                     .collect(Collectors.toList()))
+                                            .name(column)
                                             .type(ChartTypeEnum.SCATTER.getType())
                                             .build();
                                 } catch (NumberFormatException e) {
@@ -85,6 +86,11 @@ public class ScatterChartDomainServiceImpl implements ChartDomainServiceI<Scatte
                 .series(seriesFuture.join())
                 .axisX(xAxisFuture.join())
                 .axisY(ScatterOptionDTO.AxisY.builder().build())
+                .legend(ScatterOptionDTO.Legend.builder().left("5%").build())
+                .tooltip(ScatterOptionDTO.Tooltip.builder()
+                        .trigger("item")
+                        .axisPointer(ScatterOptionDTO.Tooltip.AxisPointer.builder().type("cross").build())
+                        .build())
                 .build();
     }
 

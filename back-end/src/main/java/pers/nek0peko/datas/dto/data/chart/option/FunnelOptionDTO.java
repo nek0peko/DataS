@@ -22,6 +22,8 @@ public class FunnelOptionDTO extends ChartOptionDTO {
 
     private Legend legend;
 
+    private Tooltip tooltip;
+
     @ApiModel
     @Builder
     @Data
@@ -37,6 +39,15 @@ public class FunnelOptionDTO extends ChartOptionDTO {
     @Builder
     @Data
     public static class Legend {
+    }
+
+    @ApiModel
+    @Builder
+    @Data
+    public static class Tooltip {
+
+        private String trigger;
+
     }
 
 }

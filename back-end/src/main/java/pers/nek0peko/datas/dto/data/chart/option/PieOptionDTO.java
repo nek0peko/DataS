@@ -22,6 +22,8 @@ public class PieOptionDTO extends ChartOptionDTO {
 
     private Legend legend;
 
+    private Tooltip tooltip;
+
     @ApiModel
     @Builder
     @Data
@@ -41,6 +43,15 @@ public class PieOptionDTO extends ChartOptionDTO {
         private String orient;
 
         private String left;
+
+    }
+
+    @ApiModel
+    @Builder
+    @Data
+    public static class Tooltip {
+
+        private String trigger;
 
     }
 

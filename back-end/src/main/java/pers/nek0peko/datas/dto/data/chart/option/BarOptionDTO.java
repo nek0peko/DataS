@@ -26,6 +26,10 @@ public class BarOptionDTO extends ChartOptionDTO {
 
     private List<Series> series;
 
+    private Legend legend;
+
+    private Tooltip tooltip;
+
     @ApiModel
     @Builder
     @Data
@@ -48,7 +52,38 @@ public class BarOptionDTO extends ChartOptionDTO {
 
         private String type;
 
+        private String name;
+
         private List<Integer> data;
+
+    }
+
+    @ApiModel
+    @Builder
+    @Data
+    public static class Legend {
+
+        private String left;
+
+    }
+
+    @ApiModel
+    @Builder
+    @Data
+    public static class Tooltip {
+
+        private String trigger;
+
+        private AxisPointer axisPointer;
+
+        @ApiModel
+        @Builder
+        @Data
+        public static class AxisPointer {
+
+            private String type;
+
+        }
 
     }
 
