@@ -1,9 +1,11 @@
 package pers.nek0peko.datas.dto.data.chart;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import pers.nek0peko.datas.dto.BaseDTO;
+import pers.nek0peko.datas.dto.data.chart.config.ChartConfigDTO;
 import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
 
 import java.time.LocalDateTime;
@@ -32,9 +34,19 @@ public class ChartViewDTO extends BaseDTO {
     private String name;
 
     /**
+     * 图表类型
+     */
+    private String type;
+
+    /**
      * 描述
      */
     private String description;
+
+    /**
+     * 数据源ID
+     */
+    private Long datasourceId;
 
     /**
      * 数据源名
@@ -55,6 +67,11 @@ public class ChartViewDTO extends BaseDTO {
      * 视图详情
      */
     private ChartOptionDTO option;
+
+    /**
+     * 视图配置
+     */
+    private JSONObject config;
 
     /**
      * 创建者

@@ -31,6 +31,14 @@ export function createChart(data) {
     })
 }
 
+export function modifyChart(data) {
+    return request({
+        url: '/chart/modify',
+        method: 'post',
+        data
+    })
+}
+
 export function removeChart(id) {
     return request({
         url: '/chart/remove',

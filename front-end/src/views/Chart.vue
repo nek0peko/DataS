@@ -7,7 +7,7 @@
       </el-checkbox-group>
     </div>
 
-    <el-row class="chart-row" type="flex" justify="center" :gutter="50" v-loading="chartListLoad">
+    <el-row class="card-row" type="flex" justify="center" :gutter="50" v-loading="chartListLoad">
       <el-card class="card-create" shadow="hover">
         <el-button class="button-create" @click="handleCreate" circle>+</el-button>
       </el-card>
@@ -40,36 +40,34 @@
         <el-step title="步骤 2"></el-step>
         <el-step title="步骤 3"></el-step>
       </el-steps>
-
-      <el-form class="create-dialog-form-1" label-width="100px" v-loading="createDialogLoad"
-               ref="chartForm" :model="chartForm" :rules="chartFormRule">
+      <el-form class="mt-30" label-width="100px" v-loading="createDialogLoad"
+               ref="createForm" :model="createForm" :rules="createFormRule">
         <el-form-item label="图表类型" prop="type" v-if="step===0">
-          <el-select v-model="chartForm.type" placeholder="请选择图表类型">
+          <el-select v-model="createForm.type" placeholder="请选择图表类型">
             <el-option v-for="item in chartTypeList" :label="item.name" :value="item.type"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="数据源" prop="datasourceId" v-if="step===0">
-          <el-select v-model="chartForm.datasourceId" placeholder="请选择数据源">
+          <el-select v-model="createForm.datasourceId" placeholder="请选择数据源">
             <el-option v-for="item in datasourceList" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="数据表" prop="tableName" v-if="step===1">
-          <el-select v-model="chartForm.tableName" placeholder="请选择数据表">
+          <el-select v-model="createForm.tableName" placeholder="请选择数据表">
             <el-option v-for="name in tableList" :label="name" :value="name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="图表名称" prop="name" v-if="step===2">
-          <el-input style="width: 90%" v-model="chartForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
+          <el-input style="width: 90%" v-model="createForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="description" v-if="step===2">
-          <el-input style="width: 90%" v-model="chartForm.description" type="textarea"></el-input>
+          <el-input style="width: 90%" v-model="createForm.description" type="textarea"></el-input>
         </el-form-item>
       </el-form>
-
       <!-- 柱状图、折线图、散点图 -->
-      <el-form class="create-dialog-form-2" label-width="100px"
+      <el-form class="dialog-form" label-width="100px"
                ref="barLineScatterForm" :model="barLineScatterForm" :rules="barLineScatterFormRule"
-               v-if="step===2 && (chartForm.type==='bar' || chartForm.type==='line' || chartForm.type==='scatter')">
+               v-if="step===2 && (createForm.type==='bar' || createForm.type==='line' || createForm.type==='scatter')">
         <el-form-item label="横轴列" prop="axisX">
           <el-select v-model="barLineScatterForm.axisX" placeholder="请选择数据列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
@@ -85,11 +83,10 @@
           <el-radio v-model="barLineScatterForm.needLegend" label=false>关闭</el-radio>
         </el-form-item>
       </el-form>
-
       <!-- 饼图、漏斗图 -->
-      <el-form class="create-dialog-form-2" label-width="100px"
+      <el-form class="dialog-form" label-width="100px"
                ref="pieFunnelForm" :model="pieFunnelForm" :rules="pieFunnelFormRule"
-               v-if="step===2 && (chartForm.type==='pie' || chartForm.type==='funnel')">
+               v-if="step===2 && (createForm.type==='pie' || createForm.type==='funnel')">
         <el-form-item label="类别列" prop="typeColumn">
           <el-select v-model="pieFunnelForm.typeColumn" placeholder="请选择类别列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
@@ -105,15 +102,15 @@
           <el-radio v-model="pieFunnelForm.needLegend" label=false>关闭</el-radio>
         </el-form-item>
       </el-form>
-
-      <el-card class="card-create-preview" shadow="always" :body-style="{ padding: '0px' }"
-               v-if="previewChartVisible && step===2">
+      <!-- 图表预览 -->
+      <el-card class="card-preview" shadow="always" :body-style="{ padding: '0px' }"
+               v-if="chartPreviewVisible && step===2">
         <div id="chart-preview-container">
           <div class="chart-preview" id="chart-preview"></div>
         </div>
       </el-card>
-
-      <el-row class="create-dialog-button">
+      <!-- 对话框底部按钮 -->
+      <el-row class="dialog-button">
         <el-button @click="handlePrev" v-if="step===1 || step===2">上一步</el-button>
         <el-button @click="handleNextOne" type="primary" :loading="buttonLoad" v-if="step===0">下一步</el-button>
         <el-button @click="handleNextTwo" type="primary" :loading="buttonLoad" v-if="step===1">下一步</el-button>
@@ -123,11 +120,11 @@
     </el-dialog>
 
     <el-dialog title="图表详情" width="40%" :visible.sync="detailDialogVisible">
-      <el-descriptions size="small" :column="1" border>
+      <el-descriptions size="small" :column="1" border v-if="chartList.length > 0">
         <el-descriptions-item label="ID">{{ chartList[detailIndex].id }}</el-descriptions-item>
         <el-descriptions-item label="名称">{{ chartList[detailIndex].name }}</el-descriptions-item>
         <el-descriptions-item label="描述">{{ chartList[detailIndex].description }}</el-descriptions-item>
-        <el-descriptions-item label="数据源类型">{{ chartList[detailIndex].datasourceType}}</el-descriptions-item>
+        <el-descriptions-item label="数据源类型">{{ chartList[detailIndex].datasourceType }}</el-descriptions-item>
         <el-descriptions-item label="数据源名">{{ chartList[detailIndex].datasourceName }}</el-descriptions-item>
         <el-descriptions-item label="数据表名">{{ chartList[detailIndex].tableName }}</el-descriptions-item>
         <el-descriptions-item label="图表配置">{{ chartList[detailIndex].option }}</el-descriptions-item>
@@ -138,14 +135,65 @@
     </el-dialog>
 
     <el-dialog title="编辑图表" width="35%" :visible.sync="modifyDialogVisible">
-      
+      <el-form class="modify-dialog-form-1" label-width="100px" v-loading="modifyDialogLoad"
+               ref="modifyForm" :model="modifyForm" :rules="modifyFormRule">
+        <el-form-item label="图表名称" prop="name">
+          <el-input style="width: 90%" v-model="modifyForm.name" placeholder="请输入图表名称（20字符以内）"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input style="width: 90%" v-model="modifyForm.description" type="textarea"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 柱状图、折线图、散点图 -->
+      <el-form class="dialog-form" label-width="100px"
+               ref="barLineScatterForm" :model="barLineScatterForm" :rules="barLineScatterFormRule"
+               v-if="modifyForm.type==='bar' || modifyForm.type==='line' || modifyForm.type==='scatter'">
+        <el-form-item label="横轴列" prop="axisX">
+          <el-select v-model="barLineScatterForm.axisX" placeholder="请选择数据列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="纵轴列" prop="columns">
+          <el-select v-model="barLineScatterForm.columns" multiple placeholder="请选择一个或多个数据列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="图例" prop="needLegend">
+          <el-radio v-model="barLineScatterForm.needLegend" :label="true">开启</el-radio>
+          <el-radio v-model="barLineScatterForm.needLegend" :label="false">关闭</el-radio>
+        </el-form-item>
+      </el-form>
+      <!-- 饼图、漏斗图 -->
+      <el-form class="dialog-form" label-width="100px"
+               ref="pieFunnelForm" :model="pieFunnelForm" :rules="pieFunnelFormRule"
+               v-if="modifyForm.type==='pie' || modifyForm.type==='funnel'">
+        <el-form-item label="类别列" prop="typeColumn">
+          <el-select v-model="pieFunnelForm.typeColumn" placeholder="请选择类别列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数值列" prop="valueColumn">
+          <el-select v-model="pieFunnelForm.valueColumn" placeholder="请选择数值列">
+            <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="图例" prop="needLegend">
+          <el-radio v-model="pieFunnelForm.needLegend" :label="true">开启</el-radio>
+          <el-radio v-model="pieFunnelForm.needLegend" :label="false">关闭</el-radio>
+        </el-form-item>
+      </el-form>
+      <!-- 对话框底部按钮 -->
+      <el-row class="dialog-button">
+        <el-button @click="modifyDialogVisible = false">取消</el-button>
+        <el-button @click="handleModify" type="primary">确定</el-button>
+      </el-row>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import {listChartType, listChartView, previewChart, createChart, removeChart} from '@/api/chart'
+import {listChartType, listChartView, previewChart, createChart, removeChart, modifyChart} from '@/api/chart'
 import {listDs, listDsTable, listDsColumn} from '@/api/datasource'
 
 export default {
@@ -155,18 +203,21 @@ export default {
       checkAll: true,
       checkedTypes: [],
       isIndeterminate: true,
+      chartListLoad: true,
 
       step: 0,
       buttonLoad: false,
+
+      chartPreviewVisible: false,
       createDialogVisible: false,
-      createDialogLoad: true,
-      previewChartVisible: false,
       modifyDialogVisible: false,
       detailDialogVisible: false,
-      detailIndex: 0,
-      chartListLoad: true,
+      createDialogLoad: true,
+      modifyDialogLoad: true,
 
-      chartForm: {
+      detailIndex: 0,
+
+      createForm: {
         name: "",
         type: "",
         description: "",
@@ -174,7 +225,7 @@ export default {
         tableName: "",
         config: {}
       },
-      chartFormRule: {
+      createFormRule: {
         name: [
           {required: true, message: '请输入图表名称', trigger: 'blur'},
           {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
@@ -182,7 +233,21 @@ export default {
         type: [{required: true, message: '请选择图表类型', trigger: 'change'}],
         datasourceId: [{required: true, message: '请选择数据源', trigger: 'change'}],
         tableName: [{required: true, message: '请选择数据表', trigger: 'change'}],
-        description: [{max: 50, message: '描述长度应不超过50', trigger: 'blur'}],
+        description: [{max: 50, message: '描述长度应不超过50', trigger: 'blur'}]
+      },
+      modifyType: "",
+      modifyForm: {
+        id: "",
+        name: "",
+        description: "",
+        config: {}
+      },
+      modifyFormRule: {
+        name: [
+          {required: true, message: '请输入图表名称', trigger: 'blur'},
+          {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
+        ],
+        description: [{max: 50, message: '描述长度应不超过50', trigger: 'blur'}]
       },
       barLineScatterForm: {
         axisX: "",
@@ -210,7 +275,9 @@ export default {
         {
           id: "",
           name: "",
+          type: "",
           description: "",
+          datasourceId: "",
           datasourceName: "",
           datasourceType: "",
           tableName: "",
@@ -344,7 +411,23 @@ export default {
       this.detailDialogVisible = true
     },
     editChart(index) {
+      this.modifyDialogLoad = true
+      this.modifyType = this.chartList[index].type
+      this.modifyForm = JSON.parse(JSON.stringify(this.chartList[index]))
+      this.loadConfig(index)
       this.modifyDialogVisible = true
+      listDsColumn({id: this.modifyForm.datasourceId, tableName: this.modifyForm.tableName})
+          .then(res => {
+            if (res.success) {
+              this.columnList = res.data
+            } else {
+              this.$message.error(res.errMessage)
+            }
+          }).catch((err) => {
+        this.$message.error("系统繁忙！")
+        console.error(err)
+      })
+      this.modifyDialogLoad = false
     },
     downloadChart(index, name) {
       const chart = echarts.getInstanceByDom(document.getElementById(`chart${index}`))
@@ -368,7 +451,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(id)
         removeChart(id).then(res => {
           if (res.success) {
             this.$message.success("删除成功！")
@@ -386,10 +468,32 @@ export default {
     },
 
     // Dialog
+    handleModify() {
+      this.$refs['modifyForm'].validate((valid) => {
+        if (valid) {
+          this.modifyAndValidateConfig((isValid) => {
+            if (isValid) {
+              modifyChart(this.modifyForm).then(res => {
+                if (res.success) {
+                  this.modifyDialogVisible = false
+                  this.$message.success("修改成功！")
+                  this.loadChartAll()
+                } else {
+                  this.$message.error("查询失败：" + res.errMessage)
+                }
+              }).catch((err) => {
+                this.$message.error("系统繁忙！")
+                console.error(err)
+              })
+            }
+          })
+        }
+      })
+    },
     handleCreate() {
       this.clearPreview()
       this.step = 0
-      this.chartForm = {}
+      this.createForm = {}
       this.createDialogLoad = true
       this.createDialogVisible = true
 
@@ -414,7 +518,7 @@ export default {
     },
     handlePrev() {
       if (this.step === 1) {
-        this.chartForm.tableName = ""
+        this.createForm.tableName = ""
       }
       if (this.step === 2) {
         this.clearPreview()
@@ -424,10 +528,10 @@ export default {
       }
     },
     handleNextOne() {
-      this.$refs['chartForm'].validate((valid) => {
+      this.$refs['createForm'].validate((valid) => {
         if (valid) {
           this.buttonLoad = true
-          listDsTable(this.chartForm.datasourceId).then(res => {
+          listDsTable(this.createForm.datasourceId).then(res => {
             if (res.success) {
               this.tableList = res.data
               this.step = 1
@@ -445,10 +549,10 @@ export default {
     handleNextTwo() {
       this.clearForm()
       this.clearPreview()
-      this.$refs['chartForm'].validate((valid) => {
+      this.$refs['createForm'].validate((valid) => {
         if (valid) {
           this.buttonLoad = true
-          listDsColumn({id: this.chartForm.datasourceId, tableName: this.chartForm.tableName})
+          listDsColumn({id: this.createForm.datasourceId, tableName: this.createForm.tableName})
               .then(res => {
                 if (res.success) {
                   this.columnList = res.data
@@ -468,9 +572,9 @@ export default {
       this.clearPreview()
       this.loadAndValidateConfig((isValid) => {
         if (isValid) {
-          previewChart(this.chartForm).then(res => {
+          previewChart(this.createForm).then(res => {
             if (res.success) {
-              this.previewChartVisible = true
+              this.chartPreviewVisible = true
               this.$nextTick(() => {
                 echarts.init(document.getElementById("chart-preview")).setOption(res.data.option)
                 this.resizeChartPreview()
@@ -486,12 +590,12 @@ export default {
       })
     },
     handleCreateSubmit() {
-      this.$refs['chartForm'].validate((valid) => {
+      this.$refs['createForm'].validate((valid) => {
         if (valid) {
           this.buttonLoad = true
           this.loadAndValidateConfig((isValid) => {
             if (isValid) {
-              createChart(this.chartForm).then(res => {
+              createChart(this.createForm).then(res => {
                 if (res.success) {
                   this.createDialogVisible = false
                   this.$message.success("保存成功！")
@@ -505,21 +609,21 @@ export default {
               })
             }
           })
-          this.chartForm.config = {}
+          this.createForm.config = {}
           this.buttonLoad = false
         }
       })
     },
     clearForm() {
-      if (this.chartForm.type === "bar" || this.chartForm.type === "line" || this.chartForm.type === "scatter") {
+      if (this.createForm.type === "bar" || this.createForm.type === "line" || this.createForm.type === "scatter") {
         this.barLineScatterForm = {}
       }
-      if (this.chartForm.type === "pie" || this.chartForm.type === "funnel") {
+      if (this.createForm.type === "pie" || this.createForm.type === "funnel") {
         this.pieFunnelForm = {}
       }
     },
     clearPreview() {
-      this.previewChartVisible = false
+      this.chartPreviewVisible = false
       const chartDom = document.getElementById("chart-preview")
       if (chartDom) {
         const chartInstance = echarts.getInstanceByDom(chartDom)
@@ -528,19 +632,39 @@ export default {
         }
       }
     },
+    loadConfig(index) {
+      if (this.modifyForm.type === "bar" || this.modifyForm.type === "line" || this.modifyForm.type === "scatter") {
+        this.barLineScatterForm = JSON.parse(JSON.stringify(this.chartList[index].config))
+      } else if (this.modifyForm.type === 'pie' || this.modifyForm.type === 'funnel') {
+        this.pieFunnelForm = JSON.parse(JSON.stringify(this.chartList[index].config))
+      }
+    },
     loadAndValidateConfig(callback) {
-      if (this.chartForm.type === "bar" || this.chartForm.type === "line" || this.chartForm.type === "scatter") {
-        this.chartForm.config = this.barLineScatterForm
+      if (this.createForm.type === "bar" || this.createForm.type === "line" || this.createForm.type === "scatter") {
+        this.createForm.config = this.barLineScatterForm
         this.$refs['barLineScatterForm'].validate((valid) => {
           callback(valid.valueOf())
         })
-      } else if (this.chartForm.type === 'pie' || this.chartForm.type === 'funnel') {
-        this.chartForm.config = this.pieFunnelForm
+      } else if (this.createForm.type === 'pie' || this.createForm.type === 'funnel') {
+        this.createForm.config = this.pieFunnelForm
         this.$refs['pieFunnelForm'].validate((valid) => {
           callback(valid.valueOf())
         })
       }
     },
+    modifyAndValidateConfig(callback) {
+      if (this.modifyType === "bar" || this.modifyType === "line" || this.modifyType === "scatter") {
+        this.modifyForm.config = this.barLineScatterForm
+        this.$refs['barLineScatterForm'].validate((valid) => {
+          callback(valid.valueOf())
+        })
+      } else if (this.modifyType === 'pie' || this.modifyType === 'funnel') {
+        this.modifyForm.config = this.pieFunnelForm
+        this.$refs['pieFunnelForm'].validate((valid) => {
+          callback(valid.valueOf())
+        })
+      }
+    }
   }
 }
 </script>
@@ -557,7 +681,7 @@ export default {
   display: inline
 }
 
-.chart-row {
+.card-row {
   /* 自动换行 */
   flex-wrap: wrap
 }
@@ -571,19 +695,19 @@ export default {
   align-items: center
 }
 
-.card-chart {
-  position: relative;
-  width: 500px;
-  height: 350px;
-  margin: 15px 20px
-}
-
 .button-create {
   width: 300px;
   height: 300px;
   font-size: 200px;
   color: #cccccc;
   border: none;
+}
+
+.card-chart {
+  position: relative;
+  width: 500px;
+  height: 350px;
+  margin: 15px 20px
 }
 
 #chart-container {
@@ -604,7 +728,14 @@ export default {
   right: 10px
 }
 
-.card-create-preview {
+.chart-title {
+  position: relative;
+  top: -100%;
+  transform: translateY(-50%);
+  text-align: center
+}
+
+.card-preview {
   width: 95%;
   height: 50%;
   margin: 0 auto 10% auto
@@ -622,23 +753,12 @@ export default {
   margin: 0 auto
 }
 
-.chart-title {
-  position: relative;
-  top: -100%;
-  transform: translateY(-50%);
-  text-align: center
-}
-
-.create-dialog-form-1 {
-  margin-top: 30px
-}
-
-.create-dialog-form-2 {
+.dialog-form {
   margin-top: 20px;
   margin-bottom: 40px;
 }
 
-.create-dialog-button {
+.dialog-button {
   position: absolute;
   right: 20px;
   bottom: 20px

@@ -21,7 +21,7 @@ request.interceptors.request.use(
         config.headers['Content-Type'] = 'application/json; charset=utf-8'
         return config
     }, error => {
-        console.log('err: ' + error)
+        console.error('err: ' + error)
         return Promise.reject(error)
     });
 
