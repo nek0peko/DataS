@@ -82,16 +82,17 @@
         </el-form-item>
       </el-form>
 
-      <!-- 饼图 -->
-      <el-form class="create-dialog-form-2" label-width="100px" ref="pieForm" :model="pieForm" :rules="pieFormRule"
-               v-if="step===2 && createForm.type==='pie'">
+      <!-- 饼图、漏斗图 -->
+      <el-form class="create-dialog-form-2" label-width="100px"
+               ref="pieFunnelForm" :model="pieFunnelForm" :rules="pieFunnelFormRule"
+               v-if="step===2 && (createForm.type==='pie' || createForm.type==='funnel')">
         <el-form-item label="类别列" prop="typeColumn">
-          <el-select v-model="pieForm.typeColumn" placeholder="请选择类别列">
+          <el-select v-model="pieFunnelForm.typeColumn" placeholder="请选择类别列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="数值列" prop="valueColumn">
-          <el-select v-model="pieForm.valueColumn" placeholder="请选择数值列">
+          <el-select v-model="pieFunnelForm.valueColumn" placeholder="请选择数值列">
             <el-option v-for="column in columnList" :label="column" :value="column"></el-option>
           </el-select>
         </el-form-item>
@@ -163,7 +164,7 @@ export default {
         axisX: "",
         columns: []
       },
-      pieForm: {
+      pieFunnelForm: {
         typeColumn: "",
         valueColumn: ""
       },
@@ -171,7 +172,7 @@ export default {
         axisX: [{required: true, message: '请选择横轴', trigger: 'change'}],
         columns: [{required: true, message: '请至少选择一个作为纵轴', trigger: 'change'}]
       },
-      pieFormRule: {
+      pieFunnelFormRule: {
         typeColumn: [{required: true, message: '请选择类别列', trigger: 'change'}],
         valueColumn: [{required: true, message: '请选择数值列', trigger: 'change'}]
       },
@@ -471,8 +472,8 @@ export default {
       if (this.createForm.type === "bar" || this.createForm.type === "line" || this.createForm.type === "scatter") {
         this.barLineScatterForm = {}
       }
-      if (this.createForm.type === "pie") {
-        this.pieForm = {}
+      if (this.createForm.type === "pie" || this.createForm.type === "funnel") {
+        this.pieFunnelForm = {}
       }
     },
     clearPreview() {
@@ -491,9 +492,9 @@ export default {
         this.$refs['barLineScatterForm'].validate((valid) => {
           callback(valid.valueOf())
         })
-      } else if (this.createForm.type === 'pie') {
-        this.createForm.config = this.pieForm
-        this.$refs['pieForm'].validate((valid) => {
+      } else if (this.createForm.type === 'pie' || this.createForm.type === 'funnel') {
+        this.createForm.config = this.pieFunnelForm
+        this.$refs['pieFunnelForm'].validate((valid) => {
           callback(valid.valueOf())
         })
       }

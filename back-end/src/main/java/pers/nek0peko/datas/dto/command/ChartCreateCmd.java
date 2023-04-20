@@ -26,7 +26,7 @@ public class ChartCreateCmd extends BaseCommand {
     @NotBlank(message = "图表名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "bar, line, pie, scatter")
+    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "bar, line, pie, scatter, funnel")
     @NotBlank(message = "图表类型不能为空")
     private String type;
 
