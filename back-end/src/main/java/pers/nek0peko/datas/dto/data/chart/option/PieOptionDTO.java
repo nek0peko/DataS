@@ -20,6 +20,8 @@ public class PieOptionDTO extends ChartOptionDTO {
 
     private List<Series> series;
 
+    private Legend legend;
+
     @ApiModel
     @Builder
     @Data
@@ -28,6 +30,17 @@ public class PieOptionDTO extends ChartOptionDTO {
         private String type;
 
         private List<Map<String, Object>> data;
+
+    }
+
+    @ApiModel
+    @Builder
+    @Data
+    public static class Legend {
+
+        private String orient;
+
+        private String left;
 
     }
 
