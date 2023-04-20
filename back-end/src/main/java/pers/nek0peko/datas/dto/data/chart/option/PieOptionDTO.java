@@ -33,6 +33,21 @@ public class PieOptionDTO extends ChartOptionDTO {
 
         private List<Map<String, Object>> data;
 
+        private ItemStyle itemStyle;
+
+        @ApiModel
+        @Builder
+        @Data
+        public static class ItemStyle {
+
+            private String borderColor;
+
+            private Integer borderRadius;
+
+            private Integer borderWidth;
+
+        }
+
     }
 
     @ApiModel
