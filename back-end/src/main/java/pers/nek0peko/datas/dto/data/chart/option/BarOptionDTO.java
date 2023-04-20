@@ -10,14 +10,12 @@ import java.util.List;
  * BarOptionDTO
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/20
  */
 @ApiModel
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
-@NoArgsConstructor
 public class BarOptionDTO extends ChartOptionDTO {
 
     @JsonProperty("xAxis")

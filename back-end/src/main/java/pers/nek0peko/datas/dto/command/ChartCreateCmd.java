@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * 新增图表
  *
  * @author nek0peko
- * @date 2023/03/24
+ * @date 2023/04/20
  */
 @ApiModel
 @Data
@@ -26,7 +26,7 @@ public class ChartCreateCmd extends BaseCommand {
     @NotBlank(message = "图表名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "bar, line")
+    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "bar, line, pie")
     @NotBlank(message = "图表类型不能为空")
     private String type;
 

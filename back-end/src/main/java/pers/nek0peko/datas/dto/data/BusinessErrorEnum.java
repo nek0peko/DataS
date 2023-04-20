@@ -8,7 +8,7 @@ import pers.nek0peko.datas.exception.ErrorCodeI;
  * BusinessErrorEnum
  *
  * @author nek0peko
- * @date 2023/04/18
+ * @date 2023/04/20
  */
 @Getter
 @AllArgsConstructor
@@ -36,7 +36,7 @@ public enum BusinessErrorEnum implements ErrorCodeI {
     // 数据源不支持Schema
     B_DATASOURCE_SCHEMA_UNSUPPORTED("B_DATASOURCE_SCHEMA_UNSUPPORTED", "该数据源不支持Schema！"),
     // 数据源连接失败
-    B_DATASOURCE_FAILED("B_DATASOURCE_FAILED", "数据源连接失败！"),
+    B_DATASOURCE_FAILED("B_DATASOURCE_FAILED", "数据源连接失败，请检查连接信息或数据类型！"),
 
     // 未找到数据源驱动
     B_DATASOURCE_DRIVER_NOT_FOUND("B_DATASOURCE_DRIVER_NOT_FOUND", "未找到该数据源驱动！"),

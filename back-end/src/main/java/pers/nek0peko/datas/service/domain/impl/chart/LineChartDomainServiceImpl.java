@@ -19,13 +19,14 @@ import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
 /**
  * LineChartDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/07
+ * @date 2023/04/20
  */
 @Service("line")
 public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfigDTO> {
@@ -74,7 +75,11 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
             }
         });
 
-        CompletableFuture.allOf(seriesFuture, xAxisFuture).join();
+        try {
+            CompletableFuture.allOf(seriesFuture, xAxisFuture).join();
+        } catch (CompletionException e) {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        }
 
         return LineOptionDTO.builder()
                 .series(seriesFuture.join())

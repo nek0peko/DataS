@@ -13,7 +13,7 @@ import java.util.Map;
  * 支持的图表类型
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/20
  */
 @Getter
 @AllArgsConstructor
@@ -24,6 +24,7 @@ public enum ChartTypeEnum {
      */
     BAR("bar", "柱状图"),
     LINE("line", "折线图"),
+    PIE("pie", "饼图"),
     ;
 
     private final String type;
