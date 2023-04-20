@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.nek0peko.datas.dto.command.ChartCreateCmd;
+import pers.nek0peko.datas.dto.command.ChartModifyCmd;
 import pers.nek0peko.datas.dto.command.ChartPreviewCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
 import pers.nek0peko.datas.dto.response.Response;
@@ -28,7 +29,7 @@ import java.util.Map;
  * 数据可视化
  *
  * @author nek0peko
- * @date 2023/04/04
+ * @date 2023/04/20
  */
 @Api(tags = "数据可视化")
 @ApiSort(1)
@@ -69,6 +70,13 @@ public class ChartController {
     }
 
     @ApiOperationSupport(author = "nek0peko", order = 5)
+    @ApiOperation(value = "修改图表")
+    @PostMapping(value = "/modify")
+    public Response modify(@Valid @NotNull @RequestBody ChartModifyCmd cmd) {
+        return chartService.modify(cmd);
+    }
+
+    @ApiOperationSupport(author = "nek0peko", order = 6)
     @ApiOperation(value = "删除图表")
     @ApiImplicitParam(name = "id", value = "图表ID", required = true, dataType = "Long", dataTypeClass = Long.class)
     @PostMapping(value = "/remove")

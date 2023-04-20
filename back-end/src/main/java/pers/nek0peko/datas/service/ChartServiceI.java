@@ -1,6 +1,7 @@
 package pers.nek0peko.datas.service;
 
 import pers.nek0peko.datas.dto.command.ChartCreateCmd;
+import pers.nek0peko.datas.dto.command.ChartModifyCmd;
 import pers.nek0peko.datas.dto.command.ChartPreviewCmd;
 import pers.nek0peko.datas.dto.data.chart.ChartViewDTO;
 import pers.nek0peko.datas.dto.response.Response;
@@ -13,7 +14,7 @@ import java.util.Map;
  * 图表服务
  *
  * @author nek0peko
- * @date 2023/04/04
+ * @date 2023/04/20
  */
 public interface ChartServiceI {
 
@@ -47,6 +48,14 @@ public interface ChartServiceI {
      * @return 是否新增成功
      */
     Response create(ChartCreateCmd cmd);
+
+    /**
+     * 修改图表
+     *
+     * @param cmd 修改图表请求
+     * @return 是否修改成功
+     */
+    Response modify(ChartModifyCmd cmd);
 
     /**
      * 删除图表
