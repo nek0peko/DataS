@@ -10,13 +10,14 @@ import pers.nek0peko.datas.service.domain.DatasourceSchemaDomainServiceI;
 import pers.nek0peko.datas.util.BaseClassLoaderProvider;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
  * PostgresDatasourceDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/18
+ * @date 2023/04/28
  */
 @Service("Postgres")
 public class PostgresDatasourceDomainServiceImpl extends BaseClassLoaderProvider implements DatasourceSchemaDomainServiceI<PostgresConfigDTO> {
@@ -68,19 +69,14 @@ public class PostgresDatasourceDomainServiceImpl extends BaseClassLoaderProvider
 
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
         final PostgresConfigDTO config = configJson.toJavaObject(PostgresConfigDTO.class);
-        return queryColumnByDriver(myClassLoader, DRIVER, sql,
-                configUrl(config), configProperties(config.getUsername(), config.getPassword()));
-    }
 
-    private static String configUrl(PostgresConfigDTO config) {
-        return String.format("jdbc:postgresql://%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
-    }
+        final String url = String.format("jdbc:postgresql://%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
 
-    private static Properties configProperties(String user, String password) {
         final Properties props = new Properties();
-        props.setProperty("user", user);
-        props.setProperty("password", password);
-        return props;
+        props.setProperty("user", Optional.ofNullable(config.getUsername()).orElse(""));
+        props.setProperty("password", Optional.ofNullable(config.getPassword()).orElse(""));
+
+        return queryColumnByDriver(myClassLoader, DRIVER, sql, url, props);
     }
 
 }

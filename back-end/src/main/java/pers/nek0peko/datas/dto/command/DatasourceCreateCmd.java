@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * 新增数据源
  *
  * @author nek0peko
- * @date 2023/04/18
+ * @date 2023/04/28
  */
 @ApiModel
 @Data
@@ -26,7 +26,7 @@ public class DatasourceCreateCmd extends BaseCommand {
     @NotBlank(message = "数据源名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "MySQL, Oracle, Postgres")
+    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "MySQL, Oracle, Postgres, Hive")
     @NotBlank(message = "数据源类型不能为空")
     private String type;
 

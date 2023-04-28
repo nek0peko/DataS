@@ -10,13 +10,14 @@ import pers.nek0peko.datas.service.domain.DatasourceSchemaDomainServiceI;
 import pers.nek0peko.datas.util.BaseClassLoaderProvider;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
  * OracleDatasourceDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/18
+ * @date 2023/04/28
  */
 @Service("Oracle")
 public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider implements DatasourceSchemaDomainServiceI<OracleConfigDTO> {
@@ -72,26 +73,22 @@ public class OracleDatasourceDomainServiceImpl extends BaseClassLoaderProvider i
 
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
         final OracleConfigDTO config = configJson.toJavaObject(OracleConfigDTO.class);
-        return queryColumnByDriver(myClassLoader, DRIVER, sql,
-                configUrl(config), configProperties(config.getUsername(), config.getPassword()));
-    }
 
-    private static String configUrl(OracleConfigDTO config) {
+        final String url;
         if (SERVICE_NAME.equalsIgnoreCase(config.getConnectionType())) {
-            return String.format("jdbc:oracle:thin:@%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
+            url =  String.format("jdbc:oracle:thin:@%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
         } else if (SID.equalsIgnoreCase(config.getConnectionType())) {
-            return String.format("jdbc:oracle:thin:@%s:%s:%s", config.getHost(), config.getPort(), config.getDatabase());
+            url =  String.format("jdbc:oracle:thin:@%s:%s:%s", config.getHost(), config.getPort(), config.getDatabase());
         } else {
             throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_ORACLE_METHOD_ERROR);
         }
-    }
 
-    private static Properties configProperties(String user, String password) {
         final Properties props = new Properties();
         props.put("oracle.net.CONNECT_TIMEOUT", "5000");
-        props.setProperty("user", user);
-        props.setProperty("password", password);
-        return props;
+        props.setProperty("user", Optional.ofNullable(config.getUsername()).orElse(""));
+        props.setProperty("password", Optional.ofNullable(config.getPassword()).orElse(""));
+
+        return queryColumnByDriver(myClassLoader, DRIVER, sql, url, props);
     }
 
 }
