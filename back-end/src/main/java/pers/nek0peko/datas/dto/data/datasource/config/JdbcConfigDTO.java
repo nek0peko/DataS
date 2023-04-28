@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
  * JdbcConfigDTO
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/04/28
  */
 @ApiModel
 @Data
@@ -21,7 +21,7 @@ import javax.validation.constraints.Pattern;
 public class JdbcConfigDTO extends DatasourceConfigDTO {
 
     @ApiModelProperty(value = "主机名/IP地址", position = 1, required = true)
-    @Pattern(regexp = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$", message = "主机名/IP格式错误")
+    @Pattern(regexp = "^(localhost|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9]))$", message = "主机名/IP格式错误")
     private String host;
 
     @ApiModelProperty(value = "端口", position = 2, required = true)

@@ -26,7 +26,7 @@ import java.util.Objects;
  * DatasourceGatewayImpl
  *
  * @author nek0peko
- * @date 2022/12/13
+ * @date 2023/04/28
  */
 @Component
 public class DatasourceGatewayImpl implements DatasourceGateway {
@@ -78,7 +78,8 @@ public class DatasourceGatewayImpl implements DatasourceGateway {
     public PageHolder<DatasourceDTO> list(DatasourceListQry qry) {
         final LambdaQueryWrapper<DatasourceDO> wrapper = Wrappers.lambdaQuery(DatasourceDO.class)
                 .like(StringUtils.isNotEmpty(qry.getType()), DatasourceDO::getType, qry.getType())
-                .like(StringUtils.isNotEmpty(qry.getName()), DatasourceDO::getName, qry.getName());
+                .like(StringUtils.isNotEmpty(qry.getName()), DatasourceDO::getName, qry.getName())
+                .orderByDesc(DatasourceDO::getCreateTime);
         final Page<DatasourceDO> page = mapper.selectPage(new Page<>(
                 qry.getPageIndex(), qry.getPageSize(), qry.isNeedTotalCount()), wrapper);
         return PageHolder.of(convertor.toDTO(page.getRecords()), page.getTotal(), page.getSize(), page.getCurrent());
