@@ -12,7 +12,7 @@ import java.util.Map;
  * 支持的数据源类型
  *
  * @author nek0peko
- * @date 2023/04/28
+ * @date 2023/04/30
  */
 @Getter
 @AllArgsConstructor
@@ -25,6 +25,7 @@ public enum DatasourceTypeEnum {
     ORACLE("Oracle", true),
     POSTGRES("Postgres", true),
     HIVE("Hive", false),
+    GREENPLUM("Greenplum", true),
     ;
 
     private final String type;

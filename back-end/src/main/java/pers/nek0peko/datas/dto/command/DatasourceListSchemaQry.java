@@ -13,14 +13,14 @@ import javax.validation.constraints.NotNull;
  * 查询数据源中所有Schema名
  *
  * @author nek0peko
- * @date 2023/04/28
+ * @date 2023/04/30
  */
 @ApiModel
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceListSchemaQry extends BaseQuery {
 
-    @ApiModelProperty(value = "类型", required = true, allowableValues = "Oracle, Postgres")
+    @ApiModelProperty(value = "类型", required = true, allowableValues = "Oracle, Postgres, Greenplum")
     @NotBlank(message = "数据源类型不能为空")
     private String type;
 

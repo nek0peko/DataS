@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * 修改数据源
  *
  * @author nek0peko
- * @date 2023/04/28
+ * @date 2023/04/30
  */
 @ApiModel
 @Data
@@ -30,7 +30,7 @@ public class DatasourceModifyCmd extends BaseCommand {
     @NotBlank(message = "数据源名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "类型", required = true, position = 2, allowableValues = "MySQL, Oracle, Postgres, Hive")
+    @ApiModelProperty(value = "类型", required = true, position = 2, allowableValues = "MySQL, Oracle, Postgres, Hive, Greenplum")
     @NotBlank(message = "数据源类型不能为空")
     private String type;
 
