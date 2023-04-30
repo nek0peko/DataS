@@ -1,17 +1,19 @@
 package pers.nek0peko.datas.service.domain.impl.datasource;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.datasource.DatasourceResultHolder;
 import pers.nek0peko.datas.dto.data.datasource.config.GreenplumConfigDTO;
 import pers.nek0peko.datas.exception.BusinessException;
+import pers.nek0peko.datas.factory.DatasourceDomainServiceFactory;
+import pers.nek0peko.datas.service.domain.DatasourceDomainServiceI;
 import pers.nek0peko.datas.service.domain.DatasourceSchemaDomainServiceI;
 import pers.nek0peko.datas.util.BaseClassLoaderProvider;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.sql.*;
+import java.util.*;
 
 /**
  * GreenplumDatasourceDomainServiceImpl
@@ -67,16 +69,25 @@ public class GreenplumDatasourceDomainServiceImpl extends BaseClassLoaderProvide
                 "SELECT SUM(%s) FROM %s.%s GROUP BY %s ORDER BY %s", column, schema, tableName, groupBy, groupBy));
     }
 
+    @Async
+    public void migrateTable(String dsType, JSONObject dsConfig, String tableName) {
+        final DatasourceDomainServiceI service = DatasourceDomainServiceFactory.getService(dsType);
+    }
+
     private DatasourceResultHolder queryColumn(JSONObject configJson, String sql) {
         final GreenplumConfigDTO config = configJson.toJavaObject(GreenplumConfigDTO.class);
+        return queryColumnByDriver(myClassLoader, DRIVER, sql, configUrl(config), configProps(config));
+    }
 
-        final String url = String.format("jdbc:postgresql://%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
+    private String configUrl(GreenplumConfigDTO config) {
+        return String.format("jdbc:postgresql://%s:%s/%s", config.getHost(), config.getPort(), config.getDatabase());
+    }
 
+    private Properties configProps(GreenplumConfigDTO config) {
         final Properties props = new Properties();
         props.setProperty("user", Optional.ofNullable(config.getUsername()).orElse(""));
         props.setProperty("password", Optional.ofNullable(config.getPassword()).orElse(""));
-
-        return queryColumnByDriver(myClassLoader, DRIVER, sql, url, props);
+        return props;
     }
 
 }

@@ -19,7 +19,7 @@ import java.util.*;
  * DatasourceDomainServiceI
  *
  * @author nek0peko
- * @date 2023/04/19
+ * @date 2023/05/01
  */
 public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
 
@@ -129,12 +129,12 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      *
      * @param driver 驱动名
      * @param url URL
-     * @param properties Property
+     * @param props Properties
      * @param sql 查询语句
      * @param myClassLoader 自定义类加载器
      * @return 数据列
      */
-    default DatasourceResultHolder queryColumnByDriver(MyClassLoader myClassLoader, String driver, String sql, String url, Properties properties) {
+    default DatasourceResultHolder queryColumnByDriver(MyClassLoader myClassLoader, String driver, String sql, String url, Properties props) {
         Connection conn = null;
         Statement stmt = null;
         final List<String> column = new ArrayList<>();
@@ -146,7 +146,7 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
         Thread.currentThread().setContextClassLoader(myClassLoader);
 
         try {
-            conn = driverClass.connect(url, properties);
+            conn = driverClass.connect(url, props);
             stmt = conn.createStatement();
             final ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
@@ -161,6 +161,51 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
             closeConnection(conn, stmt);
         }
         return DatasourceResultHolder.buildSuccessWithData(column);
+    }
+
+    /**
+     * 加载驱动查询数据列到列表
+     *
+     * @param driver 驱动名
+     * @param url URL
+     * @param props Properties
+     * @param sql 查询语句
+     * @param myClassLoader 自定义类加载器
+     * @return 数据列列表
+     */
+    default List<Map<String, Object>> queryToListByDriver(MyClassLoader myClassLoader, String driver, String sql, String url, Properties props) {
+        Connection conn = null;
+        Statement stmt = null;
+        final List<Map<String, Object>> resultList = new ArrayList<>();
+
+        final Driver driverClass = loadDriver(myClassLoader, driver);
+        // 获取当前类加载器（用于还原）
+        final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        // 设置新类加载器
+        Thread.currentThread().setContextClassLoader(myClassLoader);
+        try {
+            conn = driverClass.connect(url, props);
+            stmt = conn.createStatement();
+            final ResultSet rs = stmt.executeQuery(sql);
+            final ResultSetMetaData md = rs.getMetaData();
+            final int count = md.getColumnCount();
+
+            while (rs.next()) {
+                final Map<String, Object> row = new HashMap<>(count);
+                for (int i = 1; i <= count; ++i) {
+                    row.put(md.getColumnName(i), rs.getObject(i));
+                }
+                resultList.add(row);
+            }
+            rs.close();
+        } catch (Exception e) {
+            throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
+        } finally {
+            // 还原类加载器
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
+            closeConnection(conn, stmt);
+        }
+        return resultList;
     }
 
     /**

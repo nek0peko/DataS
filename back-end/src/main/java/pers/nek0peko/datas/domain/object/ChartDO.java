@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  * ChartDO
  *
  * @author nek0peko
- * @date 2023/03/22
+ * @date 2023/04/30
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -27,6 +27,11 @@ public class ChartDO extends BaseDO {
      * 图表类型
      */
     private String type;
+
+    /**
+     * 同步数据
+     */
+    private Integer mode;
 
     /**
      * 描述

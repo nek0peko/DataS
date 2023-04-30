@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 获取图表绘制信息
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/04/30
  */
 @Component
 public class ChartListViewQryExe {
@@ -68,11 +68,16 @@ public class ChartListViewQryExe {
                             .build();
                     final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
                     try {
-                        chartViewDTO.setOption(service.loadDataToOption(
-                                datasourceDTO.getType(),
-                                datasourceDTO.getConfig(),
-                                chartDTO.getTableName(),
-                                service.validateAndFilterConfig(chartDTO.getConfig())));
+                        if (chartDTO.getMode() == 1) {
+                            chartViewDTO.setOption(service.loadSyncDataToOption(chartDTO.getDatasourceId(),
+                                    chartDTO.getTableName(), service.validateAndFilterConfig(chartDTO.getConfig())));
+                        } else {
+                            chartViewDTO.setOption(service.loadDataToOption(
+                                    datasourceDTO.getType(),
+                                    datasourceDTO.getConfig(),
+                                    chartDTO.getTableName(),
+                                    service.validateAndFilterConfig(chartDTO.getConfig())));
+                        }
                     } catch (Exception ignored) {
                         // 返回一个不带Option的DTO，前端显示空白图表
                     }
