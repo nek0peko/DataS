@@ -1,7 +1,7 @@
 package pers.nek0peko.datas.service.domain;
 
 import com.alibaba.fastjson.JSONObject;
-import pers.nek0peko.datas.common.constant.Constants;
+import pers.nek0peko.datas.common.constant.DatasourceConstants;
 import pers.nek0peko.datas.dto.data.BusinessErrorEnum;
 import pers.nek0peko.datas.dto.data.chart.config.ChartConfigDTO;
 import pers.nek0peko.datas.dto.data.chart.option.ChartOptionDTO;
@@ -20,7 +20,7 @@ import java.util.Set;
  * ChartDomainServiceI
  *
  * @author nek0peko
- * @date 2023/04/30
+ * @date 2023/05/02
  */
 public interface ChartDomainServiceI<T extends ChartConfigDTO> {
 
@@ -45,7 +45,7 @@ public interface ChartDomainServiceI<T extends ChartConfigDTO> {
      */
     default ChartOptionDTO loadSyncDataToOption(Long datasourceId, String tableName, JSONObject configJson) {
         return loadDataToOption(DatasourceTypeEnum.GREENPLUM.getType(),
-                JSONObject.parseObject(Constants.GREENPLUM_CONFIG_JSON),
+                JSONObject.parseObject(DatasourceConstants.GREENPLUM_CONFIG_JSON),
                 datasourceId + "-" + tableName, configJson);
     }
 
