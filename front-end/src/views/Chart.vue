@@ -52,6 +52,10 @@
             <el-option v-for="item in datasourceList" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="定时同步" prop="mode" v-if="step===0">
+          <el-radio v-model="createForm.mode" label=1>开启</el-radio>
+          <el-radio v-model="createForm.mode" label=0>关闭</el-radio>
+        </el-form-item>
         <el-form-item label="数据表" prop="tableName" v-if="step===1">
           <el-select v-model="createForm.tableName" placeholder="请选择数据表">
             <el-option v-for="name in tableList" :label="name" :value="name"></el-option>
@@ -220,6 +224,7 @@ export default {
       createForm: {
         name: "",
         type: "",
+        mode: 0,
         description: "",
         datasourceId: "",
         tableName: "",
@@ -231,6 +236,7 @@ export default {
           {max: 20, message: '长度在20个字符以内', trigger: 'blur'}
         ],
         type: [{required: true, message: '请选择图表类型', trigger: 'change'}],
+        mode: [{required: true, message: '请选择是否需要定时同步', trigger: 'blur'}],
         datasourceId: [{required: true, message: '请选择数据源', trigger: 'change'}],
         tableName: [{required: true, message: '请选择数据表', trigger: 'change'}],
         description: [{max: 50, message: '描述长度应不超过50', trigger: 'blur'}]

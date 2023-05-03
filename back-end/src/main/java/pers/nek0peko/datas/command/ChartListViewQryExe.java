@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 获取图表绘制信息
  *
  * @author nek0peko
- * @date 2023/04/30
+ * @date 2023/05/03
  */
 @Component
 public class ChartListViewQryExe {
@@ -68,6 +68,8 @@ public class ChartListViewQryExe {
                             .build();
                     final ChartDomainServiceI service = ChartDomainServiceFactory.getService(chartDTO.getType());
                     try {
+                        // TODO
+                        chartDTO.setMode(0);
                         if (chartDTO.getMode() == 1) {
                             chartViewDTO.setOption(service.loadSyncDataToOption(chartDTO.getDatasourceId(),
                                     chartDTO.getTableName(), service.validateAndFilterConfig(chartDTO.getConfig())));

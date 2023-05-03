@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * 新增图表
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/05/03
  */
 @ApiModel
 @Data
@@ -29,6 +29,10 @@ public class ChartCreateCmd extends BaseCommand {
     @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "bar, line, pie, scatter, funnel")
     @NotBlank(message = "图表类型不能为空")
     private String type;
+
+    @ApiModelProperty(value = "类型", required = true, position = 1, allowableValues = "0, 1")
+    @NotNull(message = "请选择是否需要定时同步")
+    private Integer mode;
 
     @ApiModelProperty(value = "描述：长度不超过50", position = 2, allowEmptyValue = true)
     @Length(max = 50, message = "描述长度应不超过50")
