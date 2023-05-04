@@ -12,12 +12,12 @@ import java.util.Objects;
  * BaseClassLoaderProvider
  *
  * @author nek0peko
- * @date 2023/04/17
+ * @date 2023/05/04
  */
 @NoArgsConstructor
 public abstract class BaseClassLoaderProvider {
 
-//    private static final String PATH = "/opt/bi/drivers";
+    private static final String PATH = "/opt/data_s/drivers";
 
     protected static MyClassLoader myClassLoader;
 
@@ -26,11 +26,11 @@ public abstract class BaseClassLoaderProvider {
         // 仅用于Windows开发环境测试
         final String path = System.getProperty("user.dir") + "\\back-end\\drivers";
 
-        final URL[] urls = new URL[]{(new File(path)).toURI().toURL()};
+        final URL[] urls = new URL[]{(new File(PATH)).toURI().toURL()};
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         myClassLoader = new MyClassLoader(urls, classLoader);
 
-        final File[] files = new File(path).listFiles();
+        final File[] files = new File(PATH).listFiles();
         if (Objects.nonNull(files)) {
             for (final File file : files) {
                 if (file.getName().endsWith(".jar")) {
