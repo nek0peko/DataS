@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * ScatterChartDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/05/07
  */
 @Service("scatter")
 public class ScatterChartDomainServiceImpl implements ChartDomainServiceI<ScatterConfigDTO> {
@@ -45,7 +45,7 @@ public class ScatterChartDomainServiceImpl implements ChartDomainServiceI<Scatte
                                 try {
                                     return ScatterOptionDTO.Series.builder()
                                             .data(((List<String>) columnResultHolder.getData()).stream()
-                                                    .map(Integer::parseInt)
+                                                    .map(Float::parseFloat)
                                                     .collect(Collectors.toList()))
                                             .name(column)
                                             .type(ChartTypeEnum.SCATTER.getType())

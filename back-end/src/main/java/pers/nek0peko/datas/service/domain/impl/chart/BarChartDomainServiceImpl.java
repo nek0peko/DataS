@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * BarChartDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/05/07
  */
 @Service("bar")
 public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigDTO> {
@@ -45,7 +45,7 @@ public class BarChartDomainServiceImpl implements ChartDomainServiceI<BarConfigD
                                 try {
                                     return BarOptionDTO.Series.builder()
                                             .data(((List<String>) columnResultHolder.getData()).stream()
-                                                    .map(Integer::parseInt)
+                                                    .map(Float::parseFloat)
                                                     .collect(Collectors.toList()))
                                             .name(column)
                                             .type(ChartTypeEnum.BAR.getType())

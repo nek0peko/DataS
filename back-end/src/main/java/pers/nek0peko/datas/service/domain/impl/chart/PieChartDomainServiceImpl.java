@@ -22,7 +22,7 @@ import java.util.concurrent.CompletionException;
  * PieChartDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/05/07
  */
 @Service("pie")
 public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigDTO> {
@@ -46,11 +46,11 @@ public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigD
             }
         });
 
-        final CompletableFuture<List<Integer>> valuesFuture = CompletableFuture.supplyAsync(() -> {
+        final CompletableFuture<List<Float>> valuesFuture = CompletableFuture.supplyAsync(() -> {
             final DatasourceResultHolder valuesResultHolder = service.queryColumnSumGroupBy(
                     dsConfig, tableName, config.getValueColumn(), config.getTypeColumn());
             if (valuesResultHolder.isSuccess()) {
-                return (List<Integer>) valuesResultHolder.getData();
+                return (List<Float>) valuesResultHolder.getData();
             } else {
                 throw new BusinessException(BusinessErrorEnum.B_DATASOURCE_FAILED);
             }
@@ -64,7 +64,7 @@ public class PieChartDomainServiceImpl implements ChartDomainServiceI<PieConfigD
 
         final List<Map<String, Object>> data = new ArrayList<>();
         final Iterator<String> typesIterator = typesFuture.join().iterator();
-        final Iterator<Integer> valuesIterator = valuesFuture.join().iterator();
+        final Iterator<Float> valuesIterator = valuesFuture.join().iterator();
 
         while (typesIterator.hasNext() && valuesIterator.hasNext()) {
             final Map<String, Object> map = new HashMap<>(Constants.TWO);

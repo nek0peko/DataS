@@ -54,7 +54,7 @@ public class LineOptionDTO extends ChartOptionDTO {
 
         private String name;
 
-        private List<Integer> data;
+        private List<Float> data;
 
     }
 

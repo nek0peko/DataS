@@ -10,7 +10,7 @@ import java.util.List;
  * ScatterOptionDTO
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/05/07
  */
 @ApiModel
 @Builder
@@ -54,7 +54,7 @@ public class ScatterOptionDTO extends ChartOptionDTO {
 
         private String name;
 
-        private List<Integer> data;
+        private List<Float> data;
 
     }
 

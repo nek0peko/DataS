@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * LineChartDomainServiceImpl
  *
  * @author nek0peko
- * @date 2023/04/20
+ * @date 2023/05/07
  */
 @Service("line")
 public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfigDTO> {
@@ -45,7 +45,7 @@ public class LineChartDomainServiceImpl implements ChartDomainServiceI<LineConfi
                                 try {
                                     return LineOptionDTO.Series.builder()
                                             .data(((List<String>) columnResultHolder.getData()).stream()
-                                                    .map(Integer::parseInt)
+                                                    .map(Float::parseFloat)
                                                     .collect(Collectors.toList()))
                                             .name(column)
                                             .type(ChartTypeEnum.LINE.getType())
