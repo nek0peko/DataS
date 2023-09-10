@@ -35,7 +35,7 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      * 查询数据表中所有列名
      *
      * @param configJson 数据源配置的JSON对象
-     * @param tableName 数据表名
+     * @param tableName  数据表名
      * @return 数据列名列表
      */
     List<String> listColumn(JSONObject configJson, String tableName);
@@ -44,9 +44,9 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      * 查询按指定列GroupBy后的指定列
      *
      * @param configJson 数据源配置
-     * @param tableName 表名
-     * @param column 查询的列名
-     * @param groupBy 按此列GroupBy
+     * @param tableName  表名
+     * @param column     查询的列名
+     * @param groupBy    按此列GroupBy
      * @return 指定列结果
      */
     DatasourceResultHolder queryColumnGroupBy(JSONObject configJson, String tableName, String column, String groupBy);
@@ -55,9 +55,9 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      * 查询按指定列GroupBy后的指定列总和
      *
      * @param configJson 数据源配置
-     * @param tableName 表名
-     * @param column 查询的列名
-     * @param groupBy 按此列GroupBy
+     * @param tableName  表名
+     * @param column     查询的列名
+     * @param groupBy    按此列GroupBy
      * @return 指定列总和结果
      */
     DatasourceResultHolder queryColumnSumGroupBy(JSONObject configJson, String tableName, String column, String groupBy);
@@ -127,10 +127,10 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
     /**
      * 加载驱动查询数据列
      *
-     * @param driver 驱动名
-     * @param url URL
-     * @param props Properties
-     * @param sql 查询语句
+     * @param driver        驱动名
+     * @param url           URL
+     * @param props         Properties
+     * @param sql           查询语句
      * @param myClassLoader 自定义类加载器
      * @return 数据列
      */
@@ -166,10 +166,10 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
     /**
      * 加载驱动查询数据列到列表
      *
-     * @param driver 驱动名
-     * @param url URL
-     * @param props Properties
-     * @param sql 查询语句
+     * @param driver        驱动名
+     * @param url           URL
+     * @param props         Properties
+     * @param sql           查询语句
      * @param myClassLoader 自定义类加载器
      * @return 数据列列表
      */
@@ -212,7 +212,7 @@ public interface DatasourceDomainServiceI<T extends DatasourceConfigDTO> {
      * 获取数据源驱动
      *
      * @param classLoader 自定义类加载器
-     * @param driver 数据源驱动名
+     * @param driver      数据源驱动名
      * @return 数据源驱动
      */
     default Driver loadDriver(MyClassLoader classLoader, String driver) {
